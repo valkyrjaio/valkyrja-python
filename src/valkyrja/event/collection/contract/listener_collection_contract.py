@@ -84,5 +84,9 @@ class ListenerCollectionContract(ABC):
         """Get each listener that the collection holds."""
 
     @abstractmethod
-    def get_event_ids(self) -> list[str]:
+    def get_events(self) -> list[str]:
         """Get the id of each event that has a listener."""
+
+    @abstractmethod
+    def get_events_with_listeners(self) -> dict[str, list[ListenerContract]]:
+        """Get each event id, with the listeners of that event."""
