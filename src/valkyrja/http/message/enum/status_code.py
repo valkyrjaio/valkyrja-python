@@ -85,3 +85,7 @@ class StatusCode(IntEnum):
         lookup written plainly.
         """
         return StatusText[self.name].value
+
+    def is_redirect(self) -> bool:
+        """Get whether the code tells the caller to ask somewhere else."""
+        return StatusCode.MULTIPLE_CHOICES.value <= self.value < StatusCode.BAD_REQUEST.value
