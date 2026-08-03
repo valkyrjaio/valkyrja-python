@@ -18,7 +18,11 @@ addopts = "--import-mode=importlib --strict-markers"
 
 [tool.coverage.run]
 branch = true
-source = ["valkyrja"]
+# Warning: name the source by path, never by package. `valkyrja` is a PEP 420
+# namespace package, and coverage cannot walk one to find a module that no test
+# imports. Coverage then reports only the modules that ran, so a component with
+# no test at all is absent from the report and the total reads 100%.
+source = ["../../../src/valkyrja"]
 
 [tool.coverage.report]
 show_missing = true
