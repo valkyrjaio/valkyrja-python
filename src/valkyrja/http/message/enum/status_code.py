@@ -8,6 +8,8 @@
 
 from enum import IntEnum
 
+from valkyrja.http.message.enum.status_text import StatusText
+
 
 class StatusCode(IntEnum):
     """The status code that a response carries."""
@@ -74,3 +76,12 @@ class StatusCode(IntEnum):
     LOOP_DETECTED = 508
     NOT_EXTENDED_OBSOLETED = 510
     NETWORK_AUTHENTICATION_REQUIRED = 511
+
+    def as_phrase(self) -> str:
+        """Get the text that goes with the status code.
+
+        PHP reads `StatusText::{$this->name}`, a dynamic access on the enum.
+        Python reads the member by name from the other enum, which is the same
+        lookup written plainly.
+        """
+        return StatusText[self.name].value
