@@ -16,7 +16,10 @@ from valkyrja.http.message.header.value.component.contract.component_contract im
 from valkyrja.http.message.header.value.contract.value_contract import ValueContract
 
 VALUE_SEPARATOR = ";"
-"""What stands between one component of a value and the next."""
+"""What splits one component of a value from the next, when a value is read."""
+
+VALUE_JOINER = "; "
+"""What stands between one component of a value and the next, when a value is written."""
 
 
 class Value(ValueContract):
@@ -27,7 +30,9 @@ class Value(ValueContract):
 
     @override
     def __str__(self) -> str:
-        return VALUE_SEPARATOR.join(str(component) for component in self._components)
+        written = [str(component).strip() for component in self._components]
+
+        return VALUE_JOINER.join(component for component in written if component != "")
 
     @override
     def get_components(self) -> list[ComponentContract]:
