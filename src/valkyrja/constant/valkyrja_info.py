@@ -1,5 +1,5 @@
 #
-# This file is part of the Project Template package.
+# This file is part of the Valkyrja Framework package.
 #
 # Copyright (c) 2016-present Melech Mizrachi
 #
@@ -9,7 +9,7 @@
 from typing import Final
 
 
-class TemplateInfo:
+class ValkyrjaInfo:
     """Package version metadata, updated by the release workflow."""
 
     VERSION: Final[str] = "26.0.2"

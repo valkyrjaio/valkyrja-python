@@ -1,8 +1,10 @@
 [project]
-name = "valkyrja-template-ci-ruff"
+name = "valkyrja-python-ci-ruff"
 version = "0.0.0"
 requires-python = ">=3.14"
-dependencies = ["ruff>=0.16.1,<0.17"]
+# `valkyrja-ci-ruff` supplies the copyright header text and the command that
+# writes it. Ruff reports a wrong header and corrects nothing.
+dependencies = ["ruff>=0.16.1,<0.17", "valkyrja-ci-ruff>=26.0.1,<27"]
 
 [tool.uv]
 # Environment-only project: install the tool, never build this directory.
@@ -39,4 +41,4 @@ explicit-preview-rules = true
 #
 # A bare `#` opens and closes the header. Every language writes the same text, and
 # a line comment spells each delimiter of the block comment as a bare comment mark.
-notice-rgx = "\\A#\n# This file is part of the Project Template package\\.\n#\n# Copyright \\(c\\) 2016-present Melech Mizrachi\n#\n# Released under the MIT License\\. See LICENSE\\.md for details\\.\n#"
+notice-rgx = "\\A\\#\n\\#\\ This\\ file\\ is\\ part\\ of\\ the\\ Valkyrja\\ Framework\\ package\\.\n\\#\n\\#\\ Copyright\\ \\(c\\)\\ 2016\\-present\\ Melech\\ Mizrachi\n\\#\n\\#\\ Released\\ under\\ the\\ MIT\\ License\\.\\ See\\ LICENSE\\.md\\ for\\ details\\.\n\\#"
