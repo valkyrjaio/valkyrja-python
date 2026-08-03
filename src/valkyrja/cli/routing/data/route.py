@@ -41,10 +41,10 @@ class Route(RouteContract):
         description: str,
         handler: CliHandler,
         help_text: HelpText | None = None,
-        route_matched_middleware: list[type] | None = None,
-        route_dispatched_middleware: list[type] | None = None,
-        throwable_caught_middleware: list[type] | None = None,
-        process_exiting_middleware: list[type] | None = None,
+        route_matched_middleware: list[str] | None = None,
+        route_dispatched_middleware: list[str] | None = None,
+        throwable_caught_middleware: list[str] | None = None,
+        process_exiting_middleware: list[str] | None = None,
         arguments: list[ArgumentParameterContract] | None = None,
         options: list[OptionParameterContract] | None = None,
     ) -> None:
@@ -52,16 +52,16 @@ class Route(RouteContract):
         self._description = description
         self._handler = handler
         self._help_text = help_text
-        self._route_matched_middleware: list[type] = (
+        self._route_matched_middleware: list[str] = (
             list(route_matched_middleware) if route_matched_middleware is not None else []
         )
-        self._route_dispatched_middleware: list[type] = (
+        self._route_dispatched_middleware: list[str] = (
             list(route_dispatched_middleware) if route_dispatched_middleware is not None else []
         )
-        self._throwable_caught_middleware: list[type] = (
+        self._throwable_caught_middleware: list[str] = (
             list(throwable_caught_middleware) if throwable_caught_middleware is not None else []
         )
-        self._process_exiting_middleware: list[type] = (
+        self._process_exiting_middleware: list[str] = (
             list(process_exiting_middleware) if process_exiting_middleware is not None else []
         )
         self._arguments: list[ArgumentParameterContract] = list(arguments) if arguments is not None else []
@@ -182,72 +182,72 @@ class Route(RouteContract):
         return new
 
     @override
-    def get_route_matched_middleware(self) -> list[type]:
+    def get_route_matched_middleware(self) -> list[str]:
         return list(self._route_matched_middleware)
 
     @override
-    def with_route_matched_middleware(self, *middleware: type) -> Self:
+    def with_route_matched_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._route_matched_middleware = list(middleware)
 
         return new
 
     @override
-    def with_added_route_matched_middleware(self, *middleware: type) -> Self:
+    def with_added_route_matched_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._route_matched_middleware = [*new._route_matched_middleware, *middleware]
 
         return new
 
     @override
-    def get_route_dispatched_middleware(self) -> list[type]:
+    def get_route_dispatched_middleware(self) -> list[str]:
         return list(self._route_dispatched_middleware)
 
     @override
-    def with_route_dispatched_middleware(self, *middleware: type) -> Self:
+    def with_route_dispatched_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._route_dispatched_middleware = list(middleware)
 
         return new
 
     @override
-    def with_added_route_dispatched_middleware(self, *middleware: type) -> Self:
+    def with_added_route_dispatched_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._route_dispatched_middleware = [*new._route_dispatched_middleware, *middleware]
 
         return new
 
     @override
-    def get_throwable_caught_middleware(self) -> list[type]:
+    def get_throwable_caught_middleware(self) -> list[str]:
         return list(self._throwable_caught_middleware)
 
     @override
-    def with_throwable_caught_middleware(self, *middleware: type) -> Self:
+    def with_throwable_caught_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._throwable_caught_middleware = list(middleware)
 
         return new
 
     @override
-    def with_added_throwable_caught_middleware(self, *middleware: type) -> Self:
+    def with_added_throwable_caught_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._throwable_caught_middleware = [*new._throwable_caught_middleware, *middleware]
 
         return new
 
     @override
-    def get_process_exiting_middleware(self) -> list[type]:
+    def get_process_exiting_middleware(self) -> list[str]:
         return list(self._process_exiting_middleware)
 
     @override
-    def with_process_exiting_middleware(self, *middleware: type) -> Self:
+    def with_process_exiting_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._process_exiting_middleware = list(middleware)
 
         return new
 
     @override
-    def with_added_process_exiting_middleware(self, *middleware: type) -> Self:
+    def with_added_process_exiting_middleware(self, *middleware: str) -> Self:
         new = self._copy()
         new._process_exiting_middleware = [*new._process_exiting_middleware, *middleware]
 
