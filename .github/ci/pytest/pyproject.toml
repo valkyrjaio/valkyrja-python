@@ -12,7 +12,7 @@ package = false
 # invoked with `-c`), hence the `../../../` back to the repo root.
 [tool.pytest.ini_options]
 testpaths = ["../../../tests"]
-pythonpath = ["../../../src"]
+pythonpath = ["../../../src", "../../../"]
 python_files = ["test_*.py"]
 addopts = "--import-mode=importlib --strict-markers"
 
