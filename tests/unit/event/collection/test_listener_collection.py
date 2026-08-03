@@ -8,27 +8,18 @@
 
 """Tests for the ListenerCollection."""
 
-from typing import Any, final
+from typing import Any
 
+from tests.fixtures.event.data.order_event_fixture import (
+    ORDER_PLACED_ID,
+    ORDER_SHIPPED_ID,
+    OrderPlacedFixture,
+    OrderShippedFixture,
+)
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.event.collection.listener_collection import ListenerCollection
 from valkyrja.event.data.event_data import EventData
 from valkyrja.event.data.listener import Listener
-from valkyrja.support.factory.class_name_factory import ClassNameFactory
-
-
-@final
-class OrderPlaced:
-    """An event that a test dispatches."""
-
-
-@final
-class OrderShipped:
-    """A second event, so a test reads one event apart from the other."""
-
-
-ORDER_PLACED_ID = ClassNameFactory.class_(OrderPlaced)
-ORDER_SHIPPED_ID = ClassNameFactory.class_(OrderShipped)
 
 
 def handle(container: ContainerContract, arguments: dict[str, Any]) -> Any:
@@ -79,7 +70,7 @@ def test_get_listeners_for_event_reads_the_class_of_the_event() -> None:
     collection = ListenerCollection()
     collection.add_listener(make_listener())
 
-    listeners = collection.get_listeners_for_event(OrderPlaced())
+    listeners = collection.get_listeners_for_event(OrderPlacedFixture())
 
     assert [listener.get_name() for listener in listeners] == ["first"]
 
@@ -91,12 +82,12 @@ def test_get_listeners_for_an_event_with_none_is_empty() -> None:
 def test_has_listeners_for_event() -> None:
     collection = ListenerCollection()
 
-    assert not collection.has_listeners_for_event(OrderPlaced())
+    assert not collection.has_listeners_for_event(OrderPlacedFixture())
 
     collection.add_listener(make_listener())
 
-    assert collection.has_listeners_for_event(OrderPlaced())
-    assert not collection.has_listeners_for_event(OrderShipped())
+    assert collection.has_listeners_for_event(OrderPlacedFixture())
+    assert not collection.has_listeners_for_event(OrderShippedFixture())
 
 
 def test_has_listeners_for_event_is_false_once_the_last_listener_goes() -> None:
@@ -152,7 +143,7 @@ def test_remove_listener_by_id_accepts_an_unknown_id() -> None:
 def test_set_listeners_for_event_moves_each_listener_to_that_event() -> None:
     collection = ListenerCollection()
 
-    collection.set_listeners_for_event(OrderShipped(), make_listener("first"))
+    collection.set_listeners_for_event(OrderShippedFixture(), make_listener("first"))
 
     assert collection.get_listeners_for_event_by_id(ORDER_SHIPPED_ID)[0].get_event_id() == ORDER_SHIPPED_ID
 
@@ -161,7 +152,7 @@ def test_remove_listeners_for_event_drops_the_event() -> None:
     collection = ListenerCollection()
     collection.add_listener(make_listener())
 
-    collection.remove_listeners_for_event(OrderPlaced())
+    collection.remove_listeners_for_event(OrderPlacedFixture())
 
     assert collection.get_events() == []
     assert collection.get_listeners() == []
