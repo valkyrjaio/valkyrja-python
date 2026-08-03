@@ -16,6 +16,9 @@ from valkyrja.cli.routing.data.contract.argument_parameter_contract import (
 )
 from valkyrja.cli.routing.enum.argument_mode import ArgumentMode
 from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
+from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
+    CliRoutingParameterValuesValidationException,
+)
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
 
@@ -86,6 +89,25 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
     @override
     def has_first_value(self) -> bool:
         return self._arguments != []
+
+    @override
+    def are_values_valid(self) -> bool:
+        valid = True
+
+        if self._mode is ArgumentMode.REQUIRED:
+            valid = self._arguments != []
+
+        if self._value_mode is ArgumentValueMode.DEFAULT:
+            valid = valid and len(self._arguments) <= 1
+
+        return valid
+
+    @override
+    def validate_values(self) -> Self:
+        if not self.are_values_valid():
+            raise CliRoutingParameterValuesValidationException(f"{self._name} is invalid")
+
+        return self
 
     def _copy(self) -> Self:
         """Get a copy that holds its own argument list."""

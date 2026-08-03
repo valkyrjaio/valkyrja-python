@@ -24,6 +24,9 @@ from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
 from valkyrja.cli.routing.throwable.exception.cli_routing_no_cast_exception import (
     CliRoutingNoCastException,
 )
+from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
+    CliRoutingParameterValuesValidationException,
+)
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
@@ -221,3 +224,115 @@ def test_the_container_is_the_way_python_resolves_a_cast() -> None:
     )
 
     assert parameter.get_cast_values() == ["value"]
+
+
+def test_a_required_argument_with_no_value_is_not_valid() -> None:
+    assert not ArgumentParameter("name", mode=ArgumentMode.REQUIRED).are_values_valid()
+
+
+def test_a_required_argument_with_a_value_is_valid() -> None:
+    parameter = ArgumentParameter("name", mode=ArgumentMode.REQUIRED, arguments=[Argument("a")])
+
+    assert parameter.are_values_valid()
+
+
+def test_an_optional_argument_with_no_value_is_valid() -> None:
+    assert ArgumentParameter("name", mode=ArgumentMode.OPTIONAL).are_values_valid()
+
+
+def test_a_single_value_argument_rejects_a_second_value() -> None:
+    parameter = ArgumentParameter(
+        "name",
+        mode=ArgumentMode.OPTIONAL,
+        value_mode=ArgumentValueMode.DEFAULT,
+        arguments=[Argument("a"), Argument("b")],
+    )
+
+    assert not parameter.are_values_valid()
+
+
+def test_an_array_argument_accepts_several_values() -> None:
+    parameter = ArgumentParameter(
+        "name",
+        mode=ArgumentMode.OPTIONAL,
+        value_mode=ArgumentValueMode.ARRAY,
+        arguments=[Argument("a"), Argument("b")],
+    )
+
+    assert parameter.are_values_valid()
+
+
+def test_validate_values_returns_the_argument_when_valid() -> None:
+    parameter = ArgumentParameter("name", mode=ArgumentMode.OPTIONAL)
+
+    assert parameter.validate_values() is parameter
+
+
+def test_validate_values_raises_for_an_invalid_argument() -> None:
+    parameter = ArgumentParameter("name", mode=ArgumentMode.REQUIRED)
+
+    with pytest.raises(CliRoutingParameterValuesValidationException, match="name is invalid"):
+        parameter.validate_values()
+
+
+def test_a_required_option_with_no_value_is_not_valid() -> None:
+    assert not OptionParameter("name", mode=OptionMode.REQUIRED).are_values_valid()
+
+
+def test_an_optional_option_with_no_value_is_valid() -> None:
+    assert OptionParameter("name").are_values_valid()
+
+
+def test_a_single_value_option_rejects_a_second_value() -> None:
+    parameter = OptionParameter(
+        "name",
+        value_mode=OptionValueMode.DEFAULT,
+        options=[Option("name", "a"), Option("name", "b")],
+    )
+
+    assert not parameter.are_values_valid()
+
+
+def test_an_option_rejects_a_value_outside_the_valid_values() -> None:
+    parameter = OptionParameter("name", options=[Option("name", "other")], valid_values=["a", "b"])
+
+    assert not parameter.are_values_valid()
+
+
+def test_an_option_accepts_a_value_inside_the_valid_values() -> None:
+    parameter = OptionParameter("name", options=[Option("name", "a")], valid_values=["a", "b"])
+
+    assert parameter.are_values_valid()
+
+
+def test_the_valid_values_setters_return_copies() -> None:
+    parameter = OptionParameter("name")
+
+    assert parameter.get_valid_values() == []
+    assert parameter.with_valid_values("a").get_valid_values() == ["a"]
+    assert parameter.with_valid_values("a").with_added_valid_values("b").get_valid_values() == [
+        "a",
+        "b",
+    ]
+    assert parameter.get_valid_values() == []
+
+
+def test_get_valid_values_copies_the_list() -> None:
+    parameter = OptionParameter("name", valid_values=["a"])
+
+    parameter.get_valid_values().clear()
+
+    assert parameter.get_valid_values() == ["a"]
+
+
+def test_validate_values_raises_for_an_invalid_option() -> None:
+    parameter = OptionParameter("name", mode=OptionMode.REQUIRED)
+
+    with pytest.raises(CliRoutingParameterValuesValidationException, match="name is invalid"):
+        parameter.validate_values()
+
+
+def test_validate_values_returns_the_option_when_valid() -> None:
+    parameter = OptionParameter("name")
+
+    assert parameter.validate_values() is parameter
