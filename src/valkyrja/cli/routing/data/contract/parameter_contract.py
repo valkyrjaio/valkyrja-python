@@ -54,3 +54,11 @@ class ParameterContract(ABC):
     @abstractmethod
     def has_first_value(self) -> bool:
         """Get whether the parameter holds a value."""
+
+    @abstractmethod
+    def are_values_valid(self) -> bool:
+        """Get whether the values of the parameter are valid."""
+
+    @abstractmethod
+    def validate_values(self) -> Self:
+        """Get the parameter, and raise when the values are not valid."""

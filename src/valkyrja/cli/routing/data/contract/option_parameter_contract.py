@@ -69,3 +69,15 @@ class OptionParameterContract(ParameterContract):
     @abstractmethod
     def with_added_options(self, *options: OptionContract) -> Self:
         """Get a copy of the parameter that carries more options."""
+
+    @abstractmethod
+    def get_valid_values(self) -> list[str]:
+        """Get each value that the option accepts."""
+
+    @abstractmethod
+    def with_valid_values(self, *valid_values: str) -> Self:
+        """Get a copy of the parameter that accepts different values."""
+
+    @abstractmethod
+    def with_added_valid_values(self, *valid_values: str) -> Self:
+        """Get a copy of the parameter that accepts more values."""
