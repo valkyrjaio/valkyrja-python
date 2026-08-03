@@ -1,0 +1,15 @@
+#
+# This file is part of the Valkyrja Framework package.
+#
+# Copyright (c) 2016-present Melech Mizrachi
+#
+# Released under the MIT License. See LICENSE.md for details.
+#
+
+from valkyrja.http.message.throwable.exception.abstract.http_message_runtime_exception import (
+    HttpMessageRuntimeException,
+)
+
+
+class HttpStreamException(HttpMessageRuntimeException):
+    """The stream cannot do what a caller asked of it."""
