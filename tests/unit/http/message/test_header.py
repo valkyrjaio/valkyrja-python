@@ -53,7 +53,7 @@ def test_a_component_reads_a_string_with_no_text() -> None:
 def test_a_value_joins_its_components() -> None:
     value = Value(Component("text/html"), Component("charset", "utf-8"))
 
-    assert str(value) == "text/html;charset=utf-8"
+    assert str(value) == "text/html; charset=utf-8"
     assert len(value.get_components()) == 2
 
 
