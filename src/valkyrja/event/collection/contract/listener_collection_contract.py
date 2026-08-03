@@ -8,6 +8,7 @@
 
 from abc import ABC, abstractmethod
 
+from valkyrja.event.contract.event_contract import EventContract
 from valkyrja.event.data.contract.listener_contract import ListenerContract
 from valkyrja.event.data.event_data import EventData
 
@@ -48,7 +49,7 @@ class ListenerCollectionContract(ABC):
         """Remove the listener with a given name from the collection."""
 
     @abstractmethod
-    def has_listeners_for_event(self, event: object) -> bool:
+    def has_listeners_for_event(self, event: EventContract) -> bool:
         """Get whether the collection holds a listener for a given event."""
 
     @abstractmethod
@@ -56,7 +57,7 @@ class ListenerCollectionContract(ABC):
         """Get whether the collection holds a listener for a given event id."""
 
     @abstractmethod
-    def get_listeners_for_event(self, event: object) -> list[ListenerContract]:
+    def get_listeners_for_event(self, event: EventContract) -> list[ListenerContract]:
         """Get each listener for a given event."""
 
     @abstractmethod
@@ -64,7 +65,7 @@ class ListenerCollectionContract(ABC):
         """Get each listener for a given event id."""
 
     @abstractmethod
-    def set_listeners_for_event(self, event: object, *listeners: ListenerContract) -> None:
+    def set_listeners_for_event(self, event: EventContract, *listeners: ListenerContract) -> None:
         """Set the listeners for a given event, and drop the listeners it had."""
 
     @abstractmethod
@@ -72,7 +73,7 @@ class ListenerCollectionContract(ABC):
         """Set the listeners for a given event id, and drop the listeners it had."""
 
     @abstractmethod
-    def remove_listeners_for_event(self, event: object) -> None:
+    def remove_listeners_for_event(self, event: EventContract) -> None:
         """Remove each listener for a given event."""
 
     @abstractmethod

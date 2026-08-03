@@ -6,10 +6,12 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
+
+from valkyrja.event.contract.event_contract import EventContract
 
 
-class StoppableEventContract(ABC):
+class StoppableEventContract(EventContract):
     """The contract for an event that can stop the dispatcher part way.
 
     PHP takes this contract from PSR-14. Python has no PSR, so the framework
