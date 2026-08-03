@@ -14,6 +14,9 @@ from valkyrja.cli.routing.data.abstract.parameter import Parameter, ValuedParame
 from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
 from valkyrja.cli.routing.enum.option_mode import OptionMode
 from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
+from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
+    CliRoutingParameterValuesValidationException,
+)
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
 
@@ -31,6 +34,7 @@ class OptionParameter(Parameter, OptionParameterContract):
         value_mode: OptionValueMode = OptionValueMode.NONE,
         value_display_name: str = "",
         options: list[OptionContract] | None = None,
+        valid_values: list[str] | None = None,
         container: ContainerContract | None = None,
     ) -> None:
         super().__init__(name, description, cast, container)
@@ -40,6 +44,7 @@ class OptionParameter(Parameter, OptionParameterContract):
         self._value_mode = value_mode
         self._value_display_name = value_display_name
         self._options: list[OptionContract] = list(options) if options is not None else []
+        self._valid_values: list[str] = list(valid_values) if valid_values is not None else []
 
     @override
     def get_short_names(self) -> list[str]:
@@ -122,10 +127,53 @@ class OptionParameter(Parameter, OptionParameterContract):
     def has_first_value(self) -> bool:
         return self._options != []
 
+    @override
+    def get_valid_values(self) -> list[str]:
+        return list(self._valid_values)
+
+    @override
+    def with_valid_values(self, *valid_values: str) -> Self:
+        new = self._copy()
+        new._valid_values = list(valid_values)
+
+        return new
+
+    @override
+    def with_added_valid_values(self, *valid_values: str) -> Self:
+        new = self._copy()
+        new._valid_values = [*new._valid_values, *valid_values]
+
+        return new
+
+    @override
+    def are_values_valid(self) -> bool:
+        valid = True
+
+        if self._mode is OptionMode.REQUIRED:
+            valid = self._options != []
+
+        if self._value_mode is OptionValueMode.DEFAULT:
+            valid = valid and len(self._options) <= 1
+
+        if self._valid_values:
+            for option in self._options:
+                if option.get_value() not in self._valid_values:
+                    return False
+
+        return valid
+
+    @override
+    def validate_values(self) -> Self:
+        if not self.are_values_valid():
+            raise CliRoutingParameterValuesValidationException(f"{self._name} is invalid")
+
+        return self
+
     def _copy(self) -> Self:
         """Get a copy that holds its own short name list and option list."""
         new = copy(self)
         new._short_names = list(self._short_names)
         new._options = list(self._options)
+        new._valid_values = list(self._valid_values)
 
         return new
