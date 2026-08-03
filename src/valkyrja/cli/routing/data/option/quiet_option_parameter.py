@@ -1,0 +1,24 @@
+#
+# This file is part of the Valkyrja Framework package.
+#
+# Copyright (c) 2016-present Melech Mizrachi
+#
+# Released under the MIT License. See LICENSE.md for details.
+#
+
+from valkyrja.cli.routing.constant.option_name import OptionName
+from valkyrja.cli.routing.constant.option_short_name import OptionShortName
+from valkyrja.cli.routing.data.option_parameter import OptionParameter
+from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
+
+
+class QuietOptionParameter(OptionParameter):
+    """The `--quiet` option that every command accepts."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            name=OptionName.QUIET,
+            description="Output is suppressed, except for errors.",
+            short_names=[OptionShortName.QUIET],
+            value_mode=OptionValueMode.NONE,
+        )
