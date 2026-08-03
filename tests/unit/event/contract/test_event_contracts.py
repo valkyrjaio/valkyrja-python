@@ -11,10 +11,12 @@
 import pytest
 
 from tests.fixtures.event.data.event_fixture import EventFixture
+from tests.fixtures.event.data.stoppable_event_fixture import StoppableEventFixture
 from valkyrja.event.contract.arguments_capable_event_contract import ArgumentsCapableEventContract
 from valkyrja.event.contract.dispatch_collectable_event_contract import (
     DispatchCollectableEventContract,
 )
+from valkyrja.event.contract.stoppable_event_contract import StoppableEventContract
 
 
 def test_the_arguments_contract_does_not_construct() -> None:
@@ -45,3 +47,18 @@ def test_the_event_keeps_each_dispatch() -> None:
 
 def test_a_new_event_has_no_dispatch() -> None:
     assert EventFixture().get_dispatches() == []
+
+
+def test_the_stoppable_contract_does_not_construct() -> None:
+    with pytest.raises(TypeError, match="abstract"):
+        StoppableEventContract()  # type: ignore[abstract]
+
+
+def test_a_stoppable_event_reports_whether_it_stopped() -> None:
+    event = StoppableEventFixture()
+
+    assert not event.is_propagation_stopped()
+
+    event.stop()
+
+    assert event.is_propagation_stopped()
