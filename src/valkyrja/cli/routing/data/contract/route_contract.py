@@ -109,15 +109,15 @@ class RouteContract(ABC):
         """Get a copy of the route that declares more options."""
 
     @abstractmethod
-    def get_route_matched_middleware(self) -> list[type]:
+    def get_route_matched_middleware(self) -> list[str]:
         """Get each `RouteMatchedMiddlewareContract` that the route schedules."""
 
     @abstractmethod
-    def with_route_matched_middleware(self, *middleware: type) -> Self:
+    def with_route_matched_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules different middleware."""
 
     @abstractmethod
-    def with_added_route_matched_middleware(self, *middleware: type) -> Self:
+    def with_added_route_matched_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules more middleware.
 
         Warning: the route appends, and it never dedupes. A middleware that a
@@ -125,15 +125,15 @@ class RouteContract(ABC):
         """
 
     @abstractmethod
-    def get_route_dispatched_middleware(self) -> list[type]:
+    def get_route_dispatched_middleware(self) -> list[str]:
         """Get each `RouteDispatchedMiddlewareContract` that the route schedules."""
 
     @abstractmethod
-    def with_route_dispatched_middleware(self, *middleware: type) -> Self:
+    def with_route_dispatched_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules different middleware."""
 
     @abstractmethod
-    def with_added_route_dispatched_middleware(self, *middleware: type) -> Self:
+    def with_added_route_dispatched_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules more middleware.
 
         Warning: the route appends, and it never dedupes. A middleware that a
@@ -141,15 +141,15 @@ class RouteContract(ABC):
         """
 
     @abstractmethod
-    def get_throwable_caught_middleware(self) -> list[type]:
+    def get_throwable_caught_middleware(self) -> list[str]:
         """Get each `ThrowableCaughtMiddlewareContract` that the route schedules."""
 
     @abstractmethod
-    def with_throwable_caught_middleware(self, *middleware: type) -> Self:
+    def with_throwable_caught_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules different middleware."""
 
     @abstractmethod
-    def with_added_throwable_caught_middleware(self, *middleware: type) -> Self:
+    def with_added_throwable_caught_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules more middleware.
 
         Warning: the route appends, and it never dedupes. A middleware that a
@@ -157,15 +157,15 @@ class RouteContract(ABC):
         """
 
     @abstractmethod
-    def get_process_exiting_middleware(self) -> list[type]:
+    def get_process_exiting_middleware(self) -> list[str]:
         """Get each `ProcessExitingMiddlewareContract` that the route schedules."""
 
     @abstractmethod
-    def with_process_exiting_middleware(self, *middleware: type) -> Self:
+    def with_process_exiting_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules different middleware."""
 
     @abstractmethod
-    def with_added_process_exiting_middleware(self, *middleware: type) -> Self:
+    def with_added_process_exiting_middleware(self, *middleware: str) -> Self:
         """Get a copy of the route that schedules more middleware.
 
         Warning: the route appends, and it never dedupes. A middleware that a

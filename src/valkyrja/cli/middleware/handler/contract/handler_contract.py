@@ -19,8 +19,11 @@ class HandlerContract(ABC):
     """
 
     @abstractmethod
-    def add(self, *middleware: type) -> None:
+    def add(self, *middleware: str) -> None:
         """Add each middleware to the end of the chain.
+
+        Each middleware is a binding key, never a class. The handler resolves
+        the key through the container, and the container resolves a string.
 
         Warning: the handler never dedupes. A middleware that a caller adds
         twice runs twice. A duplicate is the error of the developer, and the
