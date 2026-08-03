@@ -12,9 +12,6 @@ import pytest
 
 from tests.fixtures.cli.routing.route_fixture import ROUTE_NAME, handle, help_text, make_route
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
-from valkyrja.cli.middleware.contract.route_matched_middleware_contract import (
-    RouteMatchedMiddlewareContract,
-)
 from valkyrja.cli.routing.collection.route_collection import RouteCollection
 from valkyrja.cli.routing.data.argument_parameter import ArgumentParameter
 from valkyrja.cli.routing.data.cli_routing_data import CliRoutingData
@@ -118,15 +115,15 @@ def test_each_middleware_family_appends_and_never_dedupes(family: str) -> None:
 
     assert get() == []
 
-    scheduled = with_(RouteMatchedMiddlewareContract)
+    scheduled = with_("Valkyrja.Tests.Middleware.RouteMatched")
 
-    assert getattr(scheduled, f"get_{family}_middleware")() == [RouteMatchedMiddlewareContract]
+    assert getattr(scheduled, f"get_{family}_middleware")() == ["Valkyrja.Tests.Middleware.RouteMatched"]
 
-    twice = getattr(scheduled, f"with_added_{family}_middleware")(RouteMatchedMiddlewareContract)
+    twice = getattr(scheduled, f"with_added_{family}_middleware")("Valkyrja.Tests.Middleware.RouteMatched")
 
     assert getattr(twice, f"get_{family}_middleware")() == [
-        RouteMatchedMiddlewareContract,
-        RouteMatchedMiddlewareContract,
+        "Valkyrja.Tests.Middleware.RouteMatched",
+        "Valkyrja.Tests.Middleware.RouteMatched",
     ]
     assert get() == []
 
