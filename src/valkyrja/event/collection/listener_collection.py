@@ -11,9 +11,9 @@ from typing import override
 from valkyrja.event.collection.contract.listener_collection_contract import (
     ListenerCollectionContract,
 )
+from valkyrja.event.contract.event_contract import EventContract
 from valkyrja.event.data.contract.listener_contract import ListenerContract
 from valkyrja.event.data.event_data import EventData, ListenerFactory
-from valkyrja.support.factory.class_name_factory import ClassNameFactory
 
 
 class ListenerCollection(ListenerCollectionContract):
@@ -79,16 +79,16 @@ class ListenerCollection(ListenerCollectionContract):
         self._listeners.pop(listener_id, None)
 
     @override
-    def has_listeners_for_event(self, event: object) -> bool:
-        return self.has_listeners_for_event_by_id(ClassNameFactory.class_of(event))
+    def has_listeners_for_event(self, event: EventContract) -> bool:
+        return self.has_listeners_for_event_by_id(event.get_event_id())
 
     @override
     def has_listeners_for_event_by_id(self, event_id: str) -> bool:
         return bool(self._events.get(event_id))
 
     @override
-    def get_listeners_for_event(self, event: object) -> list[ListenerContract]:
-        return self.get_listeners_for_event_by_id(ClassNameFactory.class_of(event))
+    def get_listeners_for_event(self, event: EventContract) -> list[ListenerContract]:
+        return self.get_listeners_for_event_by_id(event.get_event_id())
 
     @override
     def get_listeners_for_event_by_id(self, event_id: str) -> list[ListenerContract]:
@@ -100,8 +100,8 @@ class ListenerCollection(ListenerCollectionContract):
         return [self._listeners[name]() for name in names]
 
     @override
-    def set_listeners_for_event(self, event: object, *listeners: ListenerContract) -> None:
-        self.set_listeners_for_event_by_id(ClassNameFactory.class_of(event), *listeners)
+    def set_listeners_for_event(self, event: EventContract, *listeners: ListenerContract) -> None:
+        self.set_listeners_for_event_by_id(event.get_event_id(), *listeners)
 
     @override
     def set_listeners_for_event_by_id(self, event_id: str, *listeners: ListenerContract) -> None:
@@ -109,8 +109,8 @@ class ListenerCollection(ListenerCollectionContract):
             self.add_listener(listener.with_event_id(event_id))
 
     @override
-    def remove_listeners_for_event(self, event: object) -> None:
-        self.remove_listeners_for_event_by_id(ClassNameFactory.class_of(event))
+    def remove_listeners_for_event(self, event: EventContract) -> None:
+        self.remove_listeners_for_event_by_id(event.get_event_id())
 
     @override
     def remove_listeners_for_event_by_id(self, event_id: str) -> None:
