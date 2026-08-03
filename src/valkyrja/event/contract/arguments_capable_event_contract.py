@@ -6,11 +6,13 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any, Self
 
+from valkyrja.event.contract.event_contract import EventContract
 
-class ArgumentsCapableEventContract(ABC):
+
+class ArgumentsCapableEventContract(EventContract):
     """The contract for an event that takes the arguments of the dispatch."""
 
     @abstractmethod
