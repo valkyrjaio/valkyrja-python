@@ -10,23 +10,36 @@
 
 import pytest
 
-from tests.fixtures.event.data.event_fixture import EventFixture
+from tests.fixtures.event.data.event_fixture import EVENT_ID, EventFixture
 from tests.fixtures.event.data.stoppable_event_fixture import StoppableEventFixture
 from valkyrja.event.contract.arguments_capable_event_contract import ArgumentsCapableEventContract
 from valkyrja.event.contract.dispatch_collectable_event_contract import (
     DispatchCollectableEventContract,
 )
+from valkyrja.event.contract.event_contract import EventContract
 from valkyrja.event.contract.stoppable_event_contract import StoppableEventContract
 
+CONTRACTS = [
+    EventContract,
+    ArgumentsCapableEventContract,
+    DispatchCollectableEventContract,
+    StoppableEventContract,
+]
 
-def test_the_arguments_contract_does_not_construct() -> None:
+
+@pytest.mark.parametrize("contract", CONTRACTS)
+def test_the_contract_does_not_construct(contract: type) -> None:
     with pytest.raises(TypeError, match="abstract"):
-        ArgumentsCapableEventContract()  # type: ignore[abstract]
+        contract()
 
 
-def test_the_dispatch_contract_does_not_construct() -> None:
-    with pytest.raises(TypeError, match="abstract"):
-        DispatchCollectableEventContract()  # type: ignore[abstract]
+@pytest.mark.parametrize("contract", CONTRACTS)
+def test_every_event_contract_extends_the_event_contract(contract: type) -> None:
+    assert issubclass(contract, EventContract)
+
+
+def test_an_event_states_its_own_id() -> None:
+    assert EventFixture().get_event_id() == EVENT_ID
 
 
 def test_set_arguments_returns_the_event() -> None:
@@ -47,11 +60,6 @@ def test_the_event_keeps_each_dispatch() -> None:
 
 def test_a_new_event_has_no_dispatch() -> None:
     assert EventFixture().get_dispatches() == []
-
-
-def test_the_stoppable_contract_does_not_construct() -> None:
-    with pytest.raises(TypeError, match="abstract"):
-        StoppableEventContract()  # type: ignore[abstract]
 
 
 def test_a_stoppable_event_reports_whether_it_stopped() -> None:

@@ -15,6 +15,9 @@ from valkyrja.event.throwable.exception.abstract.event_invalid_argument_exceptio
     EventInvalidArgumentException,
 )
 from valkyrja.event.throwable.exception.abstract.event_runtime_exception import EventRuntimeException
+from valkyrja.event.throwable.exception.event_invalid_event_exception import (
+    EventInvalidEventException,
+)
 from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 ABSTRACT_EXCEPTIONS = [EventThrowable, EventRuntimeException, EventInvalidArgumentException]
@@ -36,3 +39,11 @@ def test_the_invalid_argument_base_extends_the_language_root() -> None:
     assert issubclass(EventInvalidArgumentException, ValueError)
     assert issubclass(EventInvalidArgumentException, EventThrowable)
     assert issubclass(EventInvalidArgumentException, ValkyrjaThrowable)
+
+
+def test_the_invalid_event_exception_names_the_id() -> None:
+    exception = EventInvalidEventException("Valkyrja.Tests.NotAnEvent")
+
+    assert str(exception) == "Service with `Valkyrja.Tests.NotAnEvent` is not an event"
+    assert exception.get_id() == "Valkyrja.Tests.NotAnEvent"
+    assert isinstance(exception, EventInvalidArgumentException)
