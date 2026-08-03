@@ -1,0 +1,24 @@
+#
+# This file is part of the Valkyrja Framework package.
+#
+# Copyright (c) 2016-present Melech Mizrachi
+#
+# Released under the MIT License. See LICENSE.md for details.
+#
+
+from valkyrja.cli.routing.constant.option_name import OptionName
+from valkyrja.cli.routing.constant.option_short_name import OptionShortName
+from valkyrja.cli.routing.data.option_parameter import OptionParameter
+from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
+
+
+class SilentOptionParameter(OptionParameter):
+    """The `--silent` option that every command accepts."""
+
+    def __init__(self) -> None:
+        super().__init__(
+            name=OptionName.SILENT,
+            description="All output is suppressed",
+            short_names=[OptionShortName.SILENT],
+            value_mode=OptionValueMode.NONE,
+        )
