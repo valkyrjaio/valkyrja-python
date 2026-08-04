@@ -16,7 +16,9 @@ from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 def test_the_contract_does_not_construct() -> None:
     with pytest.raises(TypeError, match="Can't instantiate abstract throwable ValkyrjaThrowable"):
-        ValkyrjaThrowable()  # type: ignore[abstract]
+        # The contract declares no abstract method now, so mypy reads it as
+        # concrete. The `_valkyrja_abstract` guard is what stops it at run time.
+        ValkyrjaThrowable()
 
 
 def test_a_concrete_throwable_constructs() -> None:

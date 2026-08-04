@@ -6,8 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any, Self
+
+from valkyrja.throwable.factory.throwable_factory import ThrowableFactory
 
 
 class ValkyrjaThrowable(BaseException, ABC):
@@ -35,6 +37,11 @@ class ValkyrjaThrowable(BaseException, ABC):
 
         return super().__new__(cls, *args, **kwargs)
 
-    @abstractmethod
     def get_trace_code(self) -> str:
-        """Get a trace code unique to the throwable that is raised."""
+        """Get a trace code unique to the throwable that is raised.
+
+        The method is concrete, so every throwable gets a trace code without
+        writing this body again. `self` still resolves to the class that raised,
+        so the code names that class.
+        """
+        return ThrowableFactory.get_trace_code(self)
