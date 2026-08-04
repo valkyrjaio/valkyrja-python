@@ -21,10 +21,13 @@ container.bind(UserRepository, lambda c, a: UserRepository())
 ```python
 # Right — the string names the service, and no module loads.
 container.bind(
-    ContainerConstant.USER_REPOSITORY,
-    lambda c, a: UserRepository(c.get_singleton(ContainerConstant.DATABASE)),
+    AppServiceId.USER_REPOSITORY,
+    lambda c, a: UserRepository(c.get_singleton(AppServiceId.DATABASE)),
 )
 ```
+
+An application declares its own keys the same way. `AppServiceId` above is a
+class that the application owns; the framework owns `ContainerServiceId`.
 
 Read [`CONTAINER_BINDINGS.md`](https://github.com/valkyrjaio/architecture/blob/master/CONTAINER_BINDINGS.md)
 for the full rule. Go and TypeScript use string keys for the same reason.
@@ -48,7 +51,7 @@ step.
 Warning: the fallback always raises `ContainerInvalidReferenceException`. It
 raises for `InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION` too.
 
-An id is a string constant such as `io.valkyrja.container.ContainerContract`.
+An id is a string constant such as `Valkyrja.Container.Manager.ContainerContract`.
 That string names no Python module, so the container cannot construct the class
 that the id stands for. PHP constructs it, because a PHP id is a class name.
 Java constructs it, because a Java id is a class object. TypeScript raises, for
@@ -79,11 +82,11 @@ asks for the service:
 class ContainerServiceProvider(ServiceProviderContract):
     @override
     def publishers(self) -> dict[str, PublishCallback]:
-        return {ContainerConstant.DATA: ContainerServiceProvider.publish_data}
+        return {ContainerServiceId.DATA: ContainerServiceProvider.publish_data}
 
     @staticmethod
     def publish_data(container: ContainerContract) -> None:
-        container.set_singleton(ContainerConstant.DATA, container.get_data())
+        container.set_singleton(ContainerServiceId.DATA, container.get_data())
 ```
 
 Warning: `register` raises `ContainerInvalidPublishCallbackException` when a

@@ -218,7 +218,7 @@ class Container(ProvidersAware):
 
         Warning: the fallback ignores `mode`, and it raises for
         `NEW_INSTANCE_OR_THROW_EXCEPTION` too. An id is a string constant such
-        as `io.valkyrja.container.ContainerContract`, and that string names no
+        as `Valkyrja.Container.Manager.ContainerContract`, and that string names no
         Python module, so the container cannot construct the class that the id
         stands for. PHP and Java construct it, because a PHP id is a class name
         and a Java id is a class object. TypeScript raises for the same reason
