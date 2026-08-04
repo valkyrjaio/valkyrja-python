@@ -11,8 +11,10 @@ from typing import Final, final
 
 @final
 class CliServerServiceId:
-    """The binding key for each service of the Cli Server subcomponent."""
+    """The binding key for each service of the Cli Server subcomponent.
+
+    The input and the output keys belong to `CliInteractionServiceId`, which
+    owns those services. A second copy of a key here would drift from the first.
+    """
 
     INPUT_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Server.Handler.InputHandlerContract"
-    INPUT_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Input.InputContract"
-    OUTPUT_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Output.OutputContract"

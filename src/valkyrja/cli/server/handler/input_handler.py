@@ -8,6 +8,9 @@
 
 from typing import override
 
+from valkyrja.cli.interaction.constant.cli_interaction_service_id import (
+    CliInteractionServiceId,
+)
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.input.contract.input_contract import InputContract
 from valkyrja.cli.interaction.message.banner import Banner
@@ -28,7 +31,6 @@ from valkyrja.cli.middleware.handler.contract.throwable_caught_handler_contract 
     ThrowableCaughtHandlerContract,
 )
 from valkyrja.cli.routing.dispatcher.contract.router_contract import RouterContract
-from valkyrja.cli.server.constant.cli_server_service_id import CliServerServiceId
 from valkyrja.cli.server.handler.contract.input_handler_contract import InputHandlerContract
 from valkyrja.cli.server.support.exiter import Exiter
 from valkyrja.container.manager.contract.container_contract import ContainerContract
@@ -61,7 +63,7 @@ class InputHandler(InputHandlerContract):
             output = self._get_output_from_throwable(input_, throwable)
             output = self._throwable_caught_handler.throwable_caught(input_, output, throwable)
 
-        self._container.set_singleton(CliServerServiceId.OUTPUT_CONTRACT, output)
+        self._container.set_singleton(CliInteractionServiceId.OUTPUT_CONTRACT, output)
 
         return output
 
@@ -83,20 +85,20 @@ class InputHandler(InputHandlerContract):
 
     def _dispatch_router(self, input_: InputContract) -> OutputContract:
         """Run the input received middleware, then give the input to the router."""
-        self._container.set_singleton(CliServerServiceId.INPUT_CONTRACT, input_)
+        self._container.set_singleton(CliInteractionServiceId.INPUT_CONTRACT, input_)
 
         after_middleware = self._input_received_handler.input_received(input_)
 
         if isinstance(after_middleware, OutputContract):
             return after_middleware
 
-        self._container.set_singleton(CliServerServiceId.INPUT_CONTRACT, after_middleware)
+        self._container.set_singleton(CliInteractionServiceId.INPUT_CONTRACT, after_middleware)
 
         return self._router.dispatch(after_middleware)
 
     def _get_output_from_throwable(self, input_: InputContract, throwable: BaseException) -> OutputContract:
         """Build the output that reports a throwable to the user."""
-        return self._output_factory.create_output(ExitCode.ERROR).with_messages(
+        return self._output_factory.create_output(exit_code=ExitCode.ERROR).with_messages(
             Banner(ErrorMessage("Cli Server Error:")),
             NewLine(),
             ErrorMessage("Command:"),
