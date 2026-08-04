@@ -18,6 +18,9 @@ from tests.fixtures.cli.middleware.short_circuit_input_middleware_fixture import
     ShortCircuitInputMiddlewareFixture,
 )
 from tests.fixtures.cli.routing.route_fixture import make_route
+from valkyrja.cli.interaction.constant.cli_interaction_service_id import (
+    CliInteractionServiceId,
+)
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.input.input import Input
 from valkyrja.cli.interaction.output.contract.output_contract import OutputContract
@@ -84,8 +87,8 @@ def test_handle_publishes_the_input_and_the_output() -> None:
 
     handler.handle(Input(command_name="run"))
 
-    assert container.has(CliServerServiceId.INPUT_CONTRACT)
-    assert container.has(CliServerServiceId.OUTPUT_CONTRACT)
+    assert container.has(CliInteractionServiceId.INPUT_CONTRACT)
+    assert container.has(CliInteractionServiceId.OUTPUT_CONTRACT)
 
 
 def test_handle_answers_a_command_that_no_route_matches() -> None:
@@ -109,21 +112,29 @@ def test_handle_catches_a_throwable_from_the_command() -> None:
     assert "run" in "".join(m.get_text() for m in output.get_messages())
 
 
-def test_run_writes_the_output_and_exits() -> None:
+def test_run_exits_with_the_code_of_the_output(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The frozen exiter makes `exit` a no-op, so the test records the code."""
+    codes: list[int] = []
+    monkeypatch.setattr(Exiter, "exit", staticmethod(codes.append))
     handler = make_handler(RouteCollection().add(make_route("run")))
 
     handler.run(Input(command_name="run"))
 
-    assert Exiter.is_frozen()
+    assert codes == [ExitCode.SUCCESS.value]
 
 
-def test_run_reads_an_integer_exit_code() -> None:
+def test_run_reads_an_integer_exit_code(monkeypatch: pytest.MonkeyPatch) -> None:
+    codes: list[int] = []
+    monkeypatch.setattr(Exiter, "exit", staticmethod(codes.append))
+
     def failing(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
         return EmptyOutput(exit_code=7)
 
     handler = make_handler(RouteCollection().add(make_route("run").with_handler(failing)))
 
     handler.run(Input(command_name="run"))
+
+    assert codes == [7]
 
 
 def test_exit_runs_the_process_exiting_middleware() -> None:
@@ -156,3 +167,9 @@ def test_an_input_received_middleware_can_answer_before_the_router() -> None:
     output = handler.handle(Input(command_name="run"))
 
     assert output.get_exit_code() is ExitCode.NO_INPUT
+
+
+def test_a_frozen_exiter_does_not_end_the_process() -> None:
+    """The autouse fixture freezes the exiter, so the call returns."""
+    assert Exiter.is_frozen()
+    assert Exiter.exit(1) is None
