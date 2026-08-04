@@ -78,6 +78,15 @@ class Response(Message, ResponseContract):
     @override
     def send_headers(self) -> Self:
         for header in self._headers.get_all():
+            if header.get_normalized_name() == HeaderName.SET_COOKIE.lower():
+                # RFC 7230 forbids joining a `Set-Cookie` field with a comma,
+                # because the `Expires` attribute of a cookie holds a comma. Each
+                # cookie therefore takes a line of its own.
+                for value in header.get_values():
+                    self._write(f"{header.get_name()}: {value}\n")
+
+                continue
+
             self._write(f"{header}\n")
 
         return self
