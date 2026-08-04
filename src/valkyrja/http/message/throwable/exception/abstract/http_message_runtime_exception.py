@@ -7,12 +7,12 @@
 #
 
 from valkyrja.http.message.throwable.contract.http_message_throwable import HttpMessageThrowable
-from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
-    ValkyrjaRuntimeException,
+from valkyrja.http.throwable.exception.abstract.http_runtime_exception import (
+    HttpRuntimeException,
 )
 
 
-class HttpMessageRuntimeException(ValkyrjaRuntimeException, HttpMessageThrowable):
+class HttpMessageRuntimeException(HttpRuntimeException, HttpMessageThrowable):
     """The base runtime exception of the Http Message subcomponent."""
 
     _valkyrja_abstract = True
