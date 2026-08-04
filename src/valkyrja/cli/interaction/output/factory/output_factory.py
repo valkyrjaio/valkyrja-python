@@ -30,29 +30,29 @@ class OutputFactory(OutputFactoryContract):
     """Builds each kind of output."""
 
     @override
-    def create_output(self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract) -> OutputContract:
+    def create_output(self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS) -> OutputContract:
         return Output(True, False, False, exit_code, *messages)
 
     @override
     def create_empty_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> EmptyOutputContract:
         return EmptyOutput(True, False, False, exit_code, *messages)
 
     @override
     def create_plain_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> PlainOutputContract:
         return PlainOutput(True, False, False, exit_code, *messages)
 
     @override
     def create_file_output(
-        self, filepath: str, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, filepath: str, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> FileOutputContract:
         return FileOutput(filepath, True, False, False, exit_code, *messages)
 
     @override
     def create_stream_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> StreamOutputContract:
         return StreamOutput(sys.stdout, True, False, False, exit_code, *messages)
