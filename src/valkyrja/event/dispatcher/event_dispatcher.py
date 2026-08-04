@@ -13,7 +13,7 @@ from valkyrja.container.manager.contract.container_contract import ContainerCont
 from valkyrja.event.collection.contract.listener_collection_contract import (
     ListenerCollectionContract,
 )
-from valkyrja.event.constant.event_argument import EVENT_ARGUMENT_KEY
+from valkyrja.event.constant.event_argument import EventArgument
 from valkyrja.event.contract.dispatch_collectable_event_contract import (
     DispatchCollectableEventContract,
 )
@@ -70,7 +70,7 @@ class EventDispatcher(EventDispatcherContract):
     @override
     def dispatch_listener(self, event: EventContract, listener: ListenerContract) -> EventContract:
         handler = listener.get_handler()
-        dispatch = handler(self._container, {EVENT_ARGUMENT_KEY: event})
+        dispatch = handler(self._container, {EventArgument.EVENT: event})
 
         if isinstance(event, DispatchCollectableEventContract):
             event.add_dispatch(dispatch)
