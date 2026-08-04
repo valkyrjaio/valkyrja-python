@@ -213,7 +213,7 @@ def test_the_output_factory_builds_each_kind(tmp_path: Path) -> None:
 
 
 def test_the_output_factory_passes_the_exit_code_and_messages() -> None:
-    output = OutputFactory().create_output(ExitCode.ERROR, Message("a"))
+    output = OutputFactory().create_output(Message("a"), exit_code=ExitCode.ERROR)
 
     assert output.get_exit_code() is ExitCode.ERROR
     assert len(output.get_messages()) == 1
