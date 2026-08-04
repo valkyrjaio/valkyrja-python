@@ -21,7 +21,7 @@ from tests.fixtures.event.data.stoppable_event_fixture import (
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.event.collection.listener_collection import ListenerCollection
-from valkyrja.event.constant.event_argument import EVENT_ARGUMENT_KEY
+from valkyrja.event.constant.event_argument import EventArgument
 from valkyrja.event.data.listener import Listener
 from valkyrja.event.dispatcher.event_dispatcher import EventDispatcher
 from valkyrja.event.throwable.exception.event_invalid_event_exception import (
@@ -63,7 +63,7 @@ def test_dispatch_passes_the_event_in_the_arguments() -> None:
     seen: list[Any] = []
 
     def handler(container: ContainerContract, arguments: dict[str, Any]) -> Any:
-        seen.append(arguments[EVENT_ARGUMENT_KEY])
+        seen.append(arguments[EventArgument.EVENT])
 
         return None
 
@@ -117,7 +117,7 @@ def test_a_stoppable_event_stops_the_listeners_after_it() -> None:
 
     def stopping_handler(container: ContainerContract, arguments: dict[str, Any]) -> Any:
         calls.append("first")
-        event = arguments[EVENT_ARGUMENT_KEY]
+        event = arguments[EventArgument.EVENT]
         event.stop()
 
         return None
