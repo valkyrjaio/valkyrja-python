@@ -7,12 +7,12 @@
 #
 
 from valkyrja.http.message.throwable.contract.http_message_throwable import HttpMessageThrowable
-from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception import (
-    ValkyrjaInvalidArgumentException,
+from valkyrja.http.throwable.exception.abstract.http_invalid_argument_exception import (
+    HttpInvalidArgumentException,
 )
 
 
-class HttpMessageInvalidArgumentException(ValkyrjaInvalidArgumentException, HttpMessageThrowable):
+class HttpMessageInvalidArgumentException(HttpInvalidArgumentException, HttpMessageThrowable):
     """The base invalid argument exception of the Http Message subcomponent."""
 
     _valkyrja_abstract = True
