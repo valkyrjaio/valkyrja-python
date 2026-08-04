@@ -112,3 +112,16 @@ def enable(self, display_errors: bool = False) -> None: ...
 
 `enable` registers the handler. Warning: a handler that displays an error shows
 the internals of the application. Set `display_errors` in development only.
+
+## Container Bindings
+
+The component binds one service. `ThrowableServiceId` holds the key:
+
+| Key | Value | Binds |
+| --- | --- | --- |
+| `ThrowableServiceId.HANDLER_CONTRACT` | `Valkyrja.Throwable.Handler.ThrowableHandlerContract` | the handler that catches an unhandled throwable |
+
+A binding key is a string constant, never a class object. A class object as a
+key forces the module of that class to load, and the container exists to defer
+that load. The TypeScript port holds the same key, because both ports resolve a
+service by string.
