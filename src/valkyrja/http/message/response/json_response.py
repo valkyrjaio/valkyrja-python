@@ -7,6 +7,7 @@
 #
 
 import json
+from copy import deepcopy
 from typing import Any
 
 from valkyrja.http.message.constant.content_type_value import ContentTypeValue
@@ -46,5 +47,9 @@ class JsonResponse(Response, JsonResponseContract):
         )
 
     def get_data(self) -> dict[str, Any]:
-        """Get the data that the response carries."""
-        return dict(self._data)
+        """Get the data that the response carries.
+
+        The copy is deep. A shallow copy shares a nested list, so a caller that
+        appends to it changes the body of the response.
+        """
+        return deepcopy(self._data)
