@@ -18,32 +18,37 @@ from valkyrja.cli.interaction.output.contract.stream_output_contract import Stre
 
 
 class OutputFactoryContract(ABC):
-    """The contract for the factory that builds each kind of output."""
+    """The contract for the factory that builds each kind of output.
+
+    Warning: `exit_code` is keyword-only. A default that sits before a variadic
+    parameter takes the first positional argument, so `create_output(message)`
+    would bind the message to the exit code.
+    """
 
     @abstractmethod
-    def create_output(self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract) -> OutputContract:
+    def create_output(self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS) -> OutputContract:
         """Build the default output."""
 
     @abstractmethod
     def create_empty_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> EmptyOutputContract:
         """Build an output that writes nothing."""
 
     @abstractmethod
     def create_plain_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> PlainOutputContract:
         """Build an output that writes no ANSI format."""
 
     @abstractmethod
     def create_file_output(
-        self, filepath: str, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, filepath: str, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> FileOutputContract:
         """Build an output that writes to a file."""
 
     @abstractmethod
     def create_stream_output(
-        self, exit_code: ExitCode | int = ExitCode.SUCCESS, *messages: MessageContract
+        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> StreamOutputContract:
         """Build an output that writes to a stream."""
