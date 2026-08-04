@@ -106,7 +106,7 @@ class Router(RouterContract):
         if self._collection.has(command_name):
             return self._collection.get(command_name)
 
-        return self._output_factory.create_output(ExitCode.ERROR).with_messages(
+        return self._output_factory.create_output(exit_code=ExitCode.ERROR).with_messages(
             Banner(ErrorMessage(f"Command `{command_name}` was not found."))
         )
 
