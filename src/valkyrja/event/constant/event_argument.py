@@ -6,7 +6,11 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import Final
+from typing import Final, final
 
-EVENT_ARGUMENT_KEY: Final[str] = "event"
-"""The key that the dispatcher files the event under, in the arguments of a handler."""
+
+@final
+class EventArgument:
+    """The key that the dispatcher files an event under, in the arguments of a handler."""
+
+    EVENT: Final[str] = "event"

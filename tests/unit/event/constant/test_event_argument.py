@@ -8,8 +8,8 @@
 
 """Tests for the argument key of the Event component."""
 
-from valkyrja.event.constant.event_argument import EVENT_ARGUMENT_KEY
+from valkyrja.event.constant.event_argument import EventArgument
 
 
 def test_the_event_argument_key() -> None:
-    assert EVENT_ARGUMENT_KEY == "event"
+    assert EventArgument.EVENT == "event"
