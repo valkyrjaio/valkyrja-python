@@ -26,10 +26,10 @@ class ServiceProviderContract(ABC):
         class ContainerServiceProvider(ServiceProviderContract):
             @override
             def publishers(self) -> dict[str, PublishCallback]:
-                return {ContainerConstant.DATA: ContainerServiceProvider.publish_data}
+                return {ContainerServiceId.DATA: ContainerServiceProvider.publish_data}
 
             @staticmethod
             def publish_data(container: ContainerContract) -> None:
-                container.set_singleton(ContainerConstant.DATA, container.get_data())
+                container.set_singleton(ContainerServiceId.DATA, container.get_data())
         ```
         """
