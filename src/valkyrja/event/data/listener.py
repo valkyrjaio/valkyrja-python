@@ -6,57 +6,44 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from copy import copy
+from dataclasses import dataclass, replace
 from typing import Self, override
 
 from valkyrja.event.data.contract.listener_contract import ListenerContract, ListenerHandler
 
 
+@dataclass(frozen=True)
 class Listener(ListenerContract):
     """A listener that binds an event id to a handler.
 
-    Each `with_` method returns a copy, so a listener that the collection holds
-    never changes under a caller.
+    The dataclass is frozen, so a listener that the collection holds cannot
+    change under a caller. Each `with_` method answers with a copy.
     """
 
-    def __init__(self, event_id: str, name: str, handler: ListenerHandler) -> None:
-        self._event_id = event_id
-        self._name = name
-        self._handler = handler
+    event_id: str
+    name: str
+    handler: ListenerHandler
 
     @override
     def get_event_id(self) -> str:
-        return self._event_id
+        return self.event_id
 
     @override
     def with_event_id(self, event_id: str) -> Self:
-        new = self._copy()
-        new._event_id = event_id
-
-        return new
+        return replace(self, event_id=event_id)
 
     @override
     def get_name(self) -> str:
-        return self._name
+        return self.name
 
     @override
     def with_name(self, name: str) -> Self:
-        new = self._copy()
-        new._name = name
-
-        return new
+        return replace(self, name=name)
 
     @override
     def get_handler(self) -> ListenerHandler:
-        return self._handler
+        return self.handler
 
     @override
     def with_handler(self, handler: ListenerHandler) -> Self:
-        new = self._copy()
-        new._handler = handler
-
-        return new
-
-    def _copy(self) -> Self:
-        """Get a shallow copy, which is what PHP's `clone` gives."""
-        return copy(self)
+        return replace(self, handler=handler)
