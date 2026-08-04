@@ -11,7 +11,12 @@ from typing import Final, final
 
 @final
 class CliMiddlewareServiceId:
-    """The binding key for each service of the Cli Middleware subcomponent."""
+    """The binding key for each service of the Cli Middleware subcomponent.
+
+    A binding key is a string constant, never a class object. A class object as
+    a key forces the module of that class to load. TypeScript holds the same
+    keys, because both ports resolve a service by string.
+    """
 
     INPUT_RECEIVED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.InputReceivedHandlerContract"
     ROUTE_MATCHED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.RouteMatchedHandlerContract"

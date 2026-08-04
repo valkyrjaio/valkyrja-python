@@ -96,12 +96,35 @@ def test_every_handler_declares_add() -> None:
         assert hasattr(contract, "add")
 
 
-def test_the_service_ids() -> None:
-    assert (
-        CliMiddlewareServiceId.INPUT_RECEIVED_HANDLER_CONTRACT
-        == "Valkyrja.Cli.Middleware.Handler.InputReceivedHandlerContract"
-    )
-    assert (
-        CliMiddlewareServiceId.PROCESS_EXITING_HANDLER_CONTRACT
-        == "Valkyrja.Cli.Middleware.Handler.ProcessExitingHandlerContract"
-    )
+@pytest.mark.parametrize(
+    ("key", "value"),
+    [
+        (
+            CliMiddlewareServiceId.INPUT_RECEIVED_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.InputReceivedHandlerContract",
+        ),
+        (
+            CliMiddlewareServiceId.ROUTE_MATCHED_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.RouteMatchedHandlerContract",
+        ),
+        (
+            CliMiddlewareServiceId.ROUTE_NOT_MATCHED_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.RouteNotMatchedHandlerContract",
+        ),
+        (
+            CliMiddlewareServiceId.ROUTE_DISPATCHED_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.RouteDispatchedHandlerContract",
+        ),
+        (
+            CliMiddlewareServiceId.THROWABLE_CAUGHT_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.ThrowableCaughtHandlerContract",
+        ),
+        (
+            CliMiddlewareServiceId.PROCESS_EXITING_HANDLER_CONTRACT,
+            "Valkyrja.Cli.Middleware.Handler.ProcessExitingHandlerContract",
+        ),
+    ],
+)
+def test_each_service_id(key: str, value: str) -> None:
+    """Each key is part of the public API, so each test pins the whole string."""
+    assert key == value
