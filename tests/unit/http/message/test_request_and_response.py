@@ -147,15 +147,24 @@ def test_with_cookie_adds_a_set_cookie_header() -> None:
     assert "session=abc" in response.get_headers().get_header_line(HeaderName.SET_COOKIE)
 
 
-def test_with_cookie_adds_a_second_cookie_to_the_same_header() -> None:
+def test_with_cookie_keeps_each_cookie_as_its_own_value() -> None:
     """A cookie with no value writes the name alone, the same as PHP does."""
     response = Response().with_cookie(Cookie("first")).with_cookie(Cookie("second"))
 
-    line = response.get_headers().get_header_line(HeaderName.SET_COOKIE)
-
-    assert line.startswith("first;")
-    assert ", second;" in line
     assert len(response.get_headers().get(HeaderName.SET_COOKIE).get_values()) == 2
+
+
+def test_send_headers_writes_each_cookie_on_its_own_line(capsys: Any) -> None:
+    """RFC 7230 forbids joining a `Set-Cookie` field with a comma."""
+    response = Response().with_cookie(Cookie("first")).with_cookie(Cookie("second"))
+
+    response.send_headers()
+
+    lines = [line for line in capsys.readouterr().out.splitlines() if line != ""]
+
+    assert len(lines) == 2
+    assert lines[0].startswith("Set-Cookie: first;")
+    assert lines[1].startswith("Set-Cookie: second;")
 
 
 def test_without_cookie_writes_a_deleted_cookie() -> None:
