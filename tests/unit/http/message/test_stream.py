@@ -180,3 +180,17 @@ def test_close_twice_is_safe() -> None:
     stream.close()
 
     assert not stream.is_readable()
+
+
+def test_a_memory_stream_in_read_mode_reports_itself_read_only() -> None:
+    """`Mode.READ` names a stream a caller reads, so it reports no write."""
+    stream = Stream(mode=Mode.READ)
+
+    assert stream.is_readable()
+    assert not stream.is_writable()
+
+
+def test_an_empty_response_body_takes_no_write() -> None:
+    from valkyrja.http.message.response.empty_response import EmptyResponse
+
+    assert not EmptyResponse().get_body().is_writable()
