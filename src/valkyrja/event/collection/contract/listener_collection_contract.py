@@ -66,11 +66,17 @@ class ListenerCollectionContract(ABC):
 
     @abstractmethod
     def set_listeners_for_event(self, event: EventContract, *listeners: ListenerContract) -> None:
-        """Set the listeners for a given event, and drop the listeners it had."""
+        """Add each listener to a given event.
+
+        The method adds, and it drops no listener that the event holds already.
+        """
 
     @abstractmethod
     def set_listeners_for_event_by_id(self, event_id: str, *listeners: ListenerContract) -> None:
-        """Set the listeners for a given event id, and drop the listeners it had."""
+        """Add each listener to a given event id.
+
+        The method adds, and it drops no listener that the event holds already.
+        """
 
     @abstractmethod
     def remove_listeners_for_event(self, event: EventContract) -> None:
