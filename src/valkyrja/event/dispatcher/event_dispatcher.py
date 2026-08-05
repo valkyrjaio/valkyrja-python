@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import Any, override
+from typing import Any, final, override
 
 from valkyrja.container.enum.invalid_reference_mode import InvalidReferenceMode
 from valkyrja.container.manager.contract.container_contract import ContainerContract
@@ -26,6 +26,7 @@ from valkyrja.event.throwable.exception.event_invalid_event_exception import (
 )
 
 
+@final
 class EventDispatcher(EventDispatcherContract):
     """Runs each listener of an event."""
 

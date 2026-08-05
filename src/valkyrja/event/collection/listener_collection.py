@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import override
+from typing import final, override
 
 from valkyrja.event.collection.contract.listener_collection_contract import (
     ListenerCollectionContract,
@@ -16,6 +16,7 @@ from valkyrja.event.data.contract.listener_contract import ListenerContract
 from valkyrja.event.data.event_data import EventData, ListenerFactory
 
 
+@final
 class ListenerCollection(ListenerCollectionContract):
     """Holds each listener, and holds the listeners of each event.
 

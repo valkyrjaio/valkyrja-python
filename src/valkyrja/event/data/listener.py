@@ -7,11 +7,12 @@
 #
 
 from dataclasses import dataclass, replace
-from typing import Self, override
+from typing import Self, final, override
 
 from valkyrja.event.data.contract.listener_contract import ListenerContract, ListenerHandler
 
 
+@final
 @dataclass(frozen=True)
 class Listener(ListenerContract):
     """A listener that binds an event id to a handler.
