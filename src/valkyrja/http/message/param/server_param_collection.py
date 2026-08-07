@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class ServerParamCollection(ParamCollection, ServerParamCollectionContract):
-    """The parameters that server carries."""
+    pass

@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class CookieParamCollection(ParamCollection, CookieParamCollectionContract):
-    """The parameters that cookie carries."""
+    pass

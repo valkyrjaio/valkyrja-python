@@ -13,8 +13,6 @@ from valkyrja.http.message.param.contract.param_collection_contract import Param
 
 
 class ParamCollection(ParamCollectionContract):
-    """A collection of parameters that a request carries."""
-
     def __init__(self, params: dict[str | int, Any] | None = None) -> None:
         self._params: dict[str | int, Any] = dict(params) if params is not None else {}
 

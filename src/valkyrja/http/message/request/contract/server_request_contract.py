@@ -28,8 +28,6 @@ from valkyrja.http.message.request.contract.request_contract import RequestContr
 
 
 class ServerRequestContract(RequestContract):
-    """The contract for a request that a server gives the application."""
-
     @abstractmethod
     def get_server_params(self) -> ServerParamCollectionContract:
         """Get the parameters that the server gives."""

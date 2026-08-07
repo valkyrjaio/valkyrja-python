@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class ParsedBodyParamCollection(ParamCollection, ParsedBodyParamCollectionContract):
-    """The parameters that parsedbody carries."""
+    pass

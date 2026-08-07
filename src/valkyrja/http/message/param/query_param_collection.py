@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class QueryParamCollection(ParamCollection, QueryParamCollectionContract):
-    """The parameters that query carries."""
+    pass

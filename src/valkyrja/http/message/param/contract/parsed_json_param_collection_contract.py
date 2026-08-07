@@ -10,4 +10,4 @@ from valkyrja.http.message.param.contract.param_collection_contract import Param
 
 
 class ParsedJsonParamCollectionContract(ParamCollectionContract):
-    """The contract for the parameters that a json body carries."""
+    pass

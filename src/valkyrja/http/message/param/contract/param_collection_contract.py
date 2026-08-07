@@ -11,11 +11,6 @@ from typing import Any, Self
 
 
 class ParamCollectionContract(ABC):
-    """The contract for a collection of parameters that a request carries.
-
-    A value is a scalar, or another collection where the parameters nest.
-    """
-
     @abstractmethod
     def has(self, key: str | int) -> bool:
         """Get whether the collection holds a parameter under a given key."""

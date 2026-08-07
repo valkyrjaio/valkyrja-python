@@ -10,4 +10,4 @@ from valkyrja.http.message.param.contract.param_collection_contract import Param
 
 
 class ParsedBodyParamCollectionContract(ParamCollectionContract):
-    """The contract for the parameters that the body carries."""
+    pass

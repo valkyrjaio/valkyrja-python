@@ -45,8 +45,6 @@ XML_HTTP_REQUEST = "XMLHttpRequest"
 
 
 class ServerRequest(Request, ServerRequestContract):
-    """A request that a server gives the application."""
-
     def __init__(
         self,
         uri: UriContract | None = None,

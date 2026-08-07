@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class ParsedJsonParamCollection(ParamCollection, ParsedJsonParamCollectionContract):
-    """The parameters that parsedjson carries."""
+    pass
