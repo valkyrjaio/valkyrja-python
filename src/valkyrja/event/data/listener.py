@@ -15,12 +15,6 @@ from valkyrja.event.data.contract.listener_contract import ListenerContract, Lis
 @final
 @dataclass(frozen=True)
 class Listener(ListenerContract):
-    """A listener that binds an event id to a handler.
-
-    The dataclass is frozen, so a listener that the collection holds cannot
-    change under a caller. Each `with_` method answers with a copy.
-    """
-
     event_id: str
     name: str
     handler: ListenerHandler

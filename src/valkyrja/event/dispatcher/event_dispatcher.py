@@ -28,8 +28,6 @@ from valkyrja.event.throwable.exception.event_invalid_event_exception import (
 
 @final
 class EventDispatcher(EventDispatcherContract):
-    """Runs each listener of an event."""
-
     def __init__(self, collection: ListenerCollectionContract, container: ContainerContract) -> None:
         self._collection = collection
         self._container = container
