@@ -11,8 +11,6 @@ from traceback import format_tb
 
 
 class ThrowableFactory:
-    """Builds the values that describe a throwable."""
-
     @staticmethod
     def get_trace_code(throwable: BaseException) -> str:
         """Get the trace code for a throwable.

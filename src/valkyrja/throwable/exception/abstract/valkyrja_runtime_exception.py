@@ -10,14 +10,6 @@ from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 
 class ValkyrjaRuntimeException(ValkyrjaThrowable, RuntimeError):
-    """The base runtime exception for every component.
-
-    A component extends this class to get a `ComponentRuntimeException`, and a
-    concrete exception extends that one.
-    """
-
-    # `ValkyrjaThrowable` comes first, because the method resolution order
-    # decides which `__new__` runs. `RuntimeError` inherits a `__new__` that
-    # constructs any class, so a base list that puts `RuntimeError` first
-    # defeats the abstract guard on `ValkyrjaThrowable`.
+    # `ValkyrjaThrowable` comes first, because `RuntimeError` inherits a `__new__`
+    # that constructs any class and defeats the abstract guard.
     _valkyrja_abstract = True

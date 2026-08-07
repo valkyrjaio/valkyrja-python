@@ -10,8 +10,6 @@ from abc import ABC, abstractmethod
 
 
 class ThrowableHandlerContract(ABC):
-    """The contract for the handler that catches an unhandled throwable."""
-
     @abstractmethod
     def enable(self, display_errors: bool = False) -> None:
         """Enable the throwable handler.

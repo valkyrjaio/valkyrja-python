@@ -8,8 +8,4 @@
 
 
 class ValkyrjaTestCase:
-    """Base test case for this package. Concrete test cases extend it.
-
-    Mirrors PHP's ``tests/Tests/Abstract/ValkyrjaTestCase``. Replace this with
-    the shared Valkyrja pytest base once that package is available.
-    """
+    pass
