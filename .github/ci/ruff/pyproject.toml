@@ -25,6 +25,11 @@ indent-style = "space"
 # runs only when it is selected by its own code, so enabling this one does not
 # also enable every preview rule behind the other prefixes.
 select = ["E", "F", "I", "N", "UP", "B", "C4", "SIM", "RUF", "CPY001"]
+# "N818" wants an `Error` suffix on every exception name. Valkyrja names each
+# exception `*Exception` in PHP, Java, Python, and TypeScript, and `*Error` in Go
+# alone. THROWABLES.md decides this: the stem is what carries meaning across the
+# ports, and the major Python frameworks (FastAPI, Django) use `*Exception` too.
+ignore = ["N818"]
 preview = true
 explicit-preview-rules = true
 
