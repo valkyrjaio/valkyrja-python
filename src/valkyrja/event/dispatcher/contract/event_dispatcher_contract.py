@@ -14,12 +14,6 @@ from valkyrja.event.data.contract.listener_contract import ListenerContract
 
 
 class EventDispatcherContract(ABC):
-    """The contract for the dispatcher that fires an event to each listener.
-
-    PHP extends the PSR-14 `EventDispatcherInterface`. Python has no PSR, so
-    this contract declares `dispatch` itself.
-    """
-
     @abstractmethod
     def dispatch(self, event: EventContract) -> EventContract:
         """Fire an event to each listener, and get the event back."""

@@ -13,8 +13,6 @@ from valkyrja.event.contract.event_contract import EventContract
 
 
 class ArgumentsCapableEventContract(EventContract):
-    """The contract for an event that takes the arguments of the dispatch."""
-
     @abstractmethod
     def set_arguments(self, arguments: dict[str, Any]) -> Self:
         """Set the arguments on the event."""
