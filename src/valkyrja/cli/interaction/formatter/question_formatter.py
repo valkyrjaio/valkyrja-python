@@ -12,8 +12,6 @@ from valkyrja.cli.interaction.formatter.formatter import Formatter
 
 
 class QuestionFormatter(Formatter):
-    """The formatter that marks a question."""
-
     def __init__(self) -> None:
         super().__init__(
             TextColorFormat(TextColor.MAGENTA),

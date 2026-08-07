@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.formatter.formatter import Formatter
 
 
 class SuccessFormatter(Formatter):
-    """The formatter that marks a success."""
-
     def __init__(self) -> None:
         super().__init__(
             TextColorFormat(TextColor.LIGHT_WHITE),

@@ -12,4 +12,4 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_runti
 
 
 class CliInteractionNoFormatterException(CliInteractionRuntimeException):
-    """A message has no formatter, and a caller asked for one."""
+    pass

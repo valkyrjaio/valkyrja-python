@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.output.output import Output
 
 
 class EmptyOutput(Output, EmptyOutputContract):
-    """An output that writes nothing, and still records each message."""
-
     @override
     def _output_message(self, message: MessageContract) -> None:
-        """Write nothing. The output records the message and stops there."""
+        pass
