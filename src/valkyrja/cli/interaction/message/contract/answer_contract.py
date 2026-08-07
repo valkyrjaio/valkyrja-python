@@ -17,8 +17,6 @@ type ResponseValidator = Callable[[str], bool]
 
 
 class AnswerContract(MessageContract):
-    """The contract for the answer that a user gives to a question."""
-
     @abstractmethod
     def get_default_response(self) -> str:
         """Get the response that the answer takes when the user gives none."""

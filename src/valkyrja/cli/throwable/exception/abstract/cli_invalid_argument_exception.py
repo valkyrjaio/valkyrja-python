@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class CliInvalidArgumentException(ValkyrjaInvalidArgumentException, CliThrowable):
-    """The base invalid argument exception of the Cli component."""
-
     _valkyrja_abstract = True

@@ -18,13 +18,6 @@ from valkyrja.cli.interaction.output.contract.stream_output_contract import Stre
 
 
 class OutputFactoryContract(ABC):
-    """The contract for the factory that builds each kind of output.
-
-    Warning: `exit_code` is keyword-only. A default that sits before a variadic
-    parameter takes the first positional argument, so `create_output(message)`
-    would bind the message to the exit code.
-    """
-
     @abstractmethod
     def create_output(self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS) -> OutputContract:
         """Build the default output."""

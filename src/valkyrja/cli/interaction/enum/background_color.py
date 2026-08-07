@@ -13,8 +13,6 @@ DEFAULT_BACKGROUND_COLOR = 49
 
 
 class BackgroundColor(IntEnum):
-    """The ANSI code that sets the color behind the text."""
-
     BLACK = 40
     RED = 41
     GREEN = 42

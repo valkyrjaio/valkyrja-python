@@ -13,12 +13,6 @@ from valkyrja.cli.interaction.output.contract.output_contract import OutputContr
 
 
 class StreamOutputContract(OutputContract):
-    """The contract for an output that writes to a stream.
-
-    PHP holds a resource. Python holds a `TextIO`, which is what `open` and
-    `sys.stdout` both give.
-    """
-
     @abstractmethod
     def get_stream(self) -> TextIO:
         """Get the stream that the output writes to."""

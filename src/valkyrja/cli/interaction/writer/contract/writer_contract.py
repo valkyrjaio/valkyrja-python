@@ -16,13 +16,6 @@ if TYPE_CHECKING:
 
 
 class WriterContract(ABC):
-    """The contract for the writer that puts one message on an output.
-
-    The import of `OutputContract` is for the type checker alone. An output
-    holds a writer, so a plain import would make the two modules import each
-    other.
-    """
-
     @abstractmethod
     def should_write_message(self, message: MessageContract) -> bool:
         """Get whether this writer writes a given message."""
