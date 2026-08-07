@@ -13,8 +13,6 @@ from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
 
 
 class QuietOptionParameter(OptionParameter):
-    """The `--quiet` option that every command accepts."""
-
     def __init__(self) -> None:
         super().__init__(
             name=OptionName.QUIET,

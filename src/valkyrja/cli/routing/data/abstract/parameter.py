@@ -22,15 +22,11 @@ from valkyrja.type.data.cast import Cast
 
 @runtime_checkable
 class ValuedParameter(Protocol):
-    """A thing that carries one raw value, which an argument and an option both do."""
-
     def get_value(self) -> str:
         """Get the raw value that the user typed."""
 
 
 class Parameter(ParameterContract):
-    """The shared state of a parameter that a command declares."""
-
     def __init__(
         self,
         name: str,

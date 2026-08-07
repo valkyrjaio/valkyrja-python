@@ -19,10 +19,4 @@ type RouteFactory = Callable[[], RouteContract]
 
 @dataclass(frozen=True)
 class CliRoutingData:
-    """A data representation of the state of a route collection.
-
-    `sindri` writes this same shape into the generated cache, so the collection
-    loads a cache the way it loads its own state.
-    """
-
     routes: dict[str, RouteFactory] = field(default_factory=dict)

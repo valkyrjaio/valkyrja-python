@@ -12,4 +12,4 @@ from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_runtime_excep
 
 
 class CliRoutingNoCastException(CliRoutingRuntimeException):
-    """A parameter has no cast, and a caller asked for one."""
+    pass

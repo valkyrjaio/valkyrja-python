@@ -14,8 +14,6 @@ from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 
 
 class RouterContract(ABC):
-    """The contract for the router that answers a command."""
-
     @abstractmethod
     def dispatch(self, input_: InputContract) -> OutputContract:
         """Match a command to the input, then answer it."""
