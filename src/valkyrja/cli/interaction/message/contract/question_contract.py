@@ -21,13 +21,6 @@ type QuestionCallback = Callable[["OutputContract", AnswerContract], "OutputCont
 
 
 class QuestionContract(MessageContract):
-    """The contract for a message that asks the user a question.
-
-    The import of `OutputContract` is for the type checker alone. An output
-    writes a question, so a plain import would make the two modules import each
-    other.
-    """
-
     @abstractmethod
     def get_callable(self) -> QuestionCallback:
         """Get the callback that runs once the user answers."""

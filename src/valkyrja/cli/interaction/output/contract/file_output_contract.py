@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.output.contract.output_contract import OutputContr
 
 
 class FileOutputContract(OutputContract):
-    """The contract for an output that writes to a file."""
-
     @abstractmethod
     def get_filepath(self) -> str:
         """Get the path of the file that the output writes to."""

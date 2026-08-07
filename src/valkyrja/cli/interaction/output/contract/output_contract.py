@@ -15,8 +15,6 @@ from valkyrja.cli.interaction.writer.contract.writer_contract import WriterContr
 
 
 class OutputContract(ABC):
-    """The contract for the output that a command writes to."""
-
     @abstractmethod
     def get_messages(self) -> list[MessageContract]:
         """Get each message, with the written messages before the unwritten ones."""

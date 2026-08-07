@@ -10,4 +10,4 @@ from valkyrja.cli.interaction.output.contract.output_contract import OutputContr
 
 
 class EmptyOutputContract(OutputContract):
-    """The contract for an output that writes nothing at all."""
+    pass

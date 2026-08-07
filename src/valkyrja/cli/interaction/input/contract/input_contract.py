@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.option.contract.option_contract import OptionContr
 
 
 class InputContract(ABC):
-    """The contract for what the user typed on the command line."""
-
     @abstractmethod
     def get_caller(self) -> str:
         """Get the name of the program that the user ran."""

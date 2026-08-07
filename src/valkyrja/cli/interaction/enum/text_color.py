@@ -13,8 +13,6 @@ DEFAULT_TEXT_COLOR = 39
 
 
 class TextColor(IntEnum):
-    """The ANSI code that sets the color of the text."""
-
     BLACK = 30
     RED = 31
     GREEN = 32

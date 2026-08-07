@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import Val
 
 
 class CliInteractionRuntimeException(ValkyrjaRuntimeException, CliInteractionThrowable):
-    """The base runtime exception of the Cli Interaction subcomponent."""
-
     _valkyrja_abstract = True

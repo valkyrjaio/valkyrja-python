@@ -13,8 +13,6 @@ DEFAULT_STYLE = 28
 
 
 class Style(IntEnum):
-    """The ANSI code that sets the style of the text."""
-
     BOLD = 1
     UNDERSCORE = 4
     BLINK = 5

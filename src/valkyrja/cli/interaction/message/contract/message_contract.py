@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.formatter.contract.formatter_contract import Forma
 
 
 class MessageContract(ABC):
-    """The contract for one message that an output writes."""
-
     @abstractmethod
     def get_text(self) -> str:
         """Get the text of the message."""

@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.format.contract.format_contract import FormatContr
 
 
 class FormatterContract(ABC):
-    """The contract for the formatter that puts each format around a text."""
-
     @abstractmethod
     def get_formats(self) -> list[FormatContract]:
         """Get each format that the formatter applies."""

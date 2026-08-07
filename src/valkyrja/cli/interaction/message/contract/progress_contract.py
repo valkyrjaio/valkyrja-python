@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.message.contract.message_contract import MessageCo
 
 
 class ProgressContract(MessageContract):
-    """The contract for a message that reports how far a task has run."""
-
     @abstractmethod
     def is_complete(self) -> bool:
         """Get whether the task is complete."""

@@ -10,12 +10,6 @@ from abc import ABC, abstractmethod
 
 
 class CliInteractionConfigContract(ABC):
-    """The contract for the configuration of the Cli Interaction subcomponent.
-
-    PHP declares each setting as a property with a getter and a setter. Python
-    spells the same shape with a property that has a setter.
-    """
-
     @property
     @abstractmethod
     def is_quiet(self) -> bool:

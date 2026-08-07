@@ -10,12 +10,6 @@ from enum import IntEnum
 
 
 class ExitCode(IntEnum):
-    """The code that a command gives back to the shell.
-
-    The values follow the `sysexits.h` convention, so a shell reads a failure
-    the way it reads a failure of any other program.
-    """
-
     SUCCESS = 0
     ERROR = 1
 

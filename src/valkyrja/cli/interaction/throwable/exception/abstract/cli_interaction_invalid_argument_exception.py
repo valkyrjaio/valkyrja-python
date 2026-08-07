@@ -15,6 +15,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class CliInteractionInvalidArgumentException(ValkyrjaInvalidArgumentException, CliInteractionThrowable):
-    """The base invalid argument exception of the Cli Interaction subcomponent."""
-
     _valkyrja_abstract = True
