@@ -10,8 +10,8 @@ from typing import final, override
 
 from valkyrja.event.contract.event_contract import EventContract
 
-ORDER_PLACED_ID = "Valkyrja.Tests.Fixtures.Event.OrderPlacedFixture"
-ORDER_SHIPPED_ID = "Valkyrja.Tests.Fixtures.Event.OrderShippedFixture"
+ORDER_PLACED_ID = "tests.fixtures.event.OrderPlacedFixture"
+ORDER_SHIPPED_ID = "tests.fixtures.event.OrderShippedFixture"
 
 
 @final
