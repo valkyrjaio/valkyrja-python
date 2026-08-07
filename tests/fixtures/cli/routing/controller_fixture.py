@@ -13,7 +13,7 @@ from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.routing.attribute.route import route
 from valkyrja.cli.routing.data.option.help_option_parameter import HelpOptionParameter
 
-FIRST_MIDDLEWARE_ID = "Valkyrja.Tests.Middleware.First"
+FIRST_MIDDLEWARE_ID = "tests.middleware.First"
 
 
 @final
