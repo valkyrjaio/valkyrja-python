@@ -42,8 +42,8 @@ def test_the_invalid_argument_base_extends_the_language_root() -> None:
 
 
 def test_the_invalid_event_exception_names_the_id() -> None:
-    exception = EventInvalidEventException("Valkyrja.Tests.NotAnEvent")
+    exception = EventInvalidEventException("tests.NotAnEvent")
 
-    assert str(exception) == "Service with `Valkyrja.Tests.NotAnEvent` is not an event"
-    assert exception.get_id() == "Valkyrja.Tests.NotAnEvent"
+    assert str(exception) == "Service with `tests.NotAnEvent` is not an event"
+    assert exception.get_id() == "tests.NotAnEvent"
     assert isinstance(exception, EventInvalidArgumentException)

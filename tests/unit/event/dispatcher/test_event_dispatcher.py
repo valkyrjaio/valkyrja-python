@@ -28,8 +28,8 @@ from valkyrja.event.throwable.exception.event_invalid_event_exception import (
     EventInvalidEventException,
 )
 
-NOT_AN_EVENT_ID = "Valkyrja.Tests.NotAnEvent"
-MISSING_ID = "Valkyrja.Tests.Missing"
+NOT_AN_EVENT_ID = "tests.NotAnEvent"
+MISSING_ID = "tests.Missing"
 
 
 def make_dispatcher(container: ContainerContract | None = None) -> tuple[EventDispatcher, ListenerCollection]:
