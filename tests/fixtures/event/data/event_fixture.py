@@ -13,7 +13,7 @@ from valkyrja.event.contract.dispatch_collectable_event_contract import (
     DispatchCollectableEventContract,
 )
 
-EVENT_ID = "Valkyrja.Tests.Fixtures.Event.EventFixture"
+EVENT_ID = "tests.fixtures.event.EventFixture"
 
 
 @final
