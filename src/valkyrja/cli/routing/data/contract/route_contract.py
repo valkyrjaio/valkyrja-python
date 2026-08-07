@@ -26,8 +26,6 @@ type HelpText = Callable[[], MessageContract]
 
 
 class RouteContract(ABC):
-    """The contract for one command that the application answers."""
-
     @abstractmethod
     def get_name(self) -> str:
         """Get the name of the command."""

@@ -10,15 +10,6 @@ from enum import Enum
 
 
 class CastType(Enum):
-    """The type that a cast converts a value to.
-
-    Warning: each member holds a STRING that names the type, never the class
-    itself. PHP writes `StringT::class`, and Java writes `StringT.class`. Python
-    that named the 12 classes would import every one of them to read any one of
-    them, which is the eager-import cost that a string binding key exists to
-    avoid. The container resolves the string when a cast runs.
-    """
-
     STRING = "valkyrja.type.string.StringT"
     INT = "valkyrja.type.int.IntT"
     FLOAT = "valkyrja.type.float.FloatT"

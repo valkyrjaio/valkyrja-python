@@ -18,8 +18,6 @@ if TYPE_CHECKING:
 
 
 class RouteMatchedHandlerContract(HandlerContract):
-    """Runs each middleware for a route that the application matched."""
-
     @abstractmethod
     def route_matched(self, input_: InputContract, route: RouteContract) -> RouteContract | OutputContract:
         """Run the chain, and get the route onward or an output that stops it."""

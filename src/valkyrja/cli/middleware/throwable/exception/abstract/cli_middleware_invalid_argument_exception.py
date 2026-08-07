@@ -15,6 +15,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class CliMiddlewareInvalidArgumentException(ValkyrjaInvalidArgumentException, CliMiddlewareThrowable):
-    """The base invalid argument exception of the Cli Middleware subcomponent."""
-
     _valkyrja_abstract = True

@@ -12,8 +12,6 @@ from typing import Any, Self
 
 
 class TypeContract(ABC):
-    """The contract for a value that the framework converts between forms."""
-
     @abstractmethod
     def as_value(self) -> Any:
         """Get the value in its own form."""

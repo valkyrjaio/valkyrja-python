@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
 
 
 class CliRoutingRuntimeException(ValkyrjaRuntimeException, CliRoutingThrowable):
-    """The base runtime exception of the Cli Routing subcomponent."""
-
     _valkyrja_abstract = True
