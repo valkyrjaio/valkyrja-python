@@ -51,7 +51,7 @@ step.
 Warning: the fallback always raises `ContainerInvalidReferenceException`. It
 raises for `InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION` too.
 
-An id is a string constant such as `Valkyrja.Container.Manager.ContainerContract`.
+An id is a string constant such as `valkyrja.container.manager.ContainerContract`.
 That string names no Python module, so the container cannot construct the class
 that the id stands for. PHP constructs it, because a PHP id is a class name.
 Java constructs it, because a Java id is a class object. TypeScript raises, for
