@@ -11,6 +11,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import Val
 
 
 class ContainerRuntimeException(ValkyrjaRuntimeException, ContainerThrowable):
-    """The base runtime exception of the Container component."""
-
     _valkyrja_abstract = True

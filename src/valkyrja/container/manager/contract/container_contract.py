@@ -15,13 +15,6 @@ from valkyrja.container.manager.contract.providers_aware_contract import Provide
 
 
 class ContainerContract(ProvidersAwareContract):
-    """The contract for the service container.
-
-    Every id is a string constant, never a class object. A class object as a key
-    forces the module of that class to load, and the container exists to defer
-    that load. Read `CONTAINER_BINDINGS.md` for the reason.
-    """
-
     @abstractmethod
     def get_data(self) -> ContainerData:
         """Get a data representation of the container."""

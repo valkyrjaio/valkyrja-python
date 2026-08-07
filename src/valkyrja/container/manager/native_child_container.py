@@ -13,17 +13,6 @@ from valkyrja.container.manager.container import Container
 
 
 class NativeChildContainer(Container):
-    """A container that reads the state of a parent `Container` directly.
-
-    The child reads each map of the parent, so a lookup costs one dictionary
-    read and never a call through the contract. `ChildContainer` reads the
-    parent through the contract instead, and it accepts any container.
-
-    The class reads a protected member of the parent, the same as PHP. The
-    parent is a `Container`, not a `ContainerContract`, and that narrower type
-    is what makes the direct read valid.
-    """
-
     def __init__(self, parent: Container) -> None:
         super().__init__()
 
@@ -64,9 +53,8 @@ class NativeChildContainer(Container):
         if (id_ in self._callbacks or id_ in self._parent._callbacks) and not self.is_published(id_):
             self.publish(id_)
 
-    # Warning: each lookup below tests for `None`, never for a false value. PHP
-    # chains these with `??`, which tests for null alone. An empty alias string
-    # is a false value, so `or` would read past it to the parent.
+    # Warning: each lookup tests for `None`, never for a false value. An empty
+    # alias is a false value, so `or` would read past it to the parent.
     @override
     def _get_callback(self, id_: str) -> PublishCallback | None:
         callback = self._callbacks.get(id_)
