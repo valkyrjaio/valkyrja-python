@@ -13,21 +13,8 @@ from valkyrja.throwable.factory.throwable_factory import ThrowableFactory
 
 
 class ValkyrjaThrowable(BaseException, ABC):
-    """The contract that every throwable the framework raises implements.
-
-    The contract adds a trace code to the language root. A trace code
-    correlates a log entry to a failure point, and the log does not have to
-    show the stack trace to a user.
-    """
-
-    # Warning: `ABC` alone does not stop the instantiation of an exception
-    # class. Only `object.__new__` reads `__abstractmethods__`, and
-    # `BaseException.__new__` replaces it, so an abstract exception with an
-    # unimplemented abstract method still constructs.
-    #
-    # Each abstract class in this hierarchy sets this flag, and `__new__` below
-    # reads the flag from the class itself, never from a parent. A concrete
-    # subclass does not set the flag, so the subclass stays instantiable.
+    # Warning: `ABC` alone does not stop an exception from constructing, because
+    # `BaseException.__new__` replaces the `object.__new__` that reads `__abstractmethods__`.
     _valkyrja_abstract = True
 
     def __new__(cls, *args: Any, **kwargs: Any) -> Self:

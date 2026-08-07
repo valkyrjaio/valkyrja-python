@@ -13,8 +13,4 @@ from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 @final
 class ValkyrjaThrowableFixture(ValkyrjaThrowable):
-    """A concrete throwable that implements the contract directly.
-
-    The fixture extends neither abstract exception, so a test reaches the
-    contract without a categorical base between them.
-    """
+    """A concrete throwable that implements the contract directly."""
