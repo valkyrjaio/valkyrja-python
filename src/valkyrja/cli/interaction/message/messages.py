@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class Messages(Message):
-    """A message that joins several messages into one."""
-
     def __init__(self, *messages: MessageContract) -> None:
         super().__init__("")
 

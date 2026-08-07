@@ -20,8 +20,6 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class Question(Message, QuestionContract):
-    """A message that asks the user a question and reads the answer."""
-
     def __init__(
         self,
         text: str,

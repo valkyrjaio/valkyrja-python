@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.message.new_line import NewLine
 
 
 class Banner(Message):
-    """A message that puts a block of color around a text."""
-
     def __init__(self, message: Message) -> None:
         super().__init__(message.get_text())
 

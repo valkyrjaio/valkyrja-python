@@ -17,8 +17,6 @@ from valkyrja.cli.interaction.throwable.exception.cli_interaction_no_formatter_e
 
 
 class Message(MessageContract):
-    """One message that an output writes."""
-
     def __init__(self, text: str, formatter: FormatterContract | None = None) -> None:
         self._text = text
         self._formatter = formatter

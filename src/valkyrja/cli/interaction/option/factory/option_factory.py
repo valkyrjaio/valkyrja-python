@@ -24,8 +24,6 @@ from valkyrja.cli.interaction.throwable.exception.cli_interaction_invalid_option
 
 @final
 class OptionFactory:
-    """Builds each option that one item of the command line names."""
-
     @staticmethod
     def from_arg(arg: str) -> list[OptionContract]:
         """Build each option that an item of the command line names.

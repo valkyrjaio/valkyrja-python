@@ -12,4 +12,4 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_inval
 
 
 class CliInteractionInvalidOptionNameException(CliInteractionInvalidArgumentException):
-    """An option name is not valid."""
+    pass

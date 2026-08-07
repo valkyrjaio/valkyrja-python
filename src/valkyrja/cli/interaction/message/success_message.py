@@ -11,7 +11,5 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class SuccessMessage(Message):
-    """A message that reports a success."""
-
     def __init__(self, text: str) -> None:
         super().__init__(text=text, formatter=SuccessFormatter())

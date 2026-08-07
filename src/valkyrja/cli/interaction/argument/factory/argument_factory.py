@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.argument.contract.argument_contract import Argumen
 
 @final
 class ArgumentFactory:
-    """Builds an argument from what the user typed."""
-
     @staticmethod
     def from_arg(arg: str) -> ArgumentContract:
         """Build an argument from one item of the command line."""

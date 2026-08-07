@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.formatter.contract.formatter_contract import Forma
 
 
 class Formatter(FormatterContract):
-    """Puts each format around a text with an ANSI escape sequence."""
-
     def __init__(self, *formats: FormatContract) -> None:
         self._formats: list[FormatContract] = list(formats)
 

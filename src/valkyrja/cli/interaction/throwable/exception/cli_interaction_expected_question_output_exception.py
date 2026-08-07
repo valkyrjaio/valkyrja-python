@@ -12,4 +12,4 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_runti
 
 
 class CliInteractionExpectedQuestionOutputException(CliInteractionRuntimeException):
-    """A question writer got an output that holds no question."""
+    pass

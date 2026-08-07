@@ -19,8 +19,6 @@ TAG_PATTERN = re.compile(r"<[^>]*>")
 
 
 class PlainOutput(Output, PlainOutputContract):
-    """An output that writes the plain text, with no tag and no format."""
-
     @override
     def _output_message(self, message: MessageContract) -> None:
         sys.stdout.write(TAG_PATTERN.sub("", message.get_text()))

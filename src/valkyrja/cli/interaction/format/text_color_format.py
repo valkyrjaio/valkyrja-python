@@ -11,7 +11,5 @@ from valkyrja.cli.interaction.format.format import Format
 
 
 class TextColorFormat(Format):
-    """The format that sets the color of the text."""
-
     def __init__(self, value: TextColor) -> None:
         super().__init__(str(value.value), str(value.get_default()))

@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.argument.contract.argument_contract import Argumen
 
 
 class Argument(ArgumentContract):
-    """One positional argument that the user typed."""
-
     def __init__(self, value: str) -> None:
         self._value = value
 

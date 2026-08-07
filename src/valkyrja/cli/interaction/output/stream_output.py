@@ -16,8 +16,6 @@ from valkyrja.cli.interaction.output.output import Output
 
 
 class StreamOutput(Output, StreamOutputContract):
-    """An output that writes to a stream."""
-
     def __init__(
         self,
         stream: TextIO,

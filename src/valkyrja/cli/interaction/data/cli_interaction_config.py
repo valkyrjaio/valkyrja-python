@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.data.contract.cli_interaction_config_contract impo
 
 
 class CliInteractionConfig(CliInteractionConfigContract):
-    """The default configuration of the Cli Interaction subcomponent."""
-
     def __init__(self, is_quiet: bool = False, is_interactive: bool = True, is_silent: bool = False) -> None:
         self._is_quiet = is_quiet
         self._is_interactive = is_interactive

@@ -15,8 +15,6 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class Progress(Message, ProgressContract):
-    """A message that reports how far a task has run."""
-
     def __init__(
         self,
         text: str,

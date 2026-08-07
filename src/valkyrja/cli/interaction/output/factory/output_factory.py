@@ -27,8 +27,6 @@ from valkyrja.cli.interaction.output.stream_output import StreamOutput
 
 
 class OutputFactory(OutputFactoryContract):
-    """Builds each kind of output."""
-
     @override
     def create_output(self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS) -> OutputContract:
         return Output(True, False, False, exit_code, *messages)

@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.option.contract.option_contract import OptionContr
 
 
 class Option(OptionContract):
-    """One named option that the user typed."""
-
     def __init__(self, name: str, value: str = "", type_: OptionType = OptionType.LONG) -> None:
         self._name = name
         self._value = value

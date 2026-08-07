@@ -12,4 +12,4 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_inval
 
 
 class CliInteractionInvalidEmptyValueException(CliInteractionInvalidArgumentException):
-    """A value is empty, and the caller needs a value."""
+    pass

@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.formatter.formatter import Formatter
 
 
 class WarningFormatter(Formatter):
-    """The formatter that marks a warning."""
-
     def __init__(self) -> None:
         super().__init__(
             TextColorFormat(TextColor.BLACK),

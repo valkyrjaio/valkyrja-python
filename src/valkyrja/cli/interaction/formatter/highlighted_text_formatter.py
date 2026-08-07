@@ -12,8 +12,6 @@ from valkyrja.cli.interaction.formatter.formatter import Formatter
 
 
 class HighlightedTextFormatter(Formatter):
-    """The formatter that marks a highlighted text."""
-
     def __init__(self) -> None:
         super().__init__(
             TextColorFormat(TextColor.YELLOW),

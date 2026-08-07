@@ -14,8 +14,6 @@ from valkyrja.cli.interaction.formatter.formatter import Formatter
 
 
 class ErrorFormatter(Formatter):
-    """The formatter that marks an error."""
-
     def __init__(self) -> None:
         super().__init__(
             TextColorFormat(TextColor.LIGHT_WHITE),

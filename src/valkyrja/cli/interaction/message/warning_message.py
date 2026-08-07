@@ -11,7 +11,5 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class WarningMessage(Message):
-    """A message that reports a warning."""
-
     def __init__(self, text: str) -> None:
         super().__init__(text=text, formatter=WarningFormatter())

@@ -16,8 +16,6 @@ from valkyrja.cli.interaction.output.output import Output
 
 
 class FileOutput(Output, FileOutputContract):
-    """An output that appends each message to a file."""
-
     def __init__(
         self,
         filepath: str,

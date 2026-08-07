@@ -15,8 +15,6 @@ from valkyrja.cli.interaction.option.contract.option_contract import OptionContr
 
 
 class Input(InputContract):
-    """What the user typed on the command line."""
-
     def __init__(
         self,
         caller: str = "valkyrja",
