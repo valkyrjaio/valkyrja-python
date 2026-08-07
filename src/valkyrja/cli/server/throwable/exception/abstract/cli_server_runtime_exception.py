@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
 
 
 class CliServerRuntimeException(ValkyrjaRuntimeException, CliServerThrowable):
-    """The base runtime exception of the Cli Server subcomponent."""
-
     _valkyrja_abstract = True
