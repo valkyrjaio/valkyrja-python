@@ -23,8 +23,6 @@ VALUE_JOINER = "; "
 
 
 class Value(ValueContract):
-    """One value of a header, which holds one component or several."""
-
     def __init__(self, *components: ComponentContract | str) -> None:
         self._components: list[ComponentContract] = self._to_components(components)
 

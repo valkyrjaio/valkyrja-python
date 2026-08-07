@@ -16,12 +16,6 @@ from valkyrja.http.message.header.contract.header_contract import HeaderContract
 
 
 class HeaderCollection(HeaderCollectionContract):
-    """The headers that a message carries, keyed by the name in lower case.
-
-    A header name is case insensitive, so the collection keys each one by its
-    normalized name. A caller reads `Content-Type` and `content-type` alike.
-    """
-
     def __init__(self, *headers: HeaderContract) -> None:
         self._headers: dict[str, HeaderContract] = {header.get_normalized_name(): header for header in headers}
 

@@ -10,8 +10,6 @@ from enum import Enum
 
 
 class StatusText(Enum):
-    """The text that goes with each status code."""
-
     CONTINUE = "Continue"
     SWITCHING_PROTOCOLS = "Switching Protocols"
     PROCESSING = "Processing"

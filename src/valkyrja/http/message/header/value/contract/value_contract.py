@@ -15,13 +15,6 @@ from valkyrja.http.message.header.value.component.contract.component_contract im
 
 
 class ValueContract(ABC):
-    """The contract for one value of a header.
-
-    PHP also implements `ArrayAccess`, `Countable`, `Iterator`, and
-    `JsonSerializable`. Python spells each of those with a dunder method, so a
-    concrete value defines `__getitem__`, `__len__`, and `__iter__` instead.
-    """
-
     @abstractmethod
     def __str__(self) -> str:
         """Get the value as a string."""

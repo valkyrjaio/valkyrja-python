@@ -18,8 +18,6 @@ COMPONENT_SEPARATOR = "="
 
 
 class Component(ComponentContract):
-    """One part of a header value, such as `charset=utf-8`."""
-
     def __init__(self, token: str, text: str = "") -> None:
         self._token = token
         self._text = text

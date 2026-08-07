@@ -15,8 +15,6 @@ from valkyrja.http.message.header.value.contract.cookie_contract import CookieCo
 
 
 class ResponseContract(MessageContract):
-    """The contract for the response that the application answers with."""
-
     @abstractmethod
     def get_status_code(self) -> StatusCode:
         """Get the status code of the response."""

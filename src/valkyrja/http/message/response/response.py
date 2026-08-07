@@ -24,8 +24,6 @@ from valkyrja.http.message.stream.contract.stream_contract import StreamContract
 
 
 class Response(Message, ResponseContract):
-    """The response that the application answers with."""
-
     def __init__(
         self,
         body: StreamContract | None = None,
@@ -80,8 +78,7 @@ class Response(Message, ResponseContract):
         for header in self._headers.get_all():
             if header.get_normalized_name() == HeaderName.SET_COOKIE.lower():
                 # RFC 7230 forbids joining a `Set-Cookie` field with a comma,
-                # because the `Expires` attribute of a cookie holds a comma. Each
-                # cookie therefore takes a line of its own.
+                # because the `Expires` attribute of a cookie holds one.
                 for value in header.get_values():
                     self._write(f"{header.get_name()}: {value}\n")
 

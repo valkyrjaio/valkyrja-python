@@ -10,13 +10,6 @@ from enum import Enum
 
 
 class Mode(Enum):
-    """The mode that a stream opens in.
-
-    PHP also carries a `ModeTranslation` enum for the `b` and `t` suffixes.
-    Python has no such suffix on a text stream, so this port carries the mode
-    alone.
-    """
-
     READ = "r"
     READ_WRITE = "r+"
     WRITE = "w"

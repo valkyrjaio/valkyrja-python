@@ -15,20 +15,12 @@ from valkyrja.http.message.stream.enum.standard_stream import StandardStream
 
 
 class ReadOnlyStringIO(io.StringIO):
-    """A stream in memory that reports itself read-only.
-
-    `Mode.READ` names a stream that a caller reads and never writes. A plain
-    `StringIO` reports itself writable whatever the mode says.
-    """
-
     def writable(self) -> bool:
         return False
 
 
 @final
 class StreamFactory:
-    """Opens the stream that a caller names."""
-
     @staticmethod
     def get_resource_stream(
         stream: StandardStream | str = StandardStream.MEMORY, mode: Mode = Mode.WRITE_READ
