@@ -19,7 +19,7 @@ from valkyrja.cli.middleware.handler.contract.input_received_handler_contract im
     InputReceivedHandlerContract,
 )
 
-SHORT_CIRCUIT_INPUT_MIDDLEWARE_ID = "Valkyrja.Tests.Middleware.ShortCircuitInput"
+SHORT_CIRCUIT_INPUT_MIDDLEWARE_ID = "tests.middleware.ShortCircuitInput"
 
 
 @final
