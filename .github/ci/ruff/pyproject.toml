@@ -4,7 +4,7 @@ version = "0.0.0"
 requires-python = ">=3.14"
 # `valkyrja-ci-ruff` supplies the copyright header text and the command that
 # writes it. Ruff reports a wrong header and corrects nothing.
-dependencies = ["ruff>=0.16.1,<0.17", "valkyrja-ci-ruff>=26.0.5,<27"]
+dependencies = ["ruff>=0.16.2,<0.17", "valkyrja-ci-ruff>=26.0.5,<27"]
 
 [tool.uv]
 # Environment-only project: install the tool, never build this directory.
