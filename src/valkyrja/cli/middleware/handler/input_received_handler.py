@@ -20,8 +20,6 @@ from valkyrja.cli.middleware.handler.contract.input_received_handler_contract im
 
 
 class InputReceivedHandler(Handler, InputReceivedHandlerContract):
-    """Runs each middleware for a received input."""
-
     @override
     def input_received(self, input_: InputContract) -> InputContract | OutputContract:
         next_middleware = self._next

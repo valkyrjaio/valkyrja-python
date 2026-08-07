@@ -12,4 +12,4 @@ from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_runtime_excep
 
 
 class CliRoutingNoHelpTextException(CliRoutingRuntimeException):
-    """The route carries no help text, and a caller asked for it."""
+    pass

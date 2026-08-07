@@ -14,8 +14,6 @@ from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 
 
 class RouteCollectionContract(ABC):
-    """The contract for the collection that holds each command."""
-
     @abstractmethod
     def get_data(self) -> CliRoutingData:
         """Get a data representation of the collection."""

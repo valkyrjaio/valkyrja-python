@@ -46,8 +46,6 @@ from valkyrja.container.manager.contract.container_contract import ContainerCont
 
 
 class Router(RouterContract):
-    """Matches a command to the input, then answers it."""
-
     def __init__(
         self,
         container: ContainerContract,

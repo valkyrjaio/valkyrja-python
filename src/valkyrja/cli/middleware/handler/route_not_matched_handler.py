@@ -20,8 +20,6 @@ from valkyrja.cli.middleware.handler.contract.route_not_matched_handler_contract
 
 
 class RouteNotMatchedHandler(Handler, RouteNotMatchedHandlerContract):
-    """Runs each middleware for a route that no command matched."""
-
     @override
     def route_not_matched(self, input_: InputContract, output: OutputContract) -> OutputContract:
         next_middleware = self._next

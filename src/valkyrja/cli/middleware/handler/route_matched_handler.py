@@ -23,8 +23,6 @@ if TYPE_CHECKING:
 
 
 class RouteMatchedHandler(Handler, RouteMatchedHandlerContract):
-    """Runs each middleware for a route that a command matched."""
-
     @override
     def route_matched(self, input_: InputContract, route: RouteContract) -> RouteContract | OutputContract:
         next_middleware = self._next

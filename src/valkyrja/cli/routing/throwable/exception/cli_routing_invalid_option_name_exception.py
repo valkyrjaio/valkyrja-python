@@ -12,4 +12,4 @@ from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_invalid_argum
 
 
 class CliRoutingInvalidOptionNameException(CliRoutingInvalidArgumentException):
-    """The route declares no option with that name."""
+    pass

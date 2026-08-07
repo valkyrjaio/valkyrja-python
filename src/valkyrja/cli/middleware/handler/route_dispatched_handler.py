@@ -23,8 +23,6 @@ if TYPE_CHECKING:
 
 
 class RouteDispatchedHandler(Handler, RouteDispatchedHandlerContract):
-    """Runs each middleware for a route that the application dispatched."""
-
     @override
     def route_dispatched(self, input_: InputContract, output: OutputContract, route: RouteContract) -> OutputContract:
         next_middleware = self._next

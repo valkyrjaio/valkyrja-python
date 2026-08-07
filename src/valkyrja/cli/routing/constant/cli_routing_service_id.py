@@ -11,8 +11,6 @@ from typing import Final, final
 
 @final
 class CliRoutingServiceId:
-    """The binding key for each service of the Cli Routing subcomponent."""
-
     ROUTER_CONTRACT: Final[str] = "valkyrja.cli.routing.dispatcher.RouterContract"
     ROUTE_COLLECTION_CONTRACT: Final[str] = "valkyrja.cli.routing.collection.RouteCollectionContract"
     ROUTE_CONTRACT: Final[str] = "valkyrja.cli.routing.data.RouteContract"

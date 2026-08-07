@@ -19,13 +19,6 @@ from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_route_name_exc
 
 
 class RouteCollection(RouteCollectionContract):
-    """Holds each command, keyed by the name of the command.
-
-    The collection stores a factory for each command, never the command itself.
-    `sindri` writes a factory into the generated cache, so the runtime map and
-    the cache hold the same shape.
-    """
-
     def __init__(self) -> None:
         self._routes: dict[str, RouteFactory] = {}
 

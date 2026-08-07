@@ -24,8 +24,6 @@ from valkyrja.type.data.cast import Cast
 
 
 class ArgumentParameter(Parameter, ArgumentParameterContract):
-    """One positional parameter that a command declares."""
-
     def __init__(
         self,
         name: str,

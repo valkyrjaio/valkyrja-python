@@ -13,13 +13,6 @@ from valkyrja.container.manager.contract.container_contract import ContainerCont
 
 
 class Handler(HandlerContract):
-    """Walks a chain of middleware, one item at a time.
-
-    The handler holds a binding key for each middleware, never a class. It
-    resolves a key through the container as the chain reaches that item, so a
-    middleware that the chain never reaches never loads.
-    """
-
     def __init__(self, container: ContainerContract, *middleware: str) -> None:
         self._container = container
         self._middleware: list[str] = list(middleware)

@@ -12,8 +12,6 @@ from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 
 
 class RouteCollectorContract(ABC):
-    """The contract for the collector that reads a command from a class."""
-
     @abstractmethod
     def get_routes(self, *classes: type) -> list[RouteContract]:
         """Get each command that the given classes declare."""

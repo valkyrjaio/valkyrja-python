@@ -27,14 +27,6 @@ from valkyrja.cli.routing.throwable.exception.cli_routing_no_help_text_exception
 
 
 class Route(RouteContract):
-    """One command that the application answers.
-
-    PHP checks that the help text is a callable array, so `sindri` can read it
-    from the source. Python has no such shape: a plain function reference is
-    what `sindri` reads through the abstract syntax tree, so this port carries
-    no equivalent check.
-    """
-
     def __init__(
         self,
         name: str,

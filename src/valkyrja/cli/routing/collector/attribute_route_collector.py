@@ -18,12 +18,6 @@ from valkyrja.cli.routing.data.route import Route
 
 
 class AttributeRouteCollector(RouteCollectorContract):
-    """Reads each command that a class marks with `@route`.
-
-    PHP reflects over the `#[Route]` attribute of each method. Python reads the
-    marker that the decorator attached, which `inspect.getmembers` finds.
-    """
-
     @override
     def get_routes(self, *classes: type) -> list[RouteContract]:
         routes: list[RouteContract] = []

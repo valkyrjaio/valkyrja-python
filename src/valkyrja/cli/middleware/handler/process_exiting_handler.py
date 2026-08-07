@@ -20,8 +20,6 @@ from valkyrja.cli.middleware.handler.contract.process_exiting_handler_contract i
 
 
 class ProcessExitingHandler(Handler, ProcessExitingHandlerContract):
-    """Runs each middleware as the process exits."""
-
     @override
     def process_exiting(self, input_: InputContract, output: OutputContract) -> None:
         next_middleware = self._next

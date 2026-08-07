@@ -22,8 +22,6 @@ from valkyrja.type.data.cast import Cast
 
 
 class OptionParameter(Parameter, OptionParameterContract):
-    """One named parameter that a command declares."""
-
     def __init__(
         self,
         name: str,

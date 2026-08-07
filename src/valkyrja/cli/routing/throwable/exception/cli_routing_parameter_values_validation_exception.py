@@ -12,4 +12,4 @@ from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_invalid_argum
 
 
 class CliRoutingParameterValuesValidationException(CliRoutingInvalidArgumentException):
-    """The values that a command received do not satisfy the parameter."""
+    pass
