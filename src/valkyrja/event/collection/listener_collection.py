@@ -18,13 +18,6 @@ from valkyrja.event.data.event_data import EventData, ListenerFactory
 
 @final
 class ListenerCollection(ListenerCollectionContract):
-    """Holds each listener, and holds the listeners of each event.
-
-    The collection stores a factory for each listener, never the listener
-    itself. `sindri` writes a factory into the generated cache, so the runtime
-    map and the cache hold the same shape.
-    """
-
     def __init__(self) -> None:
         self._events: dict[str, list[str]] = {}
         self._listeners: dict[str, ListenerFactory] = {}
