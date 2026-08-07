@@ -56,9 +56,7 @@ class QuestionWriter(WriterContract):
         allowed = question.get_answer().get_allowed_responses()
         allowed_text = "/".join(allowed)
 
-        return output.write_message(question.with_text(question.get_text())).write_message(
-            Message(f" [{allowed_text}] ", HighlightedTextFormatter())
-        )
+        return output.write_message(question).write_message(Message(f" [{allowed_text}] ", HighlightedTextFormatter()))
 
     def _write_answer_after_response(self, output: OutputContract, answer: AnswerContract) -> OutputContract:
         """Write the answer that the user gave."""
