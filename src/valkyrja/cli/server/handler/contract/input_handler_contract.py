@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.output.contract.output_contract import OutputContr
 
 
 class InputHandlerContract(ABC):
-    """The contract for the handler that answers one run of the program."""
-
     @abstractmethod
     def handle(self, input_: InputContract) -> OutputContract:
         """Answer the input, and catch any throwable that the command raises."""

@@ -12,12 +12,6 @@ from typing import final
 
 @final
 class Exiter:
-    """Ends the process with the code that a command gave.
-
-    A test freezes the exiter, because a test cannot end the process that runs
-    it. PHP holds the same seam for the same reason.
-    """
-
     _exit = True
 
     @staticmethod

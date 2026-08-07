@@ -19,8 +19,6 @@ from valkyrja.cli.middleware.handler.contract.input_received_handler_contract im
 
 
 class CheckForVersionOptionsMiddleware(InputReceivedMiddlewareContract):
-    """Sends the input to the version command when the user asks for version."""
-
     def __init__(self, command_name: str, option_name: str, option_short_name: str) -> None:
         self._command_name = command_name
         self._option_name = option_name

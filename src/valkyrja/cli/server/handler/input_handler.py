@@ -37,8 +37,6 @@ from valkyrja.container.manager.contract.container_contract import ContainerCont
 
 
 class InputHandler(InputHandlerContract):
-    """Answers one run of the program, from the input to the exit code."""
-
     def __init__(
         self,
         container: ContainerContract,

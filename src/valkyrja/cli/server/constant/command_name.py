@@ -11,8 +11,6 @@ from typing import Final, final
 
 @final
 class CommandName:
-    """The name of each command that the framework ships."""
-
     HELP: Final[str] = "help"
     LIST: Final[str] = "list"
     LIST_BASH: Final[str] = "list:bash"
