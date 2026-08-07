@@ -28,8 +28,6 @@ from valkyrja.http.message.uri.uri import Uri
 
 
 class RedirectResponse(Response, RedirectResponseContract):
-    """A response that sends the caller somewhere else."""
-
     def __init__(
         self,
         uri: UriContract | None = None,

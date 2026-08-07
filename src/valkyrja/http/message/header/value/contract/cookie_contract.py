@@ -14,8 +14,6 @@ from valkyrja.http.message.header.value.contract.value_contract import ValueCont
 
 
 class CookieContract(ValueContract):
-    """The contract for a cookie that a response sets."""
-
     @abstractmethod
     def delete(self) -> Self:
         """Get a copy of the cookie that tells the browser to drop it."""

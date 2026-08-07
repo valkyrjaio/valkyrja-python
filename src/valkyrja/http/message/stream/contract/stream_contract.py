@@ -14,8 +14,6 @@ SEEK_SET = 0
 
 
 class StreamContract(ABC):
-    """The contract for the body of a message."""
-
     @abstractmethod
     def __str__(self) -> str:
         """Get every byte of the stream as a string."""

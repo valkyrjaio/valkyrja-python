@@ -12,4 +12,4 @@ from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_arg
 
 
 class HttpUriInvalidPortException(HttpMessageInvalidArgumentException):
-    """A uri names a port that TCP and UDP do not allow."""
+    pass

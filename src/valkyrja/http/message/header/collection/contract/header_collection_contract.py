@@ -13,8 +13,6 @@ from valkyrja.http.message.header.contract.header_contract import HeaderContract
 
 
 class HeaderCollectionContract(ABC):
-    """The contract for the headers that a message carries."""
-
     @abstractmethod
     def has(self, name: str) -> bool:
         """Get whether the collection holds a header with a given name."""

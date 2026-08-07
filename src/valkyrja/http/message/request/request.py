@@ -24,8 +24,6 @@ from valkyrja.http.message.uri.uri import Uri
 
 
 class Request(Message, RequestContract):
-    """A request that the application answers."""
-
     def __init__(
         self,
         uri: UriContract | None = None,

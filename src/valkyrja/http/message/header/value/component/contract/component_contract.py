@@ -11,12 +11,6 @@ from typing import Self
 
 
 class ComponentContract(ABC):
-    """The contract for one part of a header value, such as `charset=utf-8`.
-
-    A component carries a token and a text. `charset=utf-8` holds `charset` as
-    the token and `utf-8` as the text.
-    """
-
     @abstractmethod
     def __str__(self) -> str:
         """Get the component as a string."""

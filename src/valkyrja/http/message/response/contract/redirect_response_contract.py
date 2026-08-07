@@ -10,4 +10,4 @@ from valkyrja.http.message.response.contract.response_contract import ResponseCo
 
 
 class RedirectResponseContract(ResponseContract):
-    """The contract for a response that sends the caller somewhere else."""
+    pass

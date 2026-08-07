@@ -10,8 +10,6 @@ from enum import Enum
 
 
 class SameSite(Enum):
-    """Says when a browser sends a cookie with a request from another site."""
-
     NONE = "none"
     LAX = "lax"
     STRICT = "strict"

@@ -10,8 +10,6 @@ from enum import Enum
 
 
 class ProtocolVersion(Enum):
-    """The version of HTTP that a message speaks."""
-
     V1 = "1.0"
     V1_1 = "1.1"
     V2 = "2"

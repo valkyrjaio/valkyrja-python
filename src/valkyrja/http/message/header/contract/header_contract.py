@@ -13,14 +13,6 @@ from valkyrja.http.message.header.value.contract.value_contract import ValueCont
 
 
 class HeaderContract(ABC):
-    """The contract for one header of a message.
-
-    PHP also implements `ArrayAccess`, `Countable`, `Iterator`, and
-    `JsonSerializable`. Python spells each of those with a dunder method, so a
-    concrete header defines `__getitem__`, `__len__`, and `__iter__` rather than
-    naming a contract for each one.
-    """
-
     @abstractmethod
     def __str__(self) -> str:
         """Get the header as one line, with the name in front of it."""

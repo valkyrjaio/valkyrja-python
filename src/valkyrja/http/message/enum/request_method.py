@@ -10,8 +10,6 @@ from enum import Enum
 
 
 class RequestMethod(Enum):
-    """The method that a request carries."""
-
     GET = "GET"
     HEAD = "HEAD"
     POST = "POST"

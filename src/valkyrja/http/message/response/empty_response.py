@@ -17,7 +17,5 @@ from valkyrja.http.message.stream.stream import Stream
 
 
 class EmptyResponse(Response, EmptyResponseContract):
-    """A response that carries no body."""
-
     def __init__(self, headers: HeaderCollectionContract | None = None) -> None:
         super().__init__(body=Stream(mode=Mode.READ), status_code=StatusCode.NO_CONTENT, headers=headers)

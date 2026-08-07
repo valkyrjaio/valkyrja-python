@@ -28,8 +28,6 @@ COOKIE_DATE_FORMAT = "%a, %d-%b-%Y %H:%M:%S GMT"
 
 
 class Cookie(Value, CookieContract):
-    """A cookie that a response sets."""
-
     def __init__(
         self,
         name: str,

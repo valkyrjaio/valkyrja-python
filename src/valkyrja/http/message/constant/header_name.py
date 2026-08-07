@@ -11,8 +11,6 @@ from typing import Final, final
 
 @final
 class HeaderName:
-    """The name of each header that the framework reads or writes."""
-
     ACCEPT: Final[str] = "Accept"
     ACCEPT_CHARSET: Final[str] = "Accept-Charset"
     ACCEPT_ENCODING: Final[str] = "Accept-Encoding"

@@ -12,4 +12,4 @@ from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_arg
 
 
 class HttpInvalidRedirectStatusCodeException(HttpMessageInvalidArgumentException):
-    """A redirect response carries a status code that is not a redirect."""
+    pass

@@ -16,8 +16,6 @@ from valkyrja.http.message.uri.factory.uri_factory import UriFactory
 
 
 class Uri(UriContract):
-    """The address that a request asks for."""
-
     def __init__(
         self,
         scheme: Scheme = Scheme.EMPTY,

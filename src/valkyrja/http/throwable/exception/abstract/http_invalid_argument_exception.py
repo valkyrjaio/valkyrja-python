@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class HttpInvalidArgumentException(ValkyrjaInvalidArgumentException, HttpThrowable):
-    """The base invalid argument exception of the Http component."""
-
     _valkyrja_abstract = True

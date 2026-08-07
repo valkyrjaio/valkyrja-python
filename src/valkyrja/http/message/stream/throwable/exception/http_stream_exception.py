@@ -12,4 +12,4 @@ from valkyrja.http.message.throwable.exception.abstract.http_message_runtime_exc
 
 
 class HttpStreamException(HttpMessageRuntimeException):
-    """The stream cannot do what a caller asked of it."""
+    pass

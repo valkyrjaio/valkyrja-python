@@ -10,4 +10,4 @@ from valkyrja.http.message.response.contract.response_contract import ResponseCo
 
 
 class JsonResponseContract(ResponseContract):
-    """The contract for a response that carries json."""
+    pass

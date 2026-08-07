@@ -11,8 +11,6 @@ from typing import Final, final
 
 @final
 class ContentTypeValue:
-    """The value that a `Content-Type` header carries."""
-
     TEXT_HTML: Final[str] = "text/html"
     TEXT_PLAIN: Final[str] = "text/plain"
     APPLICATION_JSON: Final[str] = "application/json"

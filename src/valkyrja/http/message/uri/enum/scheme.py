@@ -10,8 +10,6 @@ from enum import Enum
 
 
 class Scheme(Enum):
-    """The scheme that a uri carries."""
-
     EMPTY = ""
     HTTP = "http"
     HTTPS = "https"

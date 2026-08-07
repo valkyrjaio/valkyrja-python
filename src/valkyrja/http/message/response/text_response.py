@@ -20,8 +20,6 @@ from valkyrja.http.message.stream.stream import Stream
 
 
 class TextResponse(Response, TextResponseContract):
-    """A response that carries plain text."""
-
     def __init__(
         self,
         text: str = "",
