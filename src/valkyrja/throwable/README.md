@@ -117,8 +117,8 @@ the internals of the application. Set `display_errors` in development only.
 
 The component binds one service. `ThrowableServiceId` holds the key:
 
-| Key | Value | Binds |
-| --- | --- | --- |
+| Key                                   | Value                                                 | Binds                                           |
+| ------------------------------------- | ----------------------------------------------------- | ----------------------------------------------- |
 | `ThrowableServiceId.HANDLER_CONTRACT` | `valkyrja.throwable.handler.ThrowableHandlerContract` | the handler that catches an unhandled throwable |
 
 A binding key is a string constant, never a class object. A class object as a
