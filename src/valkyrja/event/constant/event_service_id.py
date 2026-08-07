@@ -14,11 +14,14 @@ class EventServiceId:
     """The binding key for each service of the Event component.
 
     A binding key is a string constant, never a class object. A class object as
-    a key forces the module of that class to load. TypeScript holds the same
-    keys, because both ports resolve a service by string.
+    a key forces the module of that class to load.
+
+    The key is the import path of the module, with the `Contract` segment
+    removed. A port never copies a key from another port, because each port has
+    its own directory layout.
     """
 
-    EVENT_DATA: Final[str] = "Valkyrja.Event.Data.EventData"
-    COLLECTION_CONTRACT: Final[str] = "Valkyrja.Event.Collection.ListenerCollectionContract"
-    COLLECTOR_CONTRACT: Final[str] = "Valkyrja.Event.Collector.ListenerCollectorContract"
-    DISPATCHER_CONTRACT: Final[str] = "Valkyrja.Event.Dispatcher.EventDispatcherContract"
+    EVENT_DATA: Final[str] = "valkyrja.event.data.EventData"
+    COLLECTION_CONTRACT: Final[str] = "valkyrja.event.collection.ListenerCollectionContract"
+    COLLECTOR_CONTRACT: Final[str] = "valkyrja.event.collector.ListenerCollectorContract"
+    DISPATCHER_CONTRACT: Final[str] = "valkyrja.event.dispatcher.EventDispatcherContract"

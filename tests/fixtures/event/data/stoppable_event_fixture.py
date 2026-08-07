@@ -10,7 +10,7 @@ from typing import final, override
 
 from valkyrja.event.contract.stoppable_event_contract import StoppableEventContract
 
-STOPPABLE_EVENT_ID = "Valkyrja.Tests.Fixtures.Event.StoppableEventFixture"
+STOPPABLE_EVENT_ID = "tests.fixtures.event.StoppableEventFixture"
 
 
 @final
