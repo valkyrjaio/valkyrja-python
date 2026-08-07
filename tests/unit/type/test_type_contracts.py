@@ -30,7 +30,7 @@ def test_the_type_contract_declares_an_abstract_method() -> None:
 def test_every_cast_type_names_a_type_by_string() -> None:
     for cast_type in CastType:
         assert isinstance(cast_type.value, str)
-        assert cast_type.value.startswith("Valkyrja.Type.")
+        assert cast_type.value.startswith("valkyrja.type.")
 
 
 def test_cast_type_holds_every_member_that_php_holds() -> None:
@@ -40,7 +40,7 @@ def test_cast_type_holds_every_member_that_php_holds() -> None:
 def test_a_cast_defaults_to_a_converting_single_value() -> None:
     cast = Cast(type=CastType.STRING.value)
 
-    assert cast.type == "Valkyrja.Type.String.StringT"
+    assert cast.type == "valkyrja.type.string.StringT"
     assert cast.convert
     assert not cast.is_array
 
@@ -48,7 +48,7 @@ def test_a_cast_defaults_to_a_converting_single_value() -> None:
 def test_from_cast_type_builds_a_cast() -> None:
     cast = Cast.from_cast_type(CastType.INT, convert=False, is_array=True)
 
-    assert cast.type == "Valkyrja.Type.Int.IntT"
+    assert cast.type == "valkyrja.type.int.IntT"
     assert not cast.convert
     assert cast.is_array
 
