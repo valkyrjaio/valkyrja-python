@@ -14,8 +14,6 @@ from valkyrja.cli.middleware.handler.contract.handler_contract import HandlerCon
 
 
 class RouteNotMatchedHandlerContract(HandlerContract):
-    """Runs each middleware for a route that the application did not match."""
-
     @abstractmethod
     def route_not_matched(self, input_: InputContract, output: OutputContract) -> OutputContract:
         """Run the chain, and get the output that the application writes."""

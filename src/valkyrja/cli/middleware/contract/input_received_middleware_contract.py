@@ -16,8 +16,6 @@ from valkyrja.cli.middleware.handler.contract.input_received_handler_contract im
 
 
 class InputReceivedMiddlewareContract(ABC):
-    """Runs after the application reads the input, and before it matches a route."""
-
     @abstractmethod
     def input_received(
         self, input_: InputContract, handler: InputReceivedHandlerContract

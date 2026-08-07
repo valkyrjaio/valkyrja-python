@@ -10,8 +10,6 @@ from enum import Enum, auto
 
 
 class OptionValueMode(Enum):
-    """Says whether the option takes no value, one value, or many."""
-
     NONE = auto()
     DEFAULT = auto()
     ARRAY = auto()

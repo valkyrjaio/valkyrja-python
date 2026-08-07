@@ -20,8 +20,6 @@ if TYPE_CHECKING:
 
 
 class RouteMatchedMiddlewareContract(ABC):
-    """Runs after the application matches a route, and before it dispatches the route."""
-
     @abstractmethod
     def route_matched(
         self, input_: InputContract, route: RouteContract, handler: RouteMatchedHandlerContract

@@ -15,6 +15,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
 
 
 class CliMiddlewareRuntimeException(ValkyrjaRuntimeException, CliMiddlewareThrowable):
-    """The base runtime exception of the Cli Middleware subcomponent."""
-
     _valkyrja_abstract = True
