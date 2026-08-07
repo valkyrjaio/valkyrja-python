@@ -18,10 +18,12 @@ from tests.fixtures.cli.interaction.recording_question_fixture import (
 )
 from valkyrja.cli.interaction.data.cli_interaction_config import CliInteractionConfig
 from valkyrja.cli.interaction.message.answer import Answer
+from valkyrja.cli.interaction.message.contract.answer_contract import AnswerContract
 from valkyrja.cli.interaction.message.contract.question_contract import QuestionContract
 from valkyrja.cli.interaction.message.message import Message
 from valkyrja.cli.interaction.message.progress import Progress
 from valkyrja.cli.interaction.message.question import Question
+from valkyrja.cli.interaction.output.contract.output_contract import OutputContract
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.interaction.output.output import Output
 from valkyrja.cli.interaction.throwable.exception.cli_interaction_expected_question_output_exception import (
@@ -265,6 +267,30 @@ def test_the_writer_asks_again_after_an_invalid_response() -> None:
     QuestionWriter().write(EmptyOutput(), question)
 
     assert question.reads == 2
+
+
+def test_the_writer_runs_the_callback_and_takes_the_output_it_gives() -> None:
+    marker = Message("done")
+    question = RecordingQuestionFixture("Continue?", Answer("yes", allowed_responses=["yes"]), ["yes"])
+    calls: list[AnswerContract] = []
+
+    def callback(output: OutputContract, answer: AnswerContract) -> OutputContract:
+        calls.append(answer)
+
+        return output.write_message(marker)
+
+    result = QuestionWriter().write(EmptyOutput(), question.with_callable(callback))
+
+    assert [answer.get_user_response() for answer in calls] == ["yes"]
+    assert marker in result.get_messages()
+
+
+def test_the_writer_writes_an_invalid_response_before_it_asks_again() -> None:
+    question = RecordingQuestionFixture("Continue?", Answer("yes", allowed_responses=["no"]), ["maybe", "no"])
+
+    result = QuestionWriter().write(EmptyOutput(), question)
+
+    assert any("maybe" in message.get_text() for message in result.get_messages())
 
 
 def test_an_output_gives_a_question_to_the_writer() -> None:
