@@ -12,13 +12,6 @@ from valkyrja.event.data.contract.listener_contract import ListenerContract
 
 
 class ListenerProviderContract(ABC):
-    """The contract for a provider that gives the listeners of a component.
-
-    Each method returns a plain list, and neither method holds a condition.
-    `sindri` reads both lists through the abstract syntax tree, and a condition
-    is what stops `sindri` from reading them.
-    """
-
     @abstractmethod
     def get_listener_classes(self) -> list[type]:
         """Get each class that declares a listener with a marker."""

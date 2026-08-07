@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class EventInvalidArgumentException(ValkyrjaInvalidArgumentException, EventThrowable):
-    """The base invalid argument exception of the Event component."""
-
     _valkyrja_abstract = True

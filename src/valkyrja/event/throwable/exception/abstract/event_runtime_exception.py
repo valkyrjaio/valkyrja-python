@@ -11,6 +11,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import Val
 
 
 class EventRuntimeException(ValkyrjaRuntimeException, EventThrowable):
-    """The base runtime exception of the Event component."""
-
     _valkyrja_abstract = True
