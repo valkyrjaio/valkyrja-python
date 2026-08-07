@@ -10,4 +10,4 @@ from valkyrja.http.message.param.contract.param_collection_contract import Param
 
 
 class QueryParamCollectionContract(ParamCollectionContract):
-    """The contract for the parameters that the query string carries."""
+    pass

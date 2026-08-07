@@ -14,4 +14,4 @@ from valkyrja.http.message.param.param_collection import ParamCollection
 
 @final
 class AttributeParamCollection(ParamCollection, AttributeParamCollectionContract):
-    """The parameters that attribute carries."""
+    pass
