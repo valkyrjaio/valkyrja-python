@@ -20,8 +20,6 @@ from valkyrja.cli.middleware.handler.contract.throwable_caught_handler_contract 
 
 
 class ThrowableCaughtHandler(Handler, ThrowableCaughtHandlerContract):
-    """Runs each middleware for a throwable that the application caught."""
-
     @override
     def throwable_caught(
         self, input_: InputContract, output: OutputContract, throwable: BaseException

@@ -12,4 +12,4 @@ from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_invalid_argum
 
 
 class CliRoutingInvalidRouteNameException(CliRoutingInvalidArgumentException):
-    """The collection holds no route with that name."""
+    pass

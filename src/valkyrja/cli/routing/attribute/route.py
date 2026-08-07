@@ -25,12 +25,6 @@ ROUTE_MARKER = "_valkyrja_cli_route"
 
 @dataclass(frozen=True)
 class RouteMarker:
-    """What `@route` records about one command.
-
-    PHP writes `#[Route(...)]` above the method. Python has no attribute, so the
-    decorator attaches this marker to the function instead.
-    """
-
     name: str
     description: str
     help_text: HelpText | None = None

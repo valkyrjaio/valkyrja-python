@@ -11,8 +11,6 @@ from typing import Final, final
 
 @final
 class OptionName:
-    """The long name of each option that every command accepts."""
-
     HELP: Final[str] = "help"
     VERSION: Final[str] = "version"
     QUIET: Final[str] = "quiet"
