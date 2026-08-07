@@ -119,9 +119,9 @@ The component binds one service. `ThrowableServiceId` holds the key:
 
 | Key | Value | Binds |
 | --- | --- | --- |
-| `ThrowableServiceId.HANDLER_CONTRACT` | `Valkyrja.Throwable.Handler.ThrowableHandlerContract` | the handler that catches an unhandled throwable |
+| `ThrowableServiceId.HANDLER_CONTRACT` | `valkyrja.throwable.handler.ThrowableHandlerContract` | the handler that catches an unhandled throwable |
 
 A binding key is a string constant, never a class object. A class object as a
 key forces the module of that class to load, and the container exists to defer
-that load. The TypeScript port holds the same key, because both ports resolve a
-service by string.
+that load. The key is the import path that Python has. A port never copies a key from
+another port.
