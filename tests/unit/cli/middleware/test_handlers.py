@@ -27,8 +27,8 @@ from valkyrja.cli.middleware.handler.route_not_matched_handler import RouteNotMa
 from valkyrja.cli.middleware.handler.throwable_caught_handler import ThrowableCaughtHandler
 from valkyrja.container.manager.container import Container
 
-FIRST = "Valkyrja.Tests.Middleware.First"
-SECOND = "Valkyrja.Tests.Middleware.Second"
+FIRST = "tests.middleware.First"
+SECOND = "tests.middleware.Second"
 
 
 @pytest.fixture(autouse=True)

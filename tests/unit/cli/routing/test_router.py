@@ -142,10 +142,10 @@ def test_dispatch_route_fills_an_option_by_name_and_by_short_name() -> None:
 
 
 def test_the_service_ids() -> None:
-    assert CliRoutingServiceId.ROUTE_CONTRACT == "Valkyrja.Cli.Routing.Data.RouteContract"
-    assert CliRoutingServiceId.ROUTER_CONTRACT == "Valkyrja.Cli.Routing.Dispatcher.RouterContract"
-    assert CliRoutingServiceId.ROUTE_COLLECTION_CONTRACT == "Valkyrja.Cli.Routing.Collection.RouteCollectionContract"
-    assert CliRoutingServiceId.CLI_ROUTING_DATA == "Valkyrja.Cli.Routing.Data.CliRoutingData"
+    assert CliRoutingServiceId.ROUTE_CONTRACT == "valkyrja.cli.routing.data.RouteContract"
+    assert CliRoutingServiceId.ROUTER_CONTRACT == "valkyrja.cli.routing.dispatcher.RouterContract"
+    assert CliRoutingServiceId.ROUTE_COLLECTION_CONTRACT == "valkyrja.cli.routing.collection.RouteCollectionContract"
+    assert CliRoutingServiceId.CLI_ROUTING_DATA == "valkyrja.cli.routing.data.CliRoutingData"
 
 
 def test_a_route_matched_middleware_can_answer_with_an_output() -> None:
