@@ -17,12 +17,6 @@ from valkyrja.container.throwable.exception.container_invalid_reference_exceptio
 
 
 class Container(ProvidersAware):
-    """The service container.
-
-    The container resolves an id in one order: a singleton, then a service, then
-    an alias, then the fallback.
-    """
-
     def __init__(self, data: ContainerData | None = None) -> None:
         super().__init__()
 
@@ -112,10 +106,8 @@ class Container(ProvidersAware):
 
         self._publish_unpublished_provided(id_)
 
-        # Warning: each step tests for `None`, never for a false value. PHP
-        # chains these with `??`, which tests for null alone. Python's `or`
-        # tests for a false value, so an empty service would fall through to
-        # the next step.
+        # Warning: each step tests for `None`, never for a false value. An empty
+        # service is a false value, so `or` would fall through to the next step.
         singleton = self._get_singleton_without_checks(id_)
 
         if singleton is not None:

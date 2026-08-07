@@ -14,12 +14,6 @@ from valkyrja.container.manager.contract.container_contract import ContainerCont
 
 
 class ChildContainer(Container):
-    """A container that reads a parent container through the contract.
-
-    The child holds its own singleton bindings and its own publishers. The child
-    reads the parent for anything that the child does not hold.
-    """
-
     def __init__(self, parent: ContainerContract, data: ContainerData) -> None:
         super().__init__()
 
@@ -45,14 +39,6 @@ class ChildContainer(Container):
 
     @override
     def _get_singleton_without_checks(self, id_: str) -> object | None:
-        """Get a singleton, in this order.
-
-        1. The instance that the child resolved already.
-        2. The instance that the parent resolved already, because a resolved
-           instance is safe to share.
-        3. A new instance from the binding of the child, which keeps the child
-           apart from the parent.
-        """
         if not super().is_singleton_instance(id_) and self._parent.is_singleton_instance(id_):
             return self._parent.get_singleton(id_)
 

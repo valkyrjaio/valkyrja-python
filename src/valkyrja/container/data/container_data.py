@@ -22,12 +22,6 @@ type ServiceFactory = Callable[[ContainerContract, dict[str, Any]], object]
 
 @dataclass(frozen=True)
 class ContainerData:
-    """A data representation of the state of a container.
-
-    `sindri` writes this same shape into the generated cache, so the container
-    loads a cache the way it loads its own state.
-    """
-
     aliases: dict[str, str] = field(default_factory=dict)
     callbacks: dict[str, PublishCallback] = field(default_factory=dict)
     services: dict[str, ServiceFactory] = field(default_factory=dict)

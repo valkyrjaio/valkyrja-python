@@ -10,8 +10,6 @@ from enum import Enum, auto
 
 
 class InvalidReferenceMode(Enum):
-    """What the container does when it has no service for an id."""
-
     NEW_INSTANCE_OR_THROW_EXCEPTION = auto()
     """Construct the service, or raise an exception when construction fails."""
 

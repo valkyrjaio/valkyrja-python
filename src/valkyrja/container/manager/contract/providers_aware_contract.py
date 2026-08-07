@@ -12,8 +12,6 @@ from valkyrja.container.provider.contract.service_provider_contract import Servi
 
 
 class ProvidersAwareContract(ABC):
-    """The contract for a container that registers and publishes a provider."""
-
     @abstractmethod
     def register(self, provider: ServiceProviderContract) -> None:
         """Register a provider, and keep each publisher that the provider gives."""

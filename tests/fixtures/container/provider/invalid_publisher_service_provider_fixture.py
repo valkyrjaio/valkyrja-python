@@ -17,12 +17,7 @@ INVALID_PROVIDED_ID = "tests.fixtures.container.provider.InvalidProvided"
 
 @final
 class InvalidPublisherServiceProviderFixture(ServiceProviderContract):
-    """A provider that gives a publisher the container cannot call.
-
-    The contract types each publisher as a callable, so the fixture casts. The
-    cast reaches the guard in `ProvidersAware.register`, which a caller that
-    ignores the types can still reach at run time.
-    """
+    """A provider that gives a publisher the container cannot call."""
 
     @override
     def publishers(self) -> dict[str, PublishCallback]:

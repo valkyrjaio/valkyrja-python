@@ -17,17 +17,9 @@ from valkyrja.container.throwable.exception.container_invalid_publish_callback_e
 )
 
 
-# The base is `ContainerContract`, which already extends `ProvidersAwareContract`.
-# Java names both, because Java linearizes no interface. Python does linearize,
-# and naming both raises `TypeError: Cannot create a consistent method resolution
-# order`, because `ContainerContract` already orders one before the other.
+# `ContainerContract` extends `ProvidersAwareContract` already. Naming both, as
+# Java does, raises a method resolution order error.
 class ProvidersAware(ContainerContract, ABC):
-    """Holds the publisher that each provider gives, and publishes it once.
-
-    PHP mixes this behavior in with a trait. Python has no trait, so the
-    behavior is a base class that `Container` extends, the same as Java.
-    """
-
     def __init__(self) -> None:
         self._callbacks: dict[str, PublishCallback] = {}
         self._published: dict[str, bool] = {}
