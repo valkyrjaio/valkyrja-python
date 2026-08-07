@@ -155,7 +155,7 @@ def test_the_exiter_ends_the_process_when_it_is_not_frozen() -> None:
 
 
 def test_the_service_ids() -> None:
-    assert CliServerServiceId.INPUT_HANDLER_CONTRACT == "Valkyrja.Cli.Server.Handler.InputHandlerContract"
+    assert CliServerServiceId.INPUT_HANDLER_CONTRACT == "valkyrja.cli.server.handler.InputHandlerContract"
 
 
 def test_an_input_received_middleware_can_answer_before_the_router() -> None:

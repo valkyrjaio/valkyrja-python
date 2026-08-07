@@ -17,4 +17,4 @@ class CliServerServiceId:
     owns those services. A second copy of a key here would drift from the first.
     """
 
-    INPUT_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Server.Handler.InputHandlerContract"
+    INPUT_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.server.handler.InputHandlerContract"
