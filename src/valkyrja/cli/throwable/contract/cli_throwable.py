@@ -12,6 +12,4 @@ from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 
 class CliThrowable(ValkyrjaThrowable, ABC):
-    """The contract that every throwable the Cli component raises implements."""
-
     _valkyrja_abstract = True

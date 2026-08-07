@@ -10,8 +10,6 @@ from enum import Enum, auto
 
 
 class OptionType(Enum):
-    """The form that an option takes on the command line."""
-
     SHORT = auto()
     """One dash and one letter, such as `-h`."""
 

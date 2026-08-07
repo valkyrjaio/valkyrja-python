@@ -11,8 +11,6 @@ from typing import Self
 
 
 class FormatContract(ABC):
-    """The contract for one ANSI format, which has a code to set and a code to unset."""
-
     @abstractmethod
     def get_set_code(self) -> str:
         """Get the code that starts the format."""

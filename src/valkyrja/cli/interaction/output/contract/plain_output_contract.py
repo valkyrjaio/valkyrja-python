@@ -10,4 +10,4 @@ from valkyrja.cli.interaction.output.contract.output_contract import OutputContr
 
 
 class PlainOutputContract(OutputContract):
-    """The contract for an output that writes no ANSI format."""
+    pass

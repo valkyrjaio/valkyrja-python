@@ -11,8 +11,6 @@ from typing import Self
 
 
 class ArgumentContract(ABC):
-    """The contract for one positional argument of a command."""
-
     @abstractmethod
     def get_value(self) -> str:
         """Get the value of the argument."""

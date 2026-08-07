@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.enum.option_type import OptionType
 
 
 class OptionContract(ABC):
-    """The contract for one named option of a command, such as `--help`."""
-
     @abstractmethod
     def get_name(self) -> str:
         """Get the name of the option, without the dashes."""
