@@ -13,8 +13,6 @@ from valkyrja.cli.interaction.format.contract.format_contract import FormatContr
 
 
 class Format(FormatContract):
-    """One ANSI format, with a code that starts it and a code that ends it."""
-
     def __init__(self, set_code: str, unset_code: str) -> None:
         self._set_code = set_code
         self._unset_code = unset_code

@@ -18,8 +18,6 @@ from valkyrja.cli.interaction.writer.question_writer import QuestionWriter
 
 
 class Output(OutputContract):
-    """The output that a command writes to."""
-
     def __init__(
         self,
         is_interactive: bool = True,
@@ -77,9 +75,8 @@ class Output(OutputContract):
     @override
     def write_messages(self) -> Self:
         new = self._copy()
-        # Read the list first, then empty it. A writer can call `write_messages`
-        # again inside the loop, and an emptied list stops the same message from
-        # being written twice.
+        # Empty the list before the loop. A writer can call `write_messages` again,
+        # and an emptied list stops one message from being written twice.
         unwritten = new._unwritten_messages
         new._unwritten_messages = []
 

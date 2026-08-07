@@ -23,8 +23,6 @@ DEFAULT_ANSWER_TEXT = "You answered: `%s`"
 
 
 class Answer(Message, AnswerContract):
-    """The answer that a user gives to a question."""
-
     def __init__(
         self,
         default_response: str,

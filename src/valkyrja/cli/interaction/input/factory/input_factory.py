@@ -24,8 +24,6 @@ STANDARD_INPUT = "-"
 
 @final
 class InputFactory:
-    """Builds an input from what the user typed."""
-
     @staticmethod
     def from_globals(args: list[str], application_name: str, command_name: str) -> InputContract:
         """Build an input from the arguments of the command line."""
@@ -44,9 +42,8 @@ class InputFactory:
             if key == 0:
                 application_name = arg
             elif not end_of_options and arg == END_OF_OPTIONS:
-                # The marker itself is consumed. Every item after it is an
-                # operand, however many dashes it starts with, so a second `--`
-                # is an ordinary operand.
+                # Every item after the marker is an operand, however many dashes
+                # it starts with, so a second `--` is an ordinary operand.
                 end_of_options = True
             elif not end_of_options and arg != STANDARD_INPUT and arg.startswith("-"):
                 options = [*options, *OptionFactory.from_arg(arg)]

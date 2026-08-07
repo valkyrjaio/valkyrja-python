@@ -11,7 +11,5 @@ from valkyrja.cli.interaction.format.format import Format
 
 
 class StyleFormat(Format):
-    """The format that sets the style of the text."""
-
     def __init__(self, value: Style) -> None:
         super().__init__(str(value.value), str(value.get_default()))

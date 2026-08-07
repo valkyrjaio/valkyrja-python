@@ -12,4 +12,4 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_runti
 
 
 class CliInteractionNoValidationCallableException(CliInteractionRuntimeException):
-    """An answer has no validator, and a caller asked for one."""
+    pass

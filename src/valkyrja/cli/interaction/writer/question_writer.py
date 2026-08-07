@@ -22,8 +22,6 @@ from valkyrja.cli.interaction.writer.contract.writer_contract import WriterContr
 
 
 class QuestionWriter(WriterContract):
-    """Writes a question, reads the answer, and writes the answer back."""
-
     @override
     def should_write_message(self, message: MessageContract) -> bool:
         return isinstance(message, QuestionContract)
