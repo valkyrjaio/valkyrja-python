@@ -8,12 +8,12 @@
 
 """Tests for ThrowableServiceId.
 
-Each key is part of the public API, so each test pins the whole string. The
-TypeScript port holds the same keys.
+Each key is part of the public API, so each test pins the whole string. The key
+is the import path that Python has, never the path of another port.
 """
 
 from valkyrja.throwable.constant.throwable_service_id import ThrowableServiceId
 
 
 def test_handler_contract() -> None:
-    assert ThrowableServiceId.HANDLER_CONTRACT == "Valkyrja.Throwable.Handler.ThrowableHandlerContract"
+    assert ThrowableServiceId.HANDLER_CONTRACT == "valkyrja.throwable.handler.ThrowableHandlerContract"
