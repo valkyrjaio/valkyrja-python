@@ -42,9 +42,14 @@ class QuestionWriter(WriterContract):
             answer = question.ask()
 
             if not answer.is_valid_response():
-                return self._ask_question(output, question.with_answer(answer))
+                # The invalid response is written for posterity, then the question is asked again.
+                output = self._write_answer_after_response(output, answer)
 
-        return self._write_answer_after_response(output, answer)
+                return self._ask_question(output, question)
+
+        output = self._write_answer_after_response(output, answer)
+
+        return question.get_callable()(output, answer)
 
     def _write_question(self, output: OutputContract, question: QuestionContract) -> OutputContract:
         """Write the text of the question, with the allowed responses after it."""
