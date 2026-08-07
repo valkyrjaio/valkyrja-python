@@ -62,10 +62,10 @@ resolves an id to a class can override `_get_fallback`.
 
 ## The Containers
 
-| Class                  | Reads the parent through | Use                                      |
-| ---------------------- | ------------------------ | ---------------------------------------- |
-| `Container`            | —                        | the container of the application         |
-| `ChildContainer`       | `ContainerContract`      | any parent, at the cost of a method call |
+| Class                  | Reads the parent through | Use                                          |
+| ---------------------- | ------------------------ | -------------------------------------------- |
+| `Container`            | —                        | the container of the application             |
+| `ChildContainer`       | `ContainerContract`      | any parent, at the cost of a method call     |
 | `NativeChildContainer` | the state of the parent  | a `Container` parent, at one dictionary read |
 
 `ChildContainer` holds its own singleton bindings, so a service that the child
