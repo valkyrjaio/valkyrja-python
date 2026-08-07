@@ -19,8 +19,6 @@ from valkyrja.cli.middleware.handler.contract.throwable_caught_handler_contract 
 
 
 class OutputThrowableCaughtMiddleware(ThrowableCaughtMiddlewareContract):
-    """Writes the output that reports a throwable, then stops the chain."""
-
     @override
     def throwable_caught(
         self,

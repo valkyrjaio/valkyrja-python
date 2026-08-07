@@ -22,8 +22,6 @@ from valkyrja.cli.middleware.handler.contract.input_received_handler_contract im
 
 
 class CheckGlobalInteractionOptionsMiddleware(InputReceivedMiddlewareContract):
-    """Reads the options that change how the output talks to the user."""
-
     def __init__(
         self,
         config: CliInteractionConfigContract,
