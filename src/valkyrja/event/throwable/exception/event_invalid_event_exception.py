@@ -12,14 +12,6 @@ from valkyrja.event.throwable.exception.abstract.event_invalid_argument_exceptio
 
 
 class EventInvalidEventException(EventInvalidArgumentException):
-    """The container resolves a binding key to a thing that is not an event.
-
-    PHP and Java do not raise this. Each of them builds the event from the class
-    of the event, so the built value is an event by construction. Python builds
-    the event through the container, and the container resolves a binding key to
-    any value. Go raises the same exception for the same reason.
-    """
-
     def __init__(self, id_: str) -> None:
         super().__init__(f"Service with `{id_}` is not an event")
 

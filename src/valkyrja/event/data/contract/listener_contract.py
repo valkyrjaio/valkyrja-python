@@ -17,8 +17,6 @@ type ListenerHandler = Callable[[ContainerContract, dict[str, Any]], Any]
 
 
 class ListenerContract(ABC):
-    """The contract for a listener, which binds an event id to a handler."""
-
     @abstractmethod
     def get_event_id(self) -> str:
         """Get the id of the event that the listener waits for."""

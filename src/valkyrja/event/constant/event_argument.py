@@ -11,6 +11,4 @@ from typing import Final, final
 
 @final
 class EventArgument:
-    """The key that the dispatcher files an event under, in the arguments of a handler."""
-
     EVENT: Final[str] = "event"

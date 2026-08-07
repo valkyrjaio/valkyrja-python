@@ -14,12 +14,6 @@ from valkyrja.event.data.event_data import EventData
 
 
 class ListenerCollectionContract(ABC):
-    """The contract for the collection that holds each listener.
-
-    PHP extends the PSR-14 `ListenerProviderInterface`. Python has no PSR, so
-    this contract declares `get_listeners_for_event` itself.
-    """
-
     @abstractmethod
     def get_data(self) -> EventData:
         """Get a data representation of the collection."""

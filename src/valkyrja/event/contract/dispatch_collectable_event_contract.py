@@ -13,8 +13,6 @@ from valkyrja.event.contract.event_contract import EventContract
 
 
 class DispatchCollectableEventContract(EventContract):
-    """The contract for an event that keeps what each listener returns."""
-
     @abstractmethod
     def add_dispatch(self, dispatch: Any) -> None:
         """Add the result of one listener to the event."""
