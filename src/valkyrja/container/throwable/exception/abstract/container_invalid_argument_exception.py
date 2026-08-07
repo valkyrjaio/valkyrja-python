@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class ContainerInvalidArgumentException(ValkyrjaInvalidArgumentException, ContainerThrowable):
-    """The base invalid argument exception of the Container component."""
-
     _valkyrja_abstract = True

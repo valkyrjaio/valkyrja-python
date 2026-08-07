@@ -12,7 +12,5 @@ from valkyrja.container.throwable.exception.abstract.container_invalid_argument_
 
 
 class ContainerInvalidReferenceException(ContainerInvalidArgumentException):
-    """The container has no service for a given id."""
-
     def __init__(self, id_: str) -> None:
         super().__init__(f"Service with `{id_}` not found")

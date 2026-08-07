@@ -12,4 +12,4 @@ from valkyrja.container.throwable.exception.abstract.container_runtime_exception
 
 
 class ContainerInvalidPublishCallbackException(ContainerRuntimeException):
-    """A service provider gives a publisher that the container cannot call."""
+    pass

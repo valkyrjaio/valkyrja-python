@@ -12,8 +12,6 @@ from valkyrja.container.data.container_data import PublishCallback
 
 
 class ServiceProviderContract(ABC):
-    """The contract for a provider that publishes a service to the container."""
-
     @abstractmethod
     def publishers(self) -> dict[str, PublishCallback]:
         """Get the publisher for each service that this provider gives.
