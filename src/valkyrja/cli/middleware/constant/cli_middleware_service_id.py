@@ -14,13 +14,16 @@ class CliMiddlewareServiceId:
     """The binding key for each service of the Cli Middleware subcomponent.
 
     A binding key is a string constant, never a class object. A class object as
-    a key forces the module of that class to load. TypeScript holds the same
-    keys, because both ports resolve a service by string.
+    a key forces the module of that class to load.
+
+    The key is the import path of the module, with the `Contract` segment
+    removed. A port never copies a key from another port, because each port has
+    its own directory layout.
     """
 
-    INPUT_RECEIVED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.InputReceivedHandlerContract"
-    ROUTE_MATCHED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.RouteMatchedHandlerContract"
-    ROUTE_NOT_MATCHED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.RouteNotMatchedHandlerContract"
-    ROUTE_DISPATCHED_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.RouteDispatchedHandlerContract"
-    THROWABLE_CAUGHT_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.ThrowableCaughtHandlerContract"
-    PROCESS_EXITING_HANDLER_CONTRACT: Final[str] = "Valkyrja.Cli.Middleware.Handler.ProcessExitingHandlerContract"
+    INPUT_RECEIVED_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.InputReceivedHandlerContract"
+    ROUTE_MATCHED_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.RouteMatchedHandlerContract"
+    ROUTE_NOT_MATCHED_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.RouteNotMatchedHandlerContract"
+    ROUTE_DISPATCHED_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.RouteDispatchedHandlerContract"
+    THROWABLE_CAUGHT_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.ThrowableCaughtHandlerContract"
+    PROCESS_EXITING_HANDLER_CONTRACT: Final[str] = "valkyrja.cli.middleware.handler.ProcessExitingHandlerContract"

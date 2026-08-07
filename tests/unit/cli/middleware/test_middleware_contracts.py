@@ -101,27 +101,27 @@ def test_every_handler_declares_add() -> None:
     [
         (
             CliMiddlewareServiceId.INPUT_RECEIVED_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.InputReceivedHandlerContract",
+            "valkyrja.cli.middleware.handler.InputReceivedHandlerContract",
         ),
         (
             CliMiddlewareServiceId.ROUTE_MATCHED_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.RouteMatchedHandlerContract",
+            "valkyrja.cli.middleware.handler.RouteMatchedHandlerContract",
         ),
         (
             CliMiddlewareServiceId.ROUTE_NOT_MATCHED_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.RouteNotMatchedHandlerContract",
+            "valkyrja.cli.middleware.handler.RouteNotMatchedHandlerContract",
         ),
         (
             CliMiddlewareServiceId.ROUTE_DISPATCHED_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.RouteDispatchedHandlerContract",
+            "valkyrja.cli.middleware.handler.RouteDispatchedHandlerContract",
         ),
         (
             CliMiddlewareServiceId.THROWABLE_CAUGHT_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.ThrowableCaughtHandlerContract",
+            "valkyrja.cli.middleware.handler.ThrowableCaughtHandlerContract",
         ),
         (
             CliMiddlewareServiceId.PROCESS_EXITING_HANDLER_CONTRACT,
-            "Valkyrja.Cli.Middleware.Handler.ProcessExitingHandlerContract",
+            "valkyrja.cli.middleware.handler.ProcessExitingHandlerContract",
         ),
     ],
 )
