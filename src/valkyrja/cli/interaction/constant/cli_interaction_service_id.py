@@ -14,11 +14,14 @@ class CliInteractionServiceId:
     """The binding key for each service of the Cli Interaction subcomponent.
 
     A binding key is a string constant, never a class object. A class object as
-    a key forces the module of that class to load. TypeScript holds the same
-    keys, because both ports resolve a service by string.
+    a key forces the module of that class to load.
+
+    The key is the import path of the module, with the `Contract` segment
+    removed. A port never copies a key from another port, because each port has
+    its own directory layout.
     """
 
-    INPUT_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Input.InputContract"
-    OUTPUT_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Output.OutputContract"
-    OUTPUT_FACTORY_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Output.Factory.OutputFactoryContract"
-    CONFIG_CONTRACT: Final[str] = "Valkyrja.Cli.Interaction.Data.CliInteractionConfigContract"
+    INPUT_CONTRACT: Final[str] = "valkyrja.cli.interaction.input.InputContract"
+    OUTPUT_CONTRACT: Final[str] = "valkyrja.cli.interaction.output.OutputContract"
+    OUTPUT_FACTORY_CONTRACT: Final[str] = "valkyrja.cli.interaction.output.factory.OutputFactoryContract"
+    CONFIG_CONTRACT: Final[str] = "valkyrja.cli.interaction.data.CliInteractionConfigContract"
