@@ -20,7 +20,7 @@ from valkyrja.cli.middleware.handler.contract.route_matched_handler_contract imp
 )
 from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 
-SHORT_CIRCUIT_MIDDLEWARE_ID = "Valkyrja.Tests.Middleware.ShortCircuit"
+SHORT_CIRCUIT_MIDDLEWARE_ID = "tests.middleware.ShortCircuit"
 
 
 @final

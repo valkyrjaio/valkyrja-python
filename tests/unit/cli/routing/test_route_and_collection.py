@@ -115,15 +115,15 @@ def test_each_middleware_family_appends_and_never_dedupes(family: str) -> None:
 
     assert get() == []
 
-    scheduled = with_("Valkyrja.Tests.Middleware.RouteMatched")
+    scheduled = with_("tests.middleware.RouteMatched")
 
-    assert getattr(scheduled, f"get_{family}_middleware")() == ["Valkyrja.Tests.Middleware.RouteMatched"]
+    assert getattr(scheduled, f"get_{family}_middleware")() == ["tests.middleware.RouteMatched"]
 
-    twice = getattr(scheduled, f"with_added_{family}_middleware")("Valkyrja.Tests.Middleware.RouteMatched")
+    twice = getattr(scheduled, f"with_added_{family}_middleware")("tests.middleware.RouteMatched")
 
     assert getattr(twice, f"get_{family}_middleware")() == [
-        "Valkyrja.Tests.Middleware.RouteMatched",
-        "Valkyrja.Tests.Middleware.RouteMatched",
+        "tests.middleware.RouteMatched",
+        "tests.middleware.RouteMatched",
     ]
     assert get() == []
 
