@@ -16,8 +16,6 @@ from valkyrja.cli.middleware.handler.contract.throwable_caught_handler_contract 
 
 
 class ThrowableCaughtMiddlewareContract(ABC):
-    """Runs after the application catches a throwable during the dispatch."""
-
     @abstractmethod
     def throwable_caught(
         self,

@@ -13,6 +13,4 @@ from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception i
 
 
 class CliRoutingInvalidArgumentException(ValkyrjaInvalidArgumentException, CliRoutingThrowable):
-    """The base invalid argument exception of the Cli Routing subcomponent."""
-
     _valkyrja_abstract = True

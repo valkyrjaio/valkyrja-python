@@ -10,7 +10,5 @@ from enum import Enum, auto
 
 
 class ArgumentValueMode(Enum):
-    """Says whether the argument takes one value or many."""
-
     DEFAULT = auto()
     ARRAY = auto()

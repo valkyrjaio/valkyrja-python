@@ -16,8 +16,6 @@ from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
 
 
 class OptionParameterContract(ParameterContract):
-    """The contract for a named parameter that a command declares."""
-
     @abstractmethod
     def get_short_names(self) -> list[str]:
         """Get each short name of the option, such as `h` for `-h`."""

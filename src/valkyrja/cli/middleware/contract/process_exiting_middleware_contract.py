@@ -16,8 +16,6 @@ from valkyrja.cli.middleware.handler.contract.process_exiting_handler_contract i
 
 
 class ProcessExitingMiddlewareContract(ABC):
-    """Runs as the process exits, after the application writes the output."""
-
     @abstractmethod
     def process_exiting(
         self, input_: InputContract, output: OutputContract, handler: ProcessExitingHandlerContract

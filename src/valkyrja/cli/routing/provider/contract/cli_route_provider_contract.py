@@ -12,13 +12,6 @@ from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 
 
 class CliRouteProviderContract(ABC):
-    """The contract for a provider that gives the commands of a component.
-
-    Each method returns a plain list, and neither method holds a condition.
-    `sindri` reads both lists through the abstract syntax tree, and a condition
-    is what stops `sindri` from reading them.
-    """
-
     @abstractmethod
     def get_controller_classes(self) -> list[type]:
         """Get each class that declares a command with a marker."""

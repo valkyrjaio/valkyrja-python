@@ -10,7 +10,5 @@ from enum import Enum, auto
 
 
 class ArgumentMode(Enum):
-    """Says whether a command needs the argument."""
-
     REQUIRED = auto()
     OPTIONAL = auto()

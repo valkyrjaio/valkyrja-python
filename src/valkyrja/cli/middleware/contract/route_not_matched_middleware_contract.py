@@ -16,8 +16,6 @@ from valkyrja.cli.middleware.handler.contract.route_not_matched_handler_contract
 
 
 class RouteNotMatchedMiddlewareContract(ABC):
-    """Runs after the application matches no route."""
-
     @abstractmethod
     def route_not_matched(
         self, input_: InputContract, output: OutputContract, handler: RouteNotMatchedHandlerContract

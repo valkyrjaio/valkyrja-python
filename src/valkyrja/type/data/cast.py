@@ -13,8 +13,6 @@ from valkyrja.type.enum.cast_type import CastType
 
 @dataclass(frozen=True)
 class Cast:
-    """Says what type a value becomes, and how the framework converts it."""
-
     type: str
     convert: bool = True
     is_array: bool = False

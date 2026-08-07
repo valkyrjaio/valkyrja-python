@@ -14,8 +14,6 @@ from valkyrja.cli.middleware.handler.contract.handler_contract import HandlerCon
 
 
 class ProcessExitingHandlerContract(HandlerContract):
-    """Runs each middleware as the process exits."""
-
     @abstractmethod
     def process_exiting(self, input_: InputContract, output: OutputContract) -> None:
         """Run the chain."""

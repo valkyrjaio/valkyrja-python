@@ -16,8 +16,6 @@ from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
 
 
 class ArgumentParameterContract(ParameterContract):
-    """The contract for a positional parameter that a command declares."""
-
     @abstractmethod
     def get_mode(self) -> ArgumentMode:
         """Get whether the command needs the argument."""

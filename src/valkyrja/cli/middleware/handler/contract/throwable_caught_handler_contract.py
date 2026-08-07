@@ -14,8 +14,6 @@ from valkyrja.cli.middleware.handler.contract.handler_contract import HandlerCon
 
 
 class ThrowableCaughtHandlerContract(HandlerContract):
-    """Runs each middleware for a throwable that the application caught."""
-
     @abstractmethod
     def throwable_caught(
         self, input_: InputContract, output: OutputContract, throwable: BaseException

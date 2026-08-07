@@ -10,7 +10,5 @@ from enum import Enum, auto
 
 
 class OptionMode(Enum):
-    """Says whether a command needs the option."""
-
     REQUIRED = auto()
     OPTIONAL = auto()

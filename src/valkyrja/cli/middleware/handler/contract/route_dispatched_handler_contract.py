@@ -18,8 +18,6 @@ if TYPE_CHECKING:
 
 
 class RouteDispatchedHandlerContract(HandlerContract):
-    """Runs each middleware for a route that the application dispatched."""
-
     @abstractmethod
     def route_dispatched(self, input_: InputContract, output: OutputContract, route: RouteContract) -> OutputContract:
         """Run the chain, and get the output that the application writes."""

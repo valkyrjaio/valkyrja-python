@@ -13,8 +13,6 @@ from valkyrja.type.data.cast import Cast
 
 
 class ParameterContract(ABC):
-    """The base contract for one parameter that a command declares."""
-
     @abstractmethod
     def get_name(self) -> str:
         """Get the name of the parameter."""
