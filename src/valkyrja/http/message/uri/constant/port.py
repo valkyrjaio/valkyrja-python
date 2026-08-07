@@ -17,8 +17,6 @@ MAX_PORT: Final[int] = 65535
 
 @final
 class Port:
-    """The port that each scheme uses when a uri names none."""
-
     HTTP: Final[int] = 80
     HTTPS: Final[int] = 443
 

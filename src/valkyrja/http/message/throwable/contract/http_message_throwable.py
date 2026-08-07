@@ -12,6 +12,4 @@ from valkyrja.http.throwable.contract.http_throwable import HttpThrowable
 
 
 class HttpMessageThrowable(HttpThrowable, ABC):
-    """The contract that every throwable the Http Message subcomponent raises implements."""
-
     _valkyrja_abstract = True

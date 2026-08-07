@@ -20,8 +20,6 @@ if TYPE_CHECKING:
 
 @final
 class UriFactory:
-    """Builds the parts of a uri, and the whole string."""
-
     @staticmethod
     def validate_port(port: int) -> None:
         """Report a port that TCP and UDP do not allow."""

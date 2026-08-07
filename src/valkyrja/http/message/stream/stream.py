@@ -18,13 +18,6 @@ from valkyrja.http.message.stream.throwable.exception.http_stream_exception impo
 
 
 class Stream(StreamContract):
-    """The body of a message, over a text stream.
-
-    PHP opens a `php://` wrapper by path. Python holds each standard stream as
-    an object on `sys`, and it holds a stream in memory as a `StringIO`, so the
-    factory answers with the object rather than a path.
-    """
-
     def __init__(
         self,
         stream: StandardStream | str = StandardStream.MEMORY,

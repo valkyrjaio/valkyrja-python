@@ -15,8 +15,6 @@ from valkyrja.http.message.uri.contract.uri_contract import UriContract
 
 
 class RequestContract(MessageContract):
-    """The contract for a request that the application answers."""
-
     @abstractmethod
     def get_request_target(self) -> str:
         """Get the target of the request, as the request line writes it."""

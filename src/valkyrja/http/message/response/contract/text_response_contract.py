@@ -10,4 +10,4 @@ from valkyrja.http.message.response.contract.response_contract import ResponseCo
 
 
 class TextResponseContract(ResponseContract):
-    """The contract for a response that carries plain text."""
+    pass

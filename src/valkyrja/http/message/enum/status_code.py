@@ -12,8 +12,6 @@ from valkyrja.http.message.enum.status_text import StatusText
 
 
 class StatusCode(IntEnum):
-    """The status code that a response carries."""
-
     CONTINUE = 100
     SWITCHING_PROTOCOLS = 101
     PROCESSING = 102

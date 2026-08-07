@@ -21,8 +21,6 @@ VALUES_SEPARATOR = ", "
 
 
 class Header(HeaderContract):
-    """One header of a message."""
-
     def __init__(self, name: str, *values: ValueContract | str) -> None:
         self._name = name
         self._normalized_name = name.lower()

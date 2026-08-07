@@ -17,8 +17,6 @@ from valkyrja.http.message.stream.contract.stream_contract import StreamContract
 
 
 class MessageContract(ABC):
-    """The contract that a request and a response share."""
-
     @abstractmethod
     def get_protocol_version(self) -> ProtocolVersion:
         """Get the version of HTTP that the message speaks."""

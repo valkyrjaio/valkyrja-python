@@ -10,4 +10,4 @@ from valkyrja.http.message.response.contract.response_contract import ResponseCo
 
 
 class EmptyResponseContract(ResponseContract):
-    """The contract for a response that carries no body."""
+    pass

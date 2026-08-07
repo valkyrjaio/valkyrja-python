@@ -24,8 +24,6 @@ from valkyrja.http.message.stream.stream import Stream
 
 
 class JsonResponse(Response, JsonResponseContract):
-    """A response that carries json."""
-
     def __init__(
         self,
         data: dict[str, Any] | None = None,

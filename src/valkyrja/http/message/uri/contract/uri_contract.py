@@ -13,8 +13,6 @@ from valkyrja.http.message.uri.enum.scheme import Scheme
 
 
 class UriContract(ABC):
-    """The contract for the address that a request asks for."""
-
     @abstractmethod
     def __str__(self) -> str:
         """Get the whole uri as a string."""

@@ -20,8 +20,6 @@ from valkyrja.http.message.stream.stream import Stream
 
 
 class Message(MessageContract):
-    """The state that a request and a response share."""
-
     def __init__(
         self,
         body: StreamContract | None = None,
