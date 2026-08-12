@@ -2,7 +2,10 @@
 name = "valkyrja-python-ci-mypy"
 version = "0.0.0"
 requires-python = ">=3.14"
-dependencies = ["mypy>=2.3.0,<3"]
+# mypy checks `tests` as well as `src`, so it resolves what a test imports.
+# `pytest` is what every test imports, and mypy reports an unresolved import as
+# an error.
+dependencies = ["mypy>=2.3.0,<3", "pytest>=9.1.1,<10"]
 
 [tool.uv]
 # Environment-only project: install the tool, never build this directory.
