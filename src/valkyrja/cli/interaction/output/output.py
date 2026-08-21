@@ -87,12 +87,12 @@ class Output(OutputContract):
 
     @override
     def write_message(self, message: MessageContract) -> Self:
+        # The record follows the write, so a write that raises records nothing. A silent
+        # or a quiet message writes nothing by design, and it still counts as written.
+        if not self._is_silent and not (self._is_quiet and self._exit_code == ExitCode.SUCCESS):
+            self._output_message(message)
+
         self._written_messages.append(message)
-
-        if self._is_silent or (self._is_quiet and self._exit_code == ExitCode.SUCCESS):
-            return self
-
-        self._output_message(message)
 
         return self
 
