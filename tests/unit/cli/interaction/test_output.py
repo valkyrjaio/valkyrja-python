@@ -11,6 +11,8 @@
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.message.message import Message
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
@@ -190,6 +192,16 @@ def test_a_file_output_appends_to_its_file(tmp_path: Path) -> None:
 
     assert path.read_text(encoding="utf-8") == "ab"
     assert output.get_filepath() == str(path)
+
+
+def test_a_failed_write_does_not_record_the_message(tmp_path: Path) -> None:
+    output = FileOutput(str(tmp_path / "missing" / "out.txt"))
+
+    with pytest.raises(OSError):
+        output.write_message(Message("a"))
+
+    assert not output.has_written_message()
+    assert output.get_written_messages() == []
 
 
 def test_with_filepath_returns_a_copy(tmp_path: Path) -> None:
