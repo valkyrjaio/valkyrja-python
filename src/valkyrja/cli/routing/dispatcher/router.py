@@ -128,14 +128,14 @@ class Router(RouterContract):
         arguments = list(input_.get_arguments())
         parameters: list[ArgumentParameterContract] = []
 
-        for key, parameter in enumerate(route.get_arguments()):
+        for parameter in route.get_arguments():
             taken = []
 
             if parameter.get_value_mode() is ArgumentValueMode.ARRAY:
                 taken = arguments
                 arguments = []
-            elif key < len(arguments):
-                taken = [arguments[key]]
+            elif arguments:
+                taken = [arguments.pop(0)]
 
             parameters.append(parameter.with_arguments(*taken).validate_values())
 
