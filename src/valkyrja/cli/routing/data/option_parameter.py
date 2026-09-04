@@ -33,12 +33,14 @@ class OptionParameter(Parameter, OptionParameterContract):
         mode: OptionMode = OptionMode.OPTIONAL,
         value_mode: OptionValueMode = OptionValueMode.NONE,
         value_display_name: str = "",
+        default_value: str = "",
         options: list[OptionContract] | None = None,
         valid_values: list[str] | None = None,
         container: ContainerContract | None = None,
     ) -> None:
         super().__init__(name, description, cast, container)
 
+        self._default_value: str = default_value
         self._short_names: list[str] = list(short_names) if short_names is not None else []
         self._mode = mode
         self._value_mode = value_mode
@@ -124,8 +126,34 @@ class OptionParameter(Parameter, OptionParameterContract):
         return self._get_cast_values_for_parameters(list[ValuedParameter](self._options))
 
     @override
-    def has_first_value(self) -> bool:
+    def is_provided(self) -> bool:
         return self._options != []
+
+    @override
+    def has_first_value(self) -> bool:
+        return self.get_first_value() != ""
+
+    @override
+    def get_first_value(self) -> str:
+        if self._options == []:
+            return ""
+
+        return self._options[0].get_value()
+
+    @override
+    def has_default_value(self) -> bool:
+        return self._default_value != ""
+
+    @override
+    def get_default_value(self) -> str:
+        return self._default_value
+
+    @override
+    def with_default_value(self, default_value: str) -> Self:
+        new = self._copy()
+        new._default_value = default_value
+
+        return new
 
     @override
     def get_valid_values(self) -> list[str]:

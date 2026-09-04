@@ -87,8 +87,19 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
         return self._get_cast_values_for_parameters(list[ValuedParameter](self._arguments))
 
     @override
-    def has_first_value(self) -> bool:
+    def is_provided(self) -> bool:
         return self._arguments != []
+
+    @override
+    def has_first_value(self) -> bool:
+        return self.get_first_value() != ""
+
+    @override
+    def get_first_value(self) -> str:
+        if self._arguments == []:
+            return ""
+
+        return self._arguments[0].get_value()
 
     @override
     def are_values_valid(self) -> bool:

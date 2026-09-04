@@ -133,6 +133,21 @@ class Route(RouteContract):
         return arguments[0]
 
     @override
+    def has_provided_argument(self, name: str) -> bool:
+        arguments = self._filter_arguments_by_name(name)
+
+        return arguments != [] and arguments[0].is_provided()
+
+    @override
+    def get_argument_value(self, name: str, default: str = "") -> str:
+        arguments = self._filter_arguments_by_name(name)
+
+        if arguments == [] or not arguments[0].has_first_value():
+            return default
+
+        return arguments[0].get_first_value()
+
+    @override
     def with_arguments(self, *arguments: ArgumentParameterContract) -> Self:
         new = self._copy()
         new._arguments = list(arguments)
@@ -166,6 +181,27 @@ class Route(RouteContract):
             raise CliRoutingInvalidOptionNameException(f"The option `{name}` was not found")
 
         return options[0]
+
+    @override
+    def has_provided_option(self, name: str) -> bool:
+        options = self._filter_options_by_name(name)
+
+        return options != [] and options[0].is_provided()
+
+    @override
+    def get_option_value(self, name: str, default: str | None = None) -> str:
+        options = self._filter_options_by_name(name)
+
+        if options != [] and options[0].has_first_value():
+            return options[0].get_first_value()
+
+        if default is not None:
+            return default
+
+        if options == []:
+            return ""
+
+        return options[0].get_default_value()
 
     @override
     def with_options(self, *options: OptionParameterContract) -> Self:

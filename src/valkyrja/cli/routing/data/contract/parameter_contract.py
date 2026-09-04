@@ -52,8 +52,16 @@ class ParameterContract(ABC):
         """Get each value of the parameter, with the cast applied to it."""
 
     @abstractmethod
+    def is_provided(self) -> bool:
+        """Get whether the invocation gave the parameter, with or without a value."""
+
+    @abstractmethod
     def has_first_value(self) -> bool:
-        """Get whether the parameter holds a value."""
+        """Get whether the invocation gave the parameter a first value that is not empty."""
+
+    @abstractmethod
+    def get_first_value(self) -> str:
+        """Get the first value that the invocation gave, and an empty string where it gave none."""
 
     @abstractmethod
     def are_values_valid(self) -> bool:

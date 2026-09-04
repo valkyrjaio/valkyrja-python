@@ -77,6 +77,14 @@ class RouteContract(ABC):
         """Get the argument that carries a given name."""
 
     @abstractmethod
+    def has_provided_argument(self, name: str) -> bool:
+        """Get whether the invocation gave an argument that the route declares."""
+
+    @abstractmethod
+    def get_argument_value(self, name: str, default: str = "") -> str:
+        """Get the first value the invocation gave an argument, or the default."""
+
+    @abstractmethod
     def with_arguments(self, *arguments: ArgumentParameterContract) -> Self:
         """Get a copy of the route that declares different arguments."""
 
@@ -99,6 +107,18 @@ class RouteContract(ABC):
     @abstractmethod
     def get_option(self, name: str) -> OptionParameterContract:
         """Get the option that carries a given name."""
+
+    @abstractmethod
+    def has_provided_option(self, name: str) -> bool:
+        """Get whether the invocation gave an option that the route declares."""
+
+    @abstractmethod
+    def get_option_value(self, name: str, default: str | None = None) -> str:
+        """Get the first value the invocation gave an option.
+
+        A default given here wins, and None is the only value that reaches the
+        option's own declared default value.
+        """
 
     @abstractmethod
     def with_options(self, *options: OptionParameterContract) -> Self:

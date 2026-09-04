@@ -336,3 +336,35 @@ def test_validate_values_returns_the_option_when_valid() -> None:
     parameter = OptionParameter("name")
 
     assert parameter.validate_values() is parameter
+
+
+def test_a_parameter_separates_the_value_from_the_presence() -> None:
+    parameter = ArgumentParameter("name")
+
+    assert not parameter.is_provided()
+    assert not parameter.has_first_value()
+    assert parameter.get_first_value() == ""
+
+    empty = parameter.with_arguments(Argument(""))
+
+    assert empty.is_provided()
+    assert not empty.has_first_value()
+
+    filled = parameter.with_arguments(Argument("a"))
+
+    assert filled.is_provided()
+    assert filled.has_first_value()
+    assert filled.get_first_value() == "a"
+
+
+def test_an_option_parameter_holds_a_default_value() -> None:
+    parameter = OptionParameter("format")
+
+    assert not parameter.has_default_value()
+    assert parameter.get_default_value() == ""
+
+    declaring = parameter.with_default_value("json")
+
+    assert declaring.has_default_value()
+    assert declaring.get_default_value() == "json"
+    assert not parameter.has_default_value()
