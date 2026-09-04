@@ -1,6 +1,6 @@
 [project]
 name = "valkyrja"
-version = "26.0.6"
+version = "26.0.7"
 description = "Valkyrja is a fast, light, and robust Python framework for web and console applications"
 readme = "README.md"
 license = "MIT"
