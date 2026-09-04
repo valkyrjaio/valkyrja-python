@@ -11,6 +11,8 @@
 import pytest
 
 from tests.fixtures.cli.routing.route_fixture import ROUTE_NAME, handle, help_text, make_route
+from valkyrja.cli.interaction.argument.argument import Argument
+from valkyrja.cli.interaction.option.option import Option
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.routing.collection.route_collection import RouteCollection
 from valkyrja.cli.routing.data.argument_parameter import ArgumentParameter
@@ -195,3 +197,51 @@ def test_a_route_handler_answers_with_an_output() -> None:
     output = make_route().get_handler()(Container(), {})
 
     assert isinstance(output, EmptyOutput)
+
+
+def test_a_route_reports_what_the_invocation_provided() -> None:
+    declared = OptionParameter("namespace")
+    provided = declared.with_options(Option("namespace", "db:"))
+    declaring = OptionParameter("namespace").with_default_value("app:")
+
+    bare = make_route()
+
+    assert not bare.has_provided_option("namespace")
+    assert bare.get_option_value("namespace", "all") == "all"
+    assert bare.get_option_value("namespace") == ""
+
+    only_declared = make_route().with_options(declared)
+
+    assert only_declared.has_option("namespace")
+    assert not only_declared.has_provided_option("namespace")
+
+    filled = make_route().with_options(provided)
+
+    assert filled.has_provided_option("namespace")
+    assert filled.get_option_value("namespace") == "db:"
+
+    with_default = make_route().with_options(declaring)
+
+    assert with_default.get_option_value("namespace") == "app:"
+    assert with_default.get_option_value("namespace", "") == ""
+    assert with_default.get_option_value("namespace", "all") == "all"
+
+
+def test_a_route_reports_what_the_invocation_provided_for_an_argument() -> None:
+    declared = ArgumentParameter("namespace")
+    provided = declared.with_arguments(Argument("db:"))
+
+    bare = make_route()
+
+    assert not bare.has_provided_argument("namespace")
+    assert bare.get_argument_value("namespace", "all") == "all"
+
+    only_declared = make_route().with_arguments(declared)
+
+    assert not only_declared.has_provided_argument("namespace")
+    assert only_declared.get_argument_value("namespace", "all") == "all"
+
+    filled = make_route().with_arguments(provided)
+
+    assert filled.has_provided_argument("namespace")
+    assert filled.get_argument_value("namespace", "all") == "db:"
