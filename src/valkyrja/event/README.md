@@ -70,6 +70,32 @@ def send_mail(container: ContainerContract, arguments: dict[str, Any]) -> None:
     event = arguments[EventArgument.EVENT]
 ```
 
+## Registering Listeners
+
+The `@listener` decorator marks a function as a listener, and the decorated
+function is the handler:
+
+```python
+class OrderListeners:
+    @staticmethod
+    @listener(AppEventId.ORDER_PLACED, "mail.order_placed")
+    def on_order_placed(container: ContainerContract, arguments: dict[str, Any]) -> None: ...
+```
+
+`AttributeListenerCollector.get_listeners` reads each marked function of each
+class it is given. Stack the decorator to listen to more than one event, and give
+each marker its own name.
+
+Warning: the decorator records metadata and nothing else. It never registers the
+listener. `sindri` reads the same marker from the source, so a cached application
+never runs the collector.
+
+PHP names the handler in a second `ListenerHandler` attribute, because a PHP
+attribute also sits on a class. The Python decorator sits on the function that
+answers the event, so the marker holds no reference to a callable. A reference
+would name a binding that the module has not built yet, and the import would
+fail.
+
 ## Cache
 
 `EventData` holds the state of a collection. `events` maps an event id to the
