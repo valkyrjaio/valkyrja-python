@@ -8,6 +8,9 @@
 
 """Tests for the exception hierarchy of the Event component."""
 
+from copy import copy
+from pickle import dumps, loads
+
 import pytest
 
 from valkyrja.event.throwable.contract.event_throwable import EventThrowable
@@ -47,3 +50,11 @@ def test_the_invalid_event_exception_names_the_id() -> None:
     assert str(exception) == "Service with `tests.NotAnEvent` is not an event"
     assert exception.get_id() == "tests.NotAnEvent"
     assert isinstance(exception, EventInvalidArgumentException)
+
+
+def test_a_copy_keeps_the_message_of_the_invalid_event_exception() -> None:
+    exception = EventInvalidEventException("tests.Event")
+
+    assert str(copy(exception)) == str(exception)
+    assert str(loads(dumps(exception))) == str(exception)
+    assert copy(exception).get_id() == "tests.Event"

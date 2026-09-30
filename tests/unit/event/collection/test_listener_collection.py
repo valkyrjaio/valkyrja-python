@@ -30,6 +30,14 @@ def make_listener(name: str = "first", event_id: str = ORDER_PLACED_ID) -> Liste
     return Listener(event_id, name, handle)
 
 
+def first_handler(container: ContainerContract, arguments: dict[str, Any]) -> Any:
+    return "first"
+
+
+def second_handler(container: ContainerContract, arguments: dict[str, Any]) -> Any:
+    return "second"
+
+
 def test_a_new_collection_is_empty() -> None:
     collection = ListenerCollection()
 
@@ -66,7 +74,7 @@ def test_has_listener_is_false_for_an_unknown_listener() -> None:
     assert not ListenerCollection().has_listener_by_id("missing")
 
 
-def test_get_listeners_for_event_reads_the_class_of_the_event() -> None:
+def test_get_listeners_for_event_reads_the_id_of_the_event() -> None:
     collection = ListenerCollection()
     collection.add_listener(make_listener())
 
@@ -213,3 +221,41 @@ def test_set_from_data_copies_the_state() -> None:
     data.events[ORDER_PLACED_ID].clear()
 
     assert collection.get_listeners_for_event_by_id(ORDER_PLACED_ID) != []
+
+
+def test_add_listener_replaces_the_listener_that_holds_the_name() -> None:
+    collection = ListenerCollection()
+    collection.add_listener(Listener(ORDER_PLACED_ID, "first", first_handler))
+
+    collection.add_listener(Listener(ORDER_PLACED_ID, "first", second_handler))
+
+    listeners = collection.get_listeners_for_event_by_id(ORDER_PLACED_ID)
+
+    assert len(listeners) == 1
+    assert listeners[0].get_handler() is second_handler
+
+
+def test_set_listeners_for_event_adds_to_the_listeners_the_event_holds() -> None:
+    collection = ListenerCollection()
+    collection.add_listener(Listener(ORDER_SHIPPED_ID, "first", first_handler))
+
+    collection.set_listeners_for_event_by_id(ORDER_SHIPPED_ID, Listener(ORDER_SHIPPED_ID, "second", second_handler))
+
+    names = [listener.get_name() for listener in collection.get_listeners_for_event_by_id(ORDER_SHIPPED_ID)]
+
+    assert names == ["first", "second"]
+
+
+def test_an_event_that_lost_its_last_listener_stays_in_the_events() -> None:
+    # PHP keeps the empty entry and guards each read with a non-empty test, so
+    # `get_events` names the event while `has_listeners_for_event_by_id` is false.
+    collection = ListenerCollection()
+    listener = Listener(ORDER_PLACED_ID, "first", first_handler)
+    collection.add_listener(listener)
+
+    collection.remove_listener(listener)
+
+    assert collection.get_events() == [ORDER_PLACED_ID]
+    assert not collection.has_listeners_for_event_by_id(ORDER_PLACED_ID)
+    assert collection.get_listeners_for_event_by_id(ORDER_PLACED_ID) == []
+    assert collection.get_events_with_listeners() == {ORDER_PLACED_ID: []}
