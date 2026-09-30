@@ -51,3 +51,10 @@ def test_the_interaction_throwable_narrows_the_cli_throwable() -> None:
     assert issubclass(CliInteractionThrowable, CliThrowable)
     assert issubclass(CliInteractionRuntimeException, CliInteractionThrowable)
     assert issubclass(CliInteractionInvalidArgumentException, CliInteractionThrowable)
+
+
+def test_the_interaction_bases_chain_through_the_component_bases() -> None:
+    # PHP chains a sub-component base through the base of its component, so a
+    # caller catches every Cli failure with one of the two component bases.
+    assert issubclass(CliInteractionRuntimeException, CliRuntimeException)
+    assert issubclass(CliInteractionInvalidArgumentException, CliInvalidArgumentException)
