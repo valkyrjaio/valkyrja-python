@@ -19,15 +19,25 @@ from valkyrja.cli.interaction.message.contract.question_contract import (
 from valkyrja.cli.interaction.message.message import Message
 
 
+class Unset:
+    """The absence of an argument, which is not the same as `None`."""
+
+
+UNSET = Unset()
+"""Stands for the formatter that the caller did not name."""
+
+
 class Question(Message, QuestionContract):
     def __init__(
         self,
         text: str,
         callback: QuestionCallback,
         answer: AnswerContract,
-        formatter: FormatterContract | None = None,
+        formatter: FormatterContract | Unset | None = UNSET,
     ) -> None:
-        super().__init__(text, formatter if formatter is not None else QuestionFormatter())
+        # The sentinel keeps `None` meaning no formatter, which PHP gets from a
+        # default that names the formatter rather than null.
+        super().__init__(text, QuestionFormatter() if isinstance(formatter, Unset) else formatter)
 
         self._callback = callback
         self._answer = answer
@@ -58,10 +68,11 @@ class Question(Message, QuestionContract):
     def ask(self) -> AnswerContract:
         response = self._read_response()
 
+        # An empty response is no answer, so the default of the answer stands.
         if response == "":
-            return self._answer.with_has_been_answered(True)
+            return self._answer
 
-        return self._answer.with_user_response(response).with_has_been_answered(True)
+        return self._answer.with_user_response(response)
 
     def _read_response(self) -> str:
         """Read one line from the user.
@@ -69,4 +80,9 @@ class Question(Message, QuestionContract):
         The method is a seam. A test overrides it, because a test cannot type
         into the terminal that the process reads.
         """
-        return input().strip()
+        try:
+            return input().strip()
+        except EOFError:
+            # A closed input reads no line, which PHP reports as a false `fgets`.
+            # An empty response leaves the answer as it is.
+            return ""
