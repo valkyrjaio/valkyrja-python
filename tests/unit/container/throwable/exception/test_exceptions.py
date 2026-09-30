@@ -8,6 +8,9 @@
 
 """Tests for the exception hierarchy of the Container component."""
 
+from copy import copy
+from pickle import dumps, loads
+
 import pytest
 
 from valkyrja.container.throwable.contract.container_throwable import ContainerThrowable
@@ -22,6 +25,12 @@ from valkyrja.container.throwable.exception.container_invalid_publish_callback_e
 )
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
     ContainerInvalidReferenceException,
+)
+from valkyrja.container.throwable.exception.container_unpublished_parent_target_exception import (
+    ContainerUnpublishedParentTargetException,
+)
+from valkyrja.container.throwable.exception.container_unresolved_parent_alias_exception import (
+    ContainerUnresolvedParentAliasException,
 )
 from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception import (
@@ -73,3 +82,35 @@ def test_the_invalid_publish_callback_exception_extends_the_runtime_base() -> No
 
 def test_a_concrete_exception_gets_a_trace_code() -> None:
     assert ContainerInvalidReferenceException(SERVICE_ID).get_trace_code()
+
+
+ALIAS_ID = "tests.unit.container.Alias"
+
+
+def test_the_unpublished_parent_target_exception_names_the_id() -> None:
+    exception = ContainerUnpublishedParentTargetException(SERVICE_ID)
+
+    assert f"`{SERVICE_ID}` is registered in the parent container" in str(exception)
+    assert isinstance(exception, ContainerRuntimeException)
+    assert isinstance(exception, ValkyrjaRuntimeException)
+
+
+def test_the_unresolved_parent_alias_exception_names_the_alias_and_the_id() -> None:
+    exception = ContainerUnresolvedParentAliasException(ALIAS_ID, SERVICE_ID)
+
+    assert f"Alias `{ALIAS_ID}` reaches `{SERVICE_ID}`" in str(exception)
+    assert isinstance(exception, ContainerRuntimeException)
+    assert isinstance(exception, ValkyrjaRuntimeException)
+
+
+@pytest.mark.parametrize(
+    "exception",
+    [
+        ContainerInvalidReferenceException(SERVICE_ID),
+        ContainerUnpublishedParentTargetException(SERVICE_ID),
+        ContainerUnresolvedParentAliasException(ALIAS_ID, SERVICE_ID),
+    ],
+)
+def test_a_copy_keeps_the_message_of_the_exception(exception: ValkyrjaThrowable) -> None:
+    assert str(copy(exception)) == str(exception)
+    assert str(loads(dumps(exception))) == str(exception)
