@@ -7,6 +7,7 @@
 #
 
 from abc import ABC, abstractmethod
+from typing import TextIO
 
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.message.contract.message_contract import MessageContract
@@ -42,6 +43,6 @@ class OutputFactoryContract(ABC):
 
     @abstractmethod
     def create_stream_output(
-        self, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
+        self, stream: TextIO, *messages: MessageContract, exit_code: ExitCode | int = ExitCode.SUCCESS
     ) -> StreamOutputContract:
         """Build an output that writes to a stream."""
