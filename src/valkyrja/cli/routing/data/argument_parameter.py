@@ -16,8 +16,8 @@ from valkyrja.cli.routing.data.contract.argument_parameter_contract import (
 )
 from valkyrja.cli.routing.enum.argument_mode import ArgumentMode
 from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
-from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
-    CliRoutingParameterValuesValidationException,
+from valkyrja.cli.routing.throwable.exception.cli_routing_argument_values_validation_exception import (
+    CliRoutingArgumentValuesValidationException,
 )
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
@@ -27,9 +27,9 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
     def __init__(
         self,
         name: str,
-        description: str = "",
+        description: str,
         cast: Cast | None = None,
-        mode: ArgumentMode = ArgumentMode.REQUIRED,
+        mode: ArgumentMode = ArgumentMode.OPTIONAL,
         value_mode: ArgumentValueMode = ArgumentValueMode.DEFAULT,
         arguments: list[ArgumentContract] | None = None,
         container: ContainerContract | None = None,
@@ -114,7 +114,7 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
     @override
     def validate_values(self) -> Self:
         if not self.are_values_valid():
-            raise CliRoutingParameterValuesValidationException(f"{self._name} is invalid")
+            raise CliRoutingArgumentValuesValidationException(f"{self._name} is invalid")
 
         return self
 
