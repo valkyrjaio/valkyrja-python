@@ -72,6 +72,27 @@ resolves an id to a class can override `_get_fallback`.
 resolves stays apart from the parent. The child does reuse a singleton that the
 parent resolved already, because a resolved instance is safe to share.
 
+`ChildContainer` takes only the singletons and the callbacks of its
+`ContainerData`. An alias or a service in that data would make the child resolve
+what the parent owns, and the parent caches what it resolves, so the child would
+write to the parent.
+
+### The Child Never Writes To The Parent
+
+A request-scoped child shares the parent between requests, so a write to the
+parent outlives the request that made it. The child refuses a delegation that
+would write:
+
+- The parent holds a publish callback it has not run. The delegation would run
+  that callback, and the parent would cache the result. The child answers from
+  its own maps, and it raises
+  `ContainerUnpublishedParentTargetException` when no map of its own answers.
+- An alias of the parent reaches an id that the parent has not resolved. The
+  child walks the alias chain first, and it raises
+  `ContainerUnresolvedParentAliasException` when the walk reaches such an id.
+
+Resolve or publish each such service before the request loop begins.
+
 ## Providers
 
 A service provider gives one publisher for each service. The publisher is a
@@ -79,14 +100,14 @@ plain method reference, and the container calls it the first time an application
 asks for the service:
 
 ```python
-class ContainerServiceProvider(ServiceProviderContract):
+class AppServiceProvider(ServiceProviderContract):
     @override
     def publishers(self) -> dict[str, PublishCallback]:
-        return {ContainerServiceId.DATA: ContainerServiceProvider.publish_data}
+        return {AppServiceId.USER_REPOSITORY: AppServiceProvider.publish_user_repository}
 
     @staticmethod
-    def publish_data(container: ContainerContract) -> None:
-        container.set_singleton(ContainerServiceId.DATA, container.get_data())
+    def publish_user_repository(container: ContainerContract) -> None:
+        container.set_singleton(AppServiceId.USER_REPOSITORY, UserRepository())
 ```
 
 Warning: `register` raises `ContainerInvalidPublishCallbackException` when a
@@ -106,3 +127,7 @@ its own state.
 - `ContainerInvalidReferenceException` — the container has no service for the id
 - `ContainerInvalidPublishCallbackException` — a provider gives a publisher that
   the container cannot call
+- `ContainerUnpublishedParentTargetException` — a child would run a publish
+  callback of the parent
+- `ContainerUnresolvedParentAliasException` — an alias of the parent reaches an
+  id that the parent has not resolved
