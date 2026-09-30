@@ -52,11 +52,22 @@ class QuestionWriter(WriterContract):
         return question.get_callable()(output, answer)
 
     def _write_question(self, output: OutputContract, question: QuestionContract) -> OutputContract:
-        """Write the text of the question, with the allowed responses after it."""
-        allowed = question.get_answer().get_allowed_responses()
-        allowed_text = "/".join(allowed)
+        """Write the question, the responses it allows, and the response it defaults to."""
+        answer = question.get_answer()
+        # An answer always carries its default response, so there is always one to render.
+        allowed = " or ".join(f"`{value}`" for value in answer.get_allowed_responses())
 
-        return output.write_message(question).write_message(Message(f" [{allowed_text}] ", HighlightedTextFormatter()))
+        output = output.write_message(question)
+        output = output.write_message(Message(" ("))
+        output = output.write_message(Message(allowed))
+        output = output.write_message(Message(")"))
+        output = output.write_message(Message(' [default: "'))
+        output = output.write_message(Message(answer.get_default_response(), HighlightedTextFormatter()))
+        output = output.write_message(Message('"]'))
+        output = output.write_message(Message(":"))
+        output = output.write_message(NewLine())
+
+        return output.write_message(Message("> "))
 
     def _write_answer_after_response(self, output: OutputContract, answer: AnswerContract) -> OutputContract:
         """Write the answer that the user gave."""
