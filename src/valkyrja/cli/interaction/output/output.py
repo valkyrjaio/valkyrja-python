@@ -20,11 +20,11 @@ from valkyrja.cli.interaction.writer.question_writer import QuestionWriter
 class Output(OutputContract):
     def __init__(
         self,
+        *messages: MessageContract,
         is_interactive: bool = True,
         is_quiet: bool = False,
         is_silent: bool = False,
         exit_code: ExitCode | int = ExitCode.SUCCESS,
-        *messages: MessageContract,
     ) -> None:
         self._is_interactive = is_interactive
         self._is_quiet = is_quiet
