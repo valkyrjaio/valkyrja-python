@@ -16,6 +16,9 @@ from valkyrja.cli.interaction.throwable.contract.cli_interaction_throwable impor
 from valkyrja.cli.interaction.throwable.exception.cli_interaction_expected_question_output_exception import (
     CliInteractionExpectedQuestionOutputException,
 )
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_file_write_exception import (
+    CliInteractionFileWriteException,
+)
 from valkyrja.cli.interaction.throwable.exception.cli_interaction_invalid_empty_value_exception import (
     CliInteractionInvalidEmptyValueException,
 )
@@ -31,16 +34,25 @@ from valkyrja.cli.interaction.throwable.exception.cli_interaction_no_formatter_e
 from valkyrja.cli.interaction.throwable.exception.cli_interaction_no_validation_callable_exception import (
     CliInteractionNoValidationCallableException,
 )
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_stream_write_exception import (
+    CliInteractionStreamWriteException,
+)
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_unwritable_stream_exception import (
+    CliInteractionUnwritableStreamException,
+)
 
 RUNTIME_EXCEPTIONS: list[type] = [
     CliInteractionNoFormatterException,
     CliInteractionNoValidationCallableException,
-    CliInteractionExpectedQuestionOutputException,
+    CliInteractionFileWriteException,
+    CliInteractionStreamWriteException,
+    CliInteractionUnwritableStreamException,
 ]
 INVALID_ARGUMENT_EXCEPTIONS: list[type] = [
     CliInteractionInvalidOptionNameException,
     CliInteractionInvalidEmptyValueException,
     CliInteractionInvalidNonEmptyValueException,
+    CliInteractionExpectedQuestionOutputException,
 ]
 
 
