@@ -69,10 +69,10 @@ class OptionFactory:
     def _validate_non_empty_name(name: str) -> None:
         """Report an option with no name."""
         if name == "":
-            raise CliInteractionInvalidEmptyValueException("An option requires a name")
+            raise CliInteractionInvalidNonEmptyValueException("An option requires a name")
 
     @staticmethod
     def _validate_value_is_empty(value: str) -> None:
         """Report a value on a set of combined short options."""
         if value != "":
-            raise CliInteractionInvalidNonEmptyValueException("Combined short options cannot have a value")
+            raise CliInteractionInvalidEmptyValueException("Combined short options cannot have a value")
