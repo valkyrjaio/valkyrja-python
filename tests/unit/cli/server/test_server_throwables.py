@@ -18,6 +18,10 @@ from valkyrja.cli.server.throwable.exception.abstract.cli_server_runtime_excepti
     CliServerRuntimeException,
 )
 from valkyrja.cli.throwable.contract.cli_throwable import CliThrowable
+from valkyrja.cli.throwable.exception.abstract.cli_invalid_argument_exception import (
+    CliInvalidArgumentException,
+)
+from valkyrja.cli.throwable.exception.abstract.cli_runtime_exception import CliRuntimeException
 from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 ABSTRACT_EXCEPTIONS = [
@@ -41,3 +45,8 @@ def test_every_exception_narrows_the_cli_throwable(exception_class: type) -> Non
 def test_the_bases_extend_the_language_roots() -> None:
     assert issubclass(CliServerRuntimeException, RuntimeError)
     assert issubclass(CliServerInvalidArgumentException, ValueError)
+
+
+def test_the_server_bases_chain_through_the_component_bases() -> None:
+    assert issubclass(CliServerRuntimeException, CliRuntimeException)
+    assert issubclass(CliServerInvalidArgumentException, CliInvalidArgumentException)

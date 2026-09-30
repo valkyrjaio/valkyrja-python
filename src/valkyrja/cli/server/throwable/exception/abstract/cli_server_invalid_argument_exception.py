@@ -7,10 +7,10 @@
 #
 
 from valkyrja.cli.server.throwable.contract.cli_server_throwable import CliServerThrowable
-from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception import (
-    ValkyrjaInvalidArgumentException,
+from valkyrja.cli.throwable.exception.abstract.cli_invalid_argument_exception import (
+    CliInvalidArgumentException,
 )
 
 
-class CliServerInvalidArgumentException(ValkyrjaInvalidArgumentException, CliServerThrowable):
+class CliServerInvalidArgumentException(CliInvalidArgumentException, CliServerThrowable):
     _valkyrja_abstract = True

@@ -7,10 +7,10 @@
 #
 
 from valkyrja.cli.server.throwable.contract.cli_server_throwable import CliServerThrowable
-from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
-    ValkyrjaRuntimeException,
+from valkyrja.cli.throwable.exception.abstract.cli_runtime_exception import (
+    CliRuntimeException,
 )
 
 
-class CliServerRuntimeException(ValkyrjaRuntimeException, CliServerThrowable):
+class CliServerRuntimeException(CliRuntimeException, CliServerThrowable):
     _valkyrja_abstract = True
