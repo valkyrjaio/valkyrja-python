@@ -17,6 +17,10 @@ class ProvidersAwareContract(ABC):
         """Register a provider, and keep each publisher that the provider gives."""
 
     @abstractmethod
+    def is_deferred(self, id_: str) -> bool:
+        """Get whether a provider gives the service for a given id."""
+
+    @abstractmethod
     def is_published(self, id_: str) -> bool:
         """Get whether the container published the service for a given id."""
 
