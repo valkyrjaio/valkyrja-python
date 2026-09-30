@@ -9,6 +9,7 @@
 """Tests for Answer, Question, Progress, the QuestionWriter, and the config."""
 
 from typing import Any
+from unittest.mock import patch
 
 import pytest
 
@@ -17,6 +18,7 @@ from tests.fixtures.cli.interaction.recording_question_fixture import (
     pass_through,
 )
 from valkyrja.cli.interaction.data.cli_interaction_config import CliInteractionConfig
+from valkyrja.cli.interaction.formatter.question_formatter import QuestionFormatter
 from valkyrja.cli.interaction.message.answer import Answer
 from valkyrja.cli.interaction.message.contract.answer_contract import AnswerContract
 from valkyrja.cli.interaction.message.contract.question_contract import QuestionContract
@@ -213,7 +215,9 @@ def test_ask_with_an_empty_response_keeps_the_default() -> None:
     answered = question.ask()
 
     assert answered.get_user_response() == "yes"
-    assert answered.has_been_answered()
+    # An empty response is no answer, so the answer that the question holds stands.
+    assert not answered.has_been_answered()
+    assert answered is question.get_answer()
 
 
 def test_the_writer_takes_a_question_alone() -> None:
@@ -295,7 +299,7 @@ def test_the_writer_writes_an_invalid_response_before_it_asks_again() -> None:
 
 def test_an_output_gives_a_question_to_the_writer() -> None:
     question = RecordingQuestionFixture("Continue?", Answer("yes"), [""])
-    output = EmptyOutput(True, False, False)
+    output = EmptyOutput()
 
     written = output.with_added_message(question).write_messages()
 
@@ -332,7 +336,7 @@ def test_a_question_is_a_question_contract() -> None:
 
 
 def test_an_output_writes_a_plain_message_without_a_writer(capsys: Any) -> None:
-    output = Output(True, False, False)
+    output = Output()
 
     output.with_added_message(Message("plain")).write_messages()
 
@@ -345,3 +349,46 @@ def test_ask_reads_a_line_from_the_user(monkeypatch: pytest.MonkeyPatch) -> None
     question = Question("Continue?", pass_through, Answer("yes", allowed_responses=["no"]))
 
     assert question.ask().get_user_response() == "no"
+
+
+def test_ask_with_a_closed_input_keeps_the_answer() -> None:
+    question = Question("Continue?", lambda output, answer: output, Answer("yes"))
+
+    # `input` raises for a closed stream, which PHP reports as a false `fgets`.
+    with patch("builtins.input", side_effect=EOFError):
+        answered = question.ask()
+
+    assert answered.get_user_response() == "yes"
+    assert not answered.has_been_answered()
+
+
+def test_ask_reads_one_line_from_the_input() -> None:
+    question = Question("Continue?", lambda output, answer: output, Answer("yes"))
+
+    with patch("builtins.input", return_value="  no  "):
+        answered = question.ask()
+
+    assert answered.get_user_response() == "no"
+    assert answered.has_been_answered()
+
+
+def test_a_user_response_marks_the_answer_as_answered() -> None:
+    assert Answer("yes").with_user_response("no").has_been_answered()
+
+
+def test_a_question_takes_no_formatter_when_the_caller_gives_none() -> None:
+    question = Question("Continue?", lambda output, answer: output, Answer("yes"), formatter=None)
+
+    assert not question.has_formatter()
+
+
+def test_a_question_takes_the_question_formatter_by_default() -> None:
+    question = Question("Continue?", lambda output, answer: output, Answer("yes"))
+
+    assert isinstance(question.get_formatter(), QuestionFormatter)
+
+
+def test_an_answer_text_with_no_placeholder_reads_as_it_is() -> None:
+    answer = Answer("yes", text="Thank you")
+
+    assert answer.get_text() == "Thank you"

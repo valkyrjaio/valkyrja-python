@@ -142,12 +142,13 @@ def test_the_option_factory_rejects_an_item_that_names_no_option(arg: str) -> No
 
 
 def test_the_option_factory_rejects_an_option_with_no_name() -> None:
-    with pytest.raises(CliInteractionInvalidEmptyValueException, match="requires a name"):
+    # An empty name fails the non-empty test, which is the exception PHP names.
+    with pytest.raises(CliInteractionInvalidNonEmptyValueException, match="requires a name"):
         OptionFactory.from_arg("--=value")
 
 
 def test_the_option_factory_rejects_a_value_on_combined_short_options() -> None:
-    with pytest.raises(CliInteractionInvalidNonEmptyValueException, match="cannot have a value"):
+    with pytest.raises(CliInteractionInvalidEmptyValueException, match="cannot have a value"):
         OptionFactory.from_arg("-abc=value")
 
 
