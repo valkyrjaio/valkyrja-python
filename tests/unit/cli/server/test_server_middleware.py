@@ -158,7 +158,7 @@ def test_the_config_keeps_its_defaults_without_an_option() -> None:
 
 
 def test_the_throwable_middleware_writes_the_output() -> None:
-    output = EmptyOutput(True, False, False).with_added_message(Message("boom"))
+    output = EmptyOutput().with_added_message(Message("boom"))
 
     written = OutputThrowableCaughtMiddleware().throwable_caught(
         Input(), output, RuntimeError("boom"), ThrowableCaughtHandler(Container())
