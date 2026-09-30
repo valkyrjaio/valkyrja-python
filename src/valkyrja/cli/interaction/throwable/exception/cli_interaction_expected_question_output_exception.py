@@ -6,10 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_runtime_exception import (
-    CliInteractionRuntimeException,
+from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_invalid_argument_exception import (
+    CliInteractionInvalidArgumentException,
 )
 
 
-class CliInteractionExpectedQuestionOutputException(CliInteractionRuntimeException):
+class CliInteractionExpectedQuestionOutputException(CliInteractionInvalidArgumentException):
     pass
