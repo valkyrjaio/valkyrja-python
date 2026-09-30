@@ -14,8 +14,11 @@ from valkyrja.cli.routing.data.abstract.parameter import Parameter, ValuedParame
 from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
 from valkyrja.cli.routing.enum.option_mode import OptionMode
 from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
-from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
-    CliRoutingParameterValuesValidationException,
+from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_option_with_value_exception import (
+    CliRoutingInvalidOptionWithValueException,
+)
+from valkyrja.cli.routing.throwable.exception.cli_routing_option_values_validation_exception import (
+    CliRoutingOptionValuesValidationException,
 )
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
@@ -25,11 +28,11 @@ class OptionParameter(Parameter, OptionParameterContract):
     def __init__(
         self,
         name: str,
-        description: str = "",
+        description: str,
         cast: Cast | None = None,
         short_names: list[str] | None = None,
         mode: OptionMode = OptionMode.OPTIONAL,
-        value_mode: OptionValueMode = OptionValueMode.NONE,
+        value_mode: OptionValueMode = OptionValueMode.DEFAULT,
         value_display_name: str = "",
         default_value: str = "",
         options: list[OptionContract] | None = None,
@@ -108,16 +111,23 @@ class OptionParameter(Parameter, OptionParameterContract):
     @override
     def with_options(self, *options: OptionContract) -> Self:
         new = self._copy()
-        new._options = list(options)
+        new._options = [self._verify_takes_value(option) for option in options]
 
         return new
 
     @override
     def with_added_options(self, *options: OptionContract) -> Self:
         new = self._copy()
-        new._options = [*new._options, *options]
+        new._options = [*new._options, *(self._verify_takes_value(option) for option in options)]
 
         return new
+
+    def _verify_takes_value(self, option: OptionContract) -> OptionContract:
+        """Check that the option carries no value where the value mode allows none."""
+        if self._value_mode is OptionValueMode.NONE and option.has_value():
+            raise CliRoutingInvalidOptionWithValueException(f"{self._name} should have no value")
+
+        return option
 
     @override
     def get_cast_values(self) -> list[Any]:
@@ -191,7 +201,7 @@ class OptionParameter(Parameter, OptionParameterContract):
     @override
     def validate_values(self) -> Self:
         if not self.are_values_valid():
-            raise CliRoutingParameterValuesValidationException(f"{self._name} is invalid")
+            raise CliRoutingOptionValuesValidationException(f"{self._name} is invalid")
 
         return self
 
