@@ -7,7 +7,9 @@
 #
 
 from hashlib import md5
-from traceback import format_tb
+
+type ConstructionFrame = tuple[str, int, str]
+"""One frame of a construction stack: the file, the line, and the name."""
 
 
 class ThrowableFactory:
@@ -20,6 +22,9 @@ class ThrowableFactory:
         and `usedforsecurity` states that.
         """
         cls = type(throwable)
-        trace = "".join(format_tb(throwable.__traceback__))
+        # A throwable the framework does not define carries no construction stack,
+        # so the code names its class alone.
+        stack: tuple[ConstructionFrame, ...] = getattr(throwable, "_construction_stack", ())
+        frames = "".join(f"{filename}:{line_number}:{name}\n" for filename, line_number, name in stack)
 
-        return md5(f"{cls.__module__}.{cls.__qualname__}{trace}".encode(), usedforsecurity=False).hexdigest()
+        return md5(f"{cls.__module__}.{cls.__qualname__}{frames}".encode(), usedforsecurity=False).hexdigest()
