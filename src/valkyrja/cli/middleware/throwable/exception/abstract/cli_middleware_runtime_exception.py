@@ -9,10 +9,10 @@
 from valkyrja.cli.middleware.throwable.contract.cli_middleware_throwable import (
     CliMiddlewareThrowable,
 )
-from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import (
-    ValkyrjaRuntimeException,
+from valkyrja.cli.throwable.exception.abstract.cli_runtime_exception import (
+    CliRuntimeException,
 )
 
 
-class CliMiddlewareRuntimeException(ValkyrjaRuntimeException, CliMiddlewareThrowable):
+class CliMiddlewareRuntimeException(CliRuntimeException, CliMiddlewareThrowable):
     _valkyrja_abstract = True
