@@ -33,6 +33,10 @@ class ProvidersAware(ContainerContract, ABC):
             self._callbacks[provided] = publish_callback
 
     @override
+    def is_deferred(self, id_: str) -> bool:
+        return id_ in self._callbacks
+
+    @override
     def is_published(self, id_: str) -> bool:
         return id_ in self._published
 
@@ -53,5 +57,5 @@ class ProvidersAware(ContainerContract, ABC):
 
     def _publish_unpublished_provided(self, id_: str) -> None:
         """Publish the service for a given id, unless the container published it already."""
-        if id_ in self._callbacks and not self.is_published(id_):
+        if self.is_deferred(id_) and not self.is_published(id_):
             self.publish(id_)

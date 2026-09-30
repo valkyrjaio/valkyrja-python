@@ -20,7 +20,7 @@ class NativeChildContainer(Container):
 
     @override
     def is_alias(self, id_: str) -> bool:
-        return self._get_alias(id_) is not None
+        return self.get_aliased_id(id_) is not None
 
     @override
     def is_service(self, id_: str) -> bool:
@@ -62,10 +62,10 @@ class NativeChildContainer(Container):
         return callback if callback is not None else self._parent._callbacks.get(id_)
 
     @override
-    def _get_alias(self, id_: str) -> str | None:
-        alias = self._aliases.get(id_)
+    def get_aliased_id(self, alias: str) -> str | None:
+        aliased_id = self._aliases.get(alias)
 
-        return alias if alias is not None else self._parent._aliases.get(id_)
+        return aliased_id if aliased_id is not None else self._parent._aliases.get(alias)
 
     @override
     def _get_singleton_instance(self, id_: str) -> object | None:

@@ -46,7 +46,7 @@ class Container(ProvidersAware):
 
     @override
     def has(self, id_: str) -> bool:
-        return id_ in self._callbacks or self.is_singleton(id_) or self.is_service(id_) or self.is_alias(id_)
+        return self.is_deferred(id_) or self.is_singleton(id_) or self.is_service(id_) or self.is_alias(id_)
 
     @override
     def bind(self, id_: str, factory: ServiceFactory) -> Self:
@@ -78,6 +78,10 @@ class Container(ProvidersAware):
     @override
     def is_alias(self, id_: str) -> bool:
         return id_ in self._aliases
+
+    @override
+    def get_aliased_id(self, alias: str) -> str | None:
+        return self._aliases.get(alias)
 
     @override
     def is_service(self, id_: str) -> bool:
@@ -158,7 +162,7 @@ class Container(ProvidersAware):
 
     def _get_aliased_without_checks(self, id_: str, arguments: dict[str, Any]) -> object | None:
         """Get the service that an alias points to, without a publish step."""
-        aliased = self._get_alias(id_)
+        aliased = self.get_aliased_id(id_)
 
         if aliased is None:
             return None
@@ -192,10 +196,6 @@ class Container(ProvidersAware):
             return None
 
         return factory(self, arguments)
-
-    def _get_alias(self, id_: str) -> str | None:
-        """Get the id that an alias points to."""
-        return self._aliases.get(id_)
 
     def _get_singleton_instance(self, id_: str) -> object | None:
         """Get the singleton instance that the container holds for an id."""

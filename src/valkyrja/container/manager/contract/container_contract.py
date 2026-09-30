@@ -54,6 +54,10 @@ class ContainerContract(ProvidersAwareContract):
         """Get whether a given id is an alias."""
 
     @abstractmethod
+    def get_aliased_id(self, alias: str) -> str | None:
+        """Get the id that a given alias points to, or None when it is no alias."""
+
+    @abstractmethod
     def is_service(self, id_: str) -> bool:
         """Get whether a given id is a service."""
 
