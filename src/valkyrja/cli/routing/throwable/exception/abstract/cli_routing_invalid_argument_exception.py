@@ -6,11 +6,13 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.cli.routing.throwable.contract.cli_routing_throwable import CliRoutingThrowable
-from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception import (
-    ValkyrjaInvalidArgumentException,
+from valkyrja.cli.routing.throwable.contract.cli_routing_throwable import (
+    CliRoutingThrowable,
+)
+from valkyrja.cli.throwable.exception.abstract.cli_invalid_argument_exception import (
+    CliInvalidArgumentException,
 )
 
 
-class CliRoutingInvalidArgumentException(ValkyrjaInvalidArgumentException, CliRoutingThrowable):
+class CliRoutingInvalidArgumentException(CliInvalidArgumentException, CliRoutingThrowable):
     _valkyrja_abstract = True
