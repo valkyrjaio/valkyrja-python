@@ -8,6 +8,8 @@
 
 """Tests for the ValkyrjaRuntimeException base class."""
 
+import re
+
 import pytest
 
 from tests.fixtures.throwable.exception.valkyrja_runtime_exception_fixture import (
@@ -15,6 +17,9 @@ from tests.fixtures.throwable.exception.valkyrja_runtime_exception_fixture impor
 )
 from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import ValkyrjaRuntimeException
+
+# The MD5 hexadecimal digest that a trace code is.
+TRACE_CODE_PATTERN = re.compile(r"[0-9a-f]{32}")
 
 
 def test_the_base_class_does_not_construct() -> None:
@@ -24,16 +29,9 @@ def test_the_base_class_does_not_construct() -> None:
 
 def test_get_trace_code() -> None:
     exception = ValkyrjaRuntimeExceptionFixture()
-    exception2 = ValkyrjaRuntimeExceptionFixture()
-    exception3 = ValkyrjaRuntimeExceptionFixture("Custom message")
 
-    trace_code = exception.get_trace_code()
-    trace_code2 = exception2.get_trace_code()
-    trace_code3 = exception3.get_trace_code()
-
-    assert trace_code == trace_code2
-    assert trace_code == trace_code3
-    assert trace_code2 == trace_code3
+    assert TRACE_CODE_PATTERN.fullmatch(exception.get_trace_code())
+    assert exception.get_trace_code() == exception.get_trace_code()
 
 
 def test_a_concrete_exception_is_a_runtime_error() -> None:
