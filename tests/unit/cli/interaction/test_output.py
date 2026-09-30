@@ -8,11 +8,18 @@
 
 """Tests for the outputs."""
 
+import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, TextIO, cast
+from unittest.mock import mock_open, patch
 
 import pytest
 
+from tests.fixtures.cli.interaction.stream_fixture import (
+    PartialStreamFixture,
+    RaisingStreamFixture,
+    RefusingStreamFixture,
+)
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.message.message import Message
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
@@ -21,6 +28,15 @@ from valkyrja.cli.interaction.output.file_output import FileOutput
 from valkyrja.cli.interaction.output.output import Output
 from valkyrja.cli.interaction.output.plain_output import PlainOutput
 from valkyrja.cli.interaction.output.stream_output import StreamOutput
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_file_write_exception import (
+    CliInteractionFileWriteException,
+)
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_stream_write_exception import (
+    CliInteractionStreamWriteException,
+)
+from valkyrja.cli.interaction.throwable.exception.cli_interaction_unwritable_stream_exception import (
+    CliInteractionUnwritableStreamException,
+)
 
 
 def test_a_new_output_has_defaults() -> None:
@@ -35,7 +51,7 @@ def test_a_new_output_has_defaults() -> None:
 
 
 def test_an_output_holds_the_messages_it_takes() -> None:
-    output = Output(True, False, False, ExitCode.SUCCESS, Message("a"))
+    output = Output(Message("a"))
 
     assert output.has_unwritten_message()
     assert not output.has_written_message()
@@ -43,7 +59,7 @@ def test_an_output_holds_the_messages_it_takes() -> None:
 
 
 def test_with_messages_replaces_the_unwritten_messages() -> None:
-    output = Output(True, False, False, ExitCode.SUCCESS, Message("a"))
+    output = Output(Message("a"))
 
     changed = output.with_messages(Message("b"))
 
@@ -52,7 +68,7 @@ def test_with_messages_replaces_the_unwritten_messages() -> None:
 
 
 def test_with_added_messages_appends() -> None:
-    output = Output(True, False, False, ExitCode.SUCCESS, Message("a"))
+    output = Output(Message("a"))
 
     changed = output.with_added_messages(Message("b"), Message("c"))
 
@@ -67,7 +83,7 @@ def test_with_added_message_appends_one() -> None:
 
 
 def test_write_messages_moves_each_message_to_written(capsys: Any) -> None:
-    output = Output(True, False, False, ExitCode.SUCCESS, Message("a"), Message("b"))
+    output = Output(Message("a"), Message("b"))
 
     written = output.write_messages()
 
@@ -111,7 +127,7 @@ def test_a_quiet_output_prints_on_a_failure(capsys: Any) -> None:
 
 
 def test_get_messages_puts_the_written_messages_first(capsys: Any) -> None:
-    output = Output(True, False, False, ExitCode.SUCCESS, Message("unwritten"))
+    output = Output(Message("unwritten"))
     output.write_message(Message("written"))
     capsys.readouterr()
 
@@ -197,7 +213,7 @@ def test_a_file_output_appends_to_its_file(tmp_path: Path) -> None:
 def test_a_failed_write_does_not_record_the_message(tmp_path: Path) -> None:
     output = FileOutput(str(tmp_path / "missing" / "out.txt"))
 
-    with pytest.raises(OSError):
+    with pytest.raises(CliInteractionFileWriteException):
         output.write_message(Message("a"))
 
     assert not output.has_written_message()
@@ -221,7 +237,7 @@ def test_the_output_factory_builds_each_kind(tmp_path: Path) -> None:
     assert isinstance(factory.create_empty_output(), EmptyOutput)
     assert isinstance(factory.create_plain_output(), PlainOutput)
     assert isinstance(factory.create_file_output(str(tmp_path / "f.txt")), FileOutput)
-    assert isinstance(factory.create_stream_output(), StreamOutput)
+    assert isinstance(factory.create_stream_output(sys.stdout), StreamOutput)
 
 
 def test_the_output_factory_passes_the_exit_code_and_messages() -> None:
@@ -229,3 +245,57 @@ def test_the_output_factory_passes_the_exit_code_and_messages() -> None:
 
     assert output.get_exit_code() is ExitCode.ERROR
     assert len(output.get_messages()) == 1
+
+
+def test_a_stream_output_refuses_a_closed_stream(tmp_path: Path) -> None:
+    stream = (tmp_path / "closed.txt").open("w", encoding="utf-8")
+    stream.close()
+    output = StreamOutput(stream)
+
+    with pytest.raises(CliInteractionUnwritableStreamException, match="closed"):
+        output.write_message(Message("a"))
+
+
+def test_a_stream_output_refuses_a_stream_that_takes_no_write(tmp_path: Path) -> None:
+    path = tmp_path / "read.txt"
+    path.write_text("", encoding="utf-8")
+
+    with path.open("r", encoding="utf-8") as stream:
+        output = StreamOutput(stream)
+
+        with pytest.raises(CliInteractionUnwritableStreamException, match="takes no write"):
+            output.write_message(Message("a"))
+
+
+def test_a_stream_output_reports_a_write_the_device_refused() -> None:
+    output = StreamOutput(cast("TextIO", RaisingStreamFixture()))
+
+    with pytest.raises(CliInteractionStreamWriteException, match="the device reported a failure"):
+        output.write_message(Message("a"))
+
+
+def test_a_stream_output_reports_a_stream_that_takes_no_character() -> None:
+    output = StreamOutput(cast("TextIO", RefusingStreamFixture()))
+
+    with pytest.raises(CliInteractionStreamWriteException, match="took no character"):
+        output.write_message(Message("a"))
+
+
+def test_a_stream_output_offers_the_rest_to_a_stream_that_takes_part() -> None:
+    stream = PartialStreamFixture()
+    output = StreamOutput(cast("TextIO", stream))
+
+    output.write_message(Message("abc"))
+
+    assert stream.getvalue() == "abc"
+
+
+def test_a_file_output_reports_a_write_that_stored_part_of_the_message(tmp_path: Path) -> None:
+    output = FileOutput(str(tmp_path / "short.txt"))
+
+    # A real file stores every character, so the short write comes from a stub.
+    with patch("builtins.open", mock_open()) as opened:
+        opened.return_value.write.return_value = 1
+
+        with pytest.raises(CliInteractionFileWriteException, match="stored 1 of 3"):
+            output.write_message(Message("abc"))
