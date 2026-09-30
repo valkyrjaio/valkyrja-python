@@ -47,7 +47,12 @@ class Answer(Message, AnswerContract):
 
     @override
     def get_text(self) -> str:
-        return self._text % self._user_response
+        # PHP's `sprintf` drops an argument that the template does not place, and
+        # Python's `%` raises for that template, so the text reads as it is instead.
+        try:
+            return self._text % self._user_response
+        except TypeError:
+            return self._text
 
     @override
     def get_default_response(self) -> str:
@@ -90,6 +95,9 @@ class Answer(Message, AnswerContract):
     def with_user_response(self, user_response: str) -> Self:
         new = copy(self)
         new._user_response = user_response
+        # A user response is an answer, so the flag follows it. `Question.ask` never
+        # gives an empty response, so an unanswered question keeps the flag false.
+        new._has_been_answered = True
 
         return new
 
