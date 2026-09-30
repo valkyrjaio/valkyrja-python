@@ -9,10 +9,10 @@
 from valkyrja.cli.interaction.throwable.contract.cli_interaction_throwable import (
     CliInteractionThrowable,
 )
-from valkyrja.throwable.exception.abstract.valkyrja_invalid_argument_exception import (
-    ValkyrjaInvalidArgumentException,
+from valkyrja.cli.throwable.exception.abstract.cli_invalid_argument_exception import (
+    CliInvalidArgumentException,
 )
 
 
-class CliInteractionInvalidArgumentException(ValkyrjaInvalidArgumentException, CliInteractionThrowable):
+class CliInteractionInvalidArgumentException(CliInvalidArgumentException, CliInteractionThrowable):
     _valkyrja_abstract = True
