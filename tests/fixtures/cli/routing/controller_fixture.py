@@ -48,3 +48,41 @@ class EmptyControllerFixture:
     @staticmethod
     def helper() -> None:
         """A function with no marker."""
+
+
+@final
+class MisplacedDecoratorControllerFixture:
+    """A controller whose decorator sits over the static method, not under it."""
+
+    @route(name="misplaced", description="The decorator sits over the static method")
+    @staticmethod
+    def misplaced(container: Any, arguments: dict[str, Any]) -> OutputContract:
+        return EmptyOutput()
+
+
+@final
+class InstanceMethodControllerFixture:
+    """A controller that marks an instance method, which takes an instance too."""
+
+    @route(name="instance", description="An instance method")
+    def instance(self, container: Any, arguments: dict[str, Any]) -> OutputContract:
+        return EmptyOutput()
+
+
+class BaseControllerFixture:
+    """A controller that a second controller extends."""
+
+    @staticmethod
+    @route(name="inherited", description="A command a base class declares")
+    def inherited(container: Any, arguments: dict[str, Any]) -> OutputContract:
+        return EmptyOutput()
+
+
+@final
+class ExtendingControllerFixture(BaseControllerFixture):
+    """A controller that inherits a command and adds one of its own."""
+
+    @staticmethod
+    @route(name="own", description="A command this class declares")
+    def own(container: Any, arguments: dict[str, Any]) -> OutputContract:
+        return EmptyOutput()

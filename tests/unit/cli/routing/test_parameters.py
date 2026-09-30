@@ -21,11 +21,20 @@ from valkyrja.cli.routing.enum.argument_mode import ArgumentMode
 from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
 from valkyrja.cli.routing.enum.option_mode import OptionMode
 from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
+from valkyrja.cli.routing.throwable.exception.cli_routing_argument_values_validation_exception import (
+    CliRoutingArgumentValuesValidationException,
+)
+from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_option_with_value_exception import (
+    CliRoutingInvalidOptionWithValueException,
+)
 from valkyrja.cli.routing.throwable.exception.cli_routing_no_cast_exception import (
     CliRoutingNoCastException,
 )
-from valkyrja.cli.routing.throwable.exception.cli_routing_parameter_values_validation_exception import (
-    CliRoutingParameterValuesValidationException,
+from valkyrja.cli.routing.throwable.exception.cli_routing_no_container_exception import (
+    CliRoutingNoContainerException,
+)
+from valkyrja.cli.routing.throwable.exception.cli_routing_option_values_validation_exception import (
+    CliRoutingOptionValuesValidationException,
 )
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
@@ -62,11 +71,11 @@ def test_the_name_and_description_setters_return_copies() -> None:
 
 def test_a_parameter_without_a_cast_raises_when_asked_for_one() -> None:
     with pytest.raises(CliRoutingNoCastException, match="No cast exists"):
-        ArgumentParameter("name").get_cast()
+        ArgumentParameter("name", "The name").get_cast()
 
 
 def test_the_cast_setters_return_copies() -> None:
-    parameter = ArgumentParameter("name")
+    parameter = ArgumentParameter("name", "The name")
     cast = Cast.from_cast_type(CastType.STRING)
 
     with_cast = parameter.with_cast(cast)
@@ -78,24 +87,24 @@ def test_the_cast_setters_return_copies() -> None:
 
 
 def test_an_argument_parameter_has_defaults() -> None:
-    parameter = ArgumentParameter("name")
+    parameter = ArgumentParameter("name", "The name")
 
-    assert parameter.get_mode() is ArgumentMode.REQUIRED
+    assert parameter.get_mode() is ArgumentMode.OPTIONAL
     assert parameter.get_value_mode() is ArgumentValueMode.DEFAULT
     assert parameter.get_arguments() == []
     assert not parameter.has_first_value()
 
 
 def test_the_argument_parameter_setters_return_copies() -> None:
-    parameter = ArgumentParameter("name")
+    parameter = ArgumentParameter("name", "The name")
 
-    assert parameter.with_mode(ArgumentMode.OPTIONAL).get_mode() is ArgumentMode.OPTIONAL
+    assert parameter.with_mode(ArgumentMode.REQUIRED).get_mode() is ArgumentMode.REQUIRED
     assert parameter.with_value_mode(ArgumentValueMode.ARRAY).get_value_mode() is ArgumentValueMode.ARRAY
-    assert parameter.get_mode() is ArgumentMode.REQUIRED
+    assert parameter.get_mode() is ArgumentMode.OPTIONAL
 
 
 def test_an_argument_parameter_holds_arguments() -> None:
-    parameter = ArgumentParameter("name").with_arguments(Argument("a"))
+    parameter = ArgumentParameter("name", "The name").with_arguments(Argument("a"))
 
     assert parameter.has_first_value()
     assert [argument.get_value() for argument in parameter.get_arguments()] == ["a"]
@@ -107,7 +116,7 @@ def test_an_argument_parameter_holds_arguments() -> None:
 
 
 def test_get_arguments_copies_the_list() -> None:
-    parameter = ArgumentParameter("name").with_arguments(Argument("a"))
+    parameter = ArgumentParameter("name", "The name").with_arguments(Argument("a"))
 
     parameter.get_arguments().clear()
 
@@ -115,20 +124,25 @@ def test_get_arguments_copies_the_list() -> None:
 
 
 def test_a_parameter_with_no_cast_returns_the_raw_values() -> None:
-    parameter = ArgumentParameter("name").with_arguments(Argument("a"), Argument("b"))
+    parameter = ArgumentParameter("name", "The name").with_arguments(Argument("a"), Argument("b"))
 
     assert parameter.get_cast_values() == ["a", "b"]
 
 
-def test_a_parameter_with_a_cast_but_no_container_returns_the_raw_values() -> None:
-    parameter = ArgumentParameter("name", cast=Cast.from_cast_type(CastType.STRING)).with_arguments(Argument("a"))
+def test_a_parameter_with_a_cast_but_no_container_reports_the_missing_container() -> None:
+    # A raw string in place of the cast type would reach the handler as the wrong type.
+    parameter = ArgumentParameter("name", "The name", cast=Cast.from_cast_type(CastType.STRING)).with_arguments(
+        Argument("a")
+    )
 
-    assert parameter.get_cast_values() == ["a"]
+    with pytest.raises(CliRoutingNoContainerException, match="holds no container"):
+        parameter.get_cast_values()
 
 
 def test_a_cast_that_converts_gives_the_plain_value() -> None:
     parameter = ArgumentParameter(
         "name",
+        "The name",
         cast=Cast.from_cast_type(CastType.STRING),
         arguments=[Argument("a")],
         container=make_container(),
@@ -140,6 +154,7 @@ def test_a_cast_that_converts_gives_the_plain_value() -> None:
 def test_a_cast_that_does_not_convert_gives_the_type() -> None:
     parameter = ArgumentParameter(
         "name",
+        "The name",
         cast=Cast.from_cast_type(CastType.STRING, convert=False),
         arguments=[Argument("a")],
         container=make_container(),
@@ -152,11 +167,11 @@ def test_a_cast_that_does_not_convert_gives_the_type() -> None:
 
 
 def test_an_option_parameter_has_defaults() -> None:
-    parameter = OptionParameter("name")
+    parameter = OptionParameter("name", "The name")
 
     assert parameter.get_short_names() == []
     assert parameter.get_mode() is OptionMode.OPTIONAL
-    assert parameter.get_value_mode() is OptionValueMode.NONE
+    assert parameter.get_value_mode() is OptionValueMode.DEFAULT
     assert not parameter.has_value_display_name()
     assert parameter.get_value_display_name() == ""
     assert parameter.get_options() == []
@@ -164,7 +179,7 @@ def test_an_option_parameter_has_defaults() -> None:
 
 
 def test_the_option_parameter_setters_return_copies() -> None:
-    parameter = OptionParameter("name")
+    parameter = OptionParameter("name", "The name")
 
     assert parameter.with_short_names("n").get_short_names() == ["n"]
     assert parameter.with_short_names("n").with_added_short_names("m").get_short_names() == ["n", "m"]
@@ -176,7 +191,7 @@ def test_the_option_parameter_setters_return_copies() -> None:
 
 
 def test_an_option_parameter_holds_options() -> None:
-    parameter = OptionParameter("name").with_options(Option("name", "a"))
+    parameter = OptionParameter("name", "The name").with_options(Option("name", "a"))
 
     assert parameter.has_first_value()
 
@@ -187,7 +202,7 @@ def test_an_option_parameter_holds_options() -> None:
 
 
 def test_get_short_names_and_options_copy_their_lists() -> None:
-    parameter = OptionParameter("name", short_names=["n"], options=[Option("name", "a")])
+    parameter = OptionParameter("name", "The name", short_names=["n"], options=[Option("name", "a")])
 
     parameter.get_short_names().clear()
     parameter.get_options().clear()
@@ -199,6 +214,7 @@ def test_get_short_names_and_options_copy_their_lists() -> None:
 def test_an_option_parameter_casts_its_values() -> None:
     parameter = OptionParameter(
         "name",
+        "The name",
         cast=Cast.from_cast_type(CastType.STRING),
         options=[Option("name", "a")],
         container=make_container(),
@@ -208,7 +224,7 @@ def test_an_option_parameter_casts_its_values() -> None:
 
 
 def test_an_option_parameter_with_no_cast_returns_the_raw_values() -> None:
-    parameter = OptionParameter("name", options=[Option("name", "a")])
+    parameter = OptionParameter("name", "The name", options=[Option("name", "a")])
 
     assert parameter.get_cast_values() == ["a"]
 
@@ -218,7 +234,8 @@ def test_the_container_is_the_way_python_resolves_a_cast() -> None:
     container: ContainerContract = make_container()
     parameter = ArgumentParameter(
         "name",
-        cast=Cast(type=STRING_TYPE_ID),
+        "The name",
+        cast=Cast(type_=STRING_TYPE_ID),
         arguments=[Argument("value")],
         container=container,
     )
@@ -227,22 +244,23 @@ def test_the_container_is_the_way_python_resolves_a_cast() -> None:
 
 
 def test_a_required_argument_with_no_value_is_not_valid() -> None:
-    assert not ArgumentParameter("name", mode=ArgumentMode.REQUIRED).are_values_valid()
+    assert not ArgumentParameter("name", "The name", mode=ArgumentMode.REQUIRED).are_values_valid()
 
 
 def test_a_required_argument_with_a_value_is_valid() -> None:
-    parameter = ArgumentParameter("name", mode=ArgumentMode.REQUIRED, arguments=[Argument("a")])
+    parameter = ArgumentParameter("name", "The name", mode=ArgumentMode.REQUIRED, arguments=[Argument("a")])
 
     assert parameter.are_values_valid()
 
 
 def test_an_optional_argument_with_no_value_is_valid() -> None:
-    assert ArgumentParameter("name", mode=ArgumentMode.OPTIONAL).are_values_valid()
+    assert ArgumentParameter("name", "The name", mode=ArgumentMode.OPTIONAL).are_values_valid()
 
 
 def test_a_single_value_argument_rejects_a_second_value() -> None:
     parameter = ArgumentParameter(
         "name",
+        "The name",
         mode=ArgumentMode.OPTIONAL,
         value_mode=ArgumentValueMode.DEFAULT,
         arguments=[Argument("a"), Argument("b")],
@@ -254,6 +272,7 @@ def test_a_single_value_argument_rejects_a_second_value() -> None:
 def test_an_array_argument_accepts_several_values() -> None:
     parameter = ArgumentParameter(
         "name",
+        "The name",
         mode=ArgumentMode.OPTIONAL,
         value_mode=ArgumentValueMode.ARRAY,
         arguments=[Argument("a"), Argument("b")],
@@ -263,29 +282,30 @@ def test_an_array_argument_accepts_several_values() -> None:
 
 
 def test_validate_values_returns_the_argument_when_valid() -> None:
-    parameter = ArgumentParameter("name", mode=ArgumentMode.OPTIONAL)
+    parameter = ArgumentParameter("name", "The name", mode=ArgumentMode.OPTIONAL)
 
     assert parameter.validate_values() is parameter
 
 
 def test_validate_values_raises_for_an_invalid_argument() -> None:
-    parameter = ArgumentParameter("name", mode=ArgumentMode.REQUIRED)
+    parameter = ArgumentParameter("name", "The name", mode=ArgumentMode.REQUIRED)
 
-    with pytest.raises(CliRoutingParameterValuesValidationException, match="name is invalid"):
+    with pytest.raises(CliRoutingArgumentValuesValidationException, match="name is invalid"):
         parameter.validate_values()
 
 
 def test_a_required_option_with_no_value_is_not_valid() -> None:
-    assert not OptionParameter("name", mode=OptionMode.REQUIRED).are_values_valid()
+    assert not OptionParameter("name", "The name", mode=OptionMode.REQUIRED).are_values_valid()
 
 
 def test_an_optional_option_with_no_value_is_valid() -> None:
-    assert OptionParameter("name").are_values_valid()
+    assert OptionParameter("name", "The name").are_values_valid()
 
 
 def test_a_single_value_option_rejects_a_second_value() -> None:
     parameter = OptionParameter(
         "name",
+        "The name",
         value_mode=OptionValueMode.DEFAULT,
         options=[Option("name", "a"), Option("name", "b")],
     )
@@ -294,19 +314,19 @@ def test_a_single_value_option_rejects_a_second_value() -> None:
 
 
 def test_an_option_rejects_a_value_outside_the_valid_values() -> None:
-    parameter = OptionParameter("name", options=[Option("name", "other")], valid_values=["a", "b"])
+    parameter = OptionParameter("name", "The name", options=[Option("name", "other")], valid_values=["a", "b"])
 
     assert not parameter.are_values_valid()
 
 
 def test_an_option_accepts_a_value_inside_the_valid_values() -> None:
-    parameter = OptionParameter("name", options=[Option("name", "a")], valid_values=["a", "b"])
+    parameter = OptionParameter("name", "The name", options=[Option("name", "a")], valid_values=["a", "b"])
 
     assert parameter.are_values_valid()
 
 
 def test_the_valid_values_setters_return_copies() -> None:
-    parameter = OptionParameter("name")
+    parameter = OptionParameter("name", "The name")
 
     assert parameter.get_valid_values() == []
     assert parameter.with_valid_values("a").get_valid_values() == ["a"]
@@ -318,7 +338,7 @@ def test_the_valid_values_setters_return_copies() -> None:
 
 
 def test_get_valid_values_copies_the_list() -> None:
-    parameter = OptionParameter("name", valid_values=["a"])
+    parameter = OptionParameter("name", "The name", valid_values=["a"])
 
     parameter.get_valid_values().clear()
 
@@ -326,20 +346,20 @@ def test_get_valid_values_copies_the_list() -> None:
 
 
 def test_validate_values_raises_for_an_invalid_option() -> None:
-    parameter = OptionParameter("name", mode=OptionMode.REQUIRED)
+    parameter = OptionParameter("name", "The name", mode=OptionMode.REQUIRED)
 
-    with pytest.raises(CliRoutingParameterValuesValidationException, match="name is invalid"):
+    with pytest.raises(CliRoutingOptionValuesValidationException, match="name is invalid"):
         parameter.validate_values()
 
 
 def test_validate_values_returns_the_option_when_valid() -> None:
-    parameter = OptionParameter("name")
+    parameter = OptionParameter("name", "The name")
 
     assert parameter.validate_values() is parameter
 
 
 def test_a_parameter_separates_the_value_from_the_presence() -> None:
-    parameter = ArgumentParameter("name")
+    parameter = ArgumentParameter("name", "The name")
 
     assert not parameter.is_provided()
     assert not parameter.has_first_value()
@@ -358,7 +378,7 @@ def test_a_parameter_separates_the_value_from_the_presence() -> None:
 
 
 def test_an_option_parameter_holds_a_default_value() -> None:
-    parameter = OptionParameter("format")
+    parameter = OptionParameter("format", "The format")
 
     assert not parameter.has_default_value()
     assert parameter.get_default_value() == ""
@@ -368,3 +388,37 @@ def test_an_option_parameter_holds_a_default_value() -> None:
     assert declaring.has_default_value()
     assert declaring.get_default_value() == "json"
     assert not parameter.has_default_value()
+
+
+def test_an_option_parameter_that_takes_no_value_rejects_one() -> None:
+    parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.NONE)
+
+    with pytest.raises(CliRoutingInvalidOptionWithValueException, match="should have no value"):
+        parameter.with_options(Option("name", "a"))
+
+
+def test_an_option_parameter_that_takes_no_value_rejects_an_added_one() -> None:
+    parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.NONE)
+
+    with pytest.raises(CliRoutingInvalidOptionWithValueException, match="should have no value"):
+        parameter.with_added_options(Option("name", "a"))
+
+
+def test_an_option_parameter_that_takes_no_value_accepts_one_without() -> None:
+    parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.NONE)
+
+    assert parameter.with_options(Option("name", "")).get_options() != []
+
+
+def test_an_option_parameter_with_a_default_value_mode_takes_one_option() -> None:
+    parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.DEFAULT)
+
+    assert parameter.with_options(Option("name", "a")).are_values_valid()
+    assert not parameter.with_options(Option("name", "a"), Option("name", "b")).are_values_valid()
+
+
+def test_an_option_parameter_that_takes_no_value_accepts_several_options() -> None:
+    # The one-option limit belongs to the default value mode alone.
+    parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.NONE)
+
+    assert parameter.with_options(Option("name", ""), Option("name", "")).are_values_valid()
