@@ -20,6 +20,9 @@ from tests.fixtures.event.data.stoppable_event_fixture import (
 )
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
+from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
+    ContainerInvalidReferenceException,
+)
 from valkyrja.event.collection.listener_collection import ListenerCollection
 from valkyrja.event.constant.event_argument import EventArgument
 from valkyrja.event.data.listener import Listener
@@ -203,7 +206,7 @@ def test_dispatch_by_id_raises_when_the_id_is_not_an_event() -> None:
 def test_dispatch_by_id_raises_when_the_container_has_no_binding() -> None:
     dispatcher, _ = make_dispatcher()
 
-    with pytest.raises(Exception, match="not found"):
+    with pytest.raises(ContainerInvalidReferenceException, match="not found"):
         dispatcher.dispatch_by_id(MISSING_ID)
 
 
@@ -244,3 +247,46 @@ def test_dispatch_listeners_with_none_returns_the_event() -> None:
     event = OrderPlacedFixture()
 
     assert dispatcher.dispatch_listeners(event) is event
+
+
+def test_dispatch_by_id_sets_the_arguments_on_an_event_that_takes_them() -> None:
+    container = Container()
+    container.bind(EVENT_ID, lambda c, a: EventFixture())
+    dispatcher, _ = make_dispatcher(container)
+
+    dispatched = dispatcher.dispatch_by_id(EVENT_ID, {"key": "value"})
+
+    assert isinstance(dispatched, EventFixture)
+    assert dispatched.arguments == {"key": "value"}
+
+
+def test_dispatch_by_id_sets_an_empty_argument_map_when_it_gets_none() -> None:
+    container = Container()
+    container.bind(EVENT_ID, lambda c, a: EventFixture())
+    dispatcher, _ = make_dispatcher(container)
+
+    dispatched = dispatcher.dispatch_by_id(EVENT_ID)
+
+    assert isinstance(dispatched, EventFixture)
+    assert dispatched.arguments == {}
+
+
+def test_dispatch_by_id_raises_when_the_binding_resolves_another_event() -> None:
+    container = Container()
+    # The binding answers with an event that names a different id.
+    container.bind(EVENT_ID, lambda c, a: OrderPlacedFixture())
+    dispatcher, _ = make_dispatcher(container)
+
+    with pytest.raises(EventInvalidEventException, match="is not an event"):
+        dispatcher.dispatch_by_id(EVENT_ID)
+
+
+def test_dispatch_by_id_if_has_listeners_sets_the_arguments() -> None:
+    container = Container()
+    container.bind(EVENT_ID, lambda c, a: EventFixture())
+    dispatcher, _ = make_dispatcher(container)
+
+    dispatched = dispatcher.dispatch_by_id_if_has_listeners(EVENT_ID, {"key": "value"})
+
+    assert isinstance(dispatched, EventFixture)
+    assert dispatched.arguments == {"key": "value"}

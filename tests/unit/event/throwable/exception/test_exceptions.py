@@ -53,8 +53,9 @@ def test_the_invalid_event_exception_names_the_id() -> None:
 
 
 def test_a_copy_keeps_the_message_of_the_invalid_event_exception() -> None:
-    exception = EventInvalidEventException("Valkyrja.Tests.NotAnEvent")
+    exception = EventInvalidEventException("tests.Event")
 
     assert str(copy(exception)) == str(exception)
     assert str(loads(dumps(exception))) == str(exception)
-    assert loads(dumps(exception)).get_id() == "Valkyrja.Tests.NotAnEvent"
+    assert copy(exception).get_id() == "tests.Event"
+    assert loads(dumps(exception)).get_id() == "tests.Event"
