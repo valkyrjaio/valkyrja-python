@@ -63,14 +63,14 @@ def test_a_route_builds_its_help_text_only_when_asked() -> None:
 
 
 def test_a_route_holds_arguments() -> None:
-    route = make_route().with_arguments(ArgumentParameter("first"))
+    route = make_route().with_arguments(ArgumentParameter("first", "The first"))
 
     assert route.has_arguments()
     assert route.has_argument("first")
     assert route.get_argument("first").get_name() == "first"
     assert not route.has_argument("missing")
 
-    added = route.with_added_arguments(ArgumentParameter("second"))
+    added = route.with_added_arguments(ArgumentParameter("second", "The second"))
 
     assert len(added.get_arguments()) == 2
     assert len(route.get_arguments()) == 1
@@ -87,14 +87,14 @@ def test_a_route_without_arguments() -> None:
 
 
 def test_a_route_holds_options() -> None:
-    route = make_route().with_options(OptionParameter("help", short_names=["h"]))
+    route = make_route().with_options(OptionParameter("help", "The help", short_names=["h"]))
 
     assert route.has_options()
     assert route.has_option("help")
     assert route.has_option("h")
     assert route.get_option("h").get_name() == "help"
 
-    added = route.with_added_options(OptionParameter("quiet"))
+    added = route.with_added_options(OptionParameter("quiet", "The quiet"))
 
     assert len(added.get_options()) == 2
     assert len(route.get_options()) == 1
@@ -131,7 +131,7 @@ def test_each_middleware_family_appends_and_never_dedupes(family: str) -> None:
 
 
 def test_get_arguments_and_options_copy_their_lists() -> None:
-    route = make_route().with_arguments(ArgumentParameter("a")).with_options(OptionParameter("o"))
+    route = make_route().with_arguments(ArgumentParameter("a", "The a")).with_options(OptionParameter("o", "The o"))
 
     route.get_arguments().clear()
     route.get_options().clear()
@@ -200,9 +200,9 @@ def test_a_route_handler_answers_with_an_output() -> None:
 
 
 def test_a_route_reports_what_the_invocation_provided() -> None:
-    declared = OptionParameter("namespace")
+    declared = OptionParameter("namespace", "The namespace")
     provided = declared.with_options(Option("namespace", "db:"))
-    declaring = OptionParameter("namespace").with_default_value("app:")
+    declaring = OptionParameter("namespace", "The namespace").with_default_value("app:")
 
     bare = make_route()
 
@@ -228,7 +228,7 @@ def test_a_route_reports_what_the_invocation_provided() -> None:
 
 
 def test_a_route_reports_what_the_invocation_provided_for_an_argument() -> None:
-    declared = ArgumentParameter("namespace")
+    declared = ArgumentParameter("namespace", "The namespace")
     provided = declared.with_arguments(Argument("db:"))
 
     bare = make_route()

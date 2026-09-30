@@ -93,7 +93,7 @@ def test_dispatch_publishes_the_route_in_the_container() -> None:
 
 def test_dispatch_route_fills_a_single_value_argument() -> None:
     container = Container()
-    route = make_route("run").with_arguments(ArgumentParameter("first", mode=ArgumentMode.OPTIONAL))
+    route = make_route("run").with_arguments(ArgumentParameter("first", "The first", mode=ArgumentMode.OPTIONAL))
     router = make_router(RouteCollection().add(route), container)
 
     router.dispatch_route(Input(command_name="run", arguments=[Argument("a")]), route)
@@ -106,7 +106,7 @@ def test_dispatch_route_fills_a_single_value_argument() -> None:
 def test_dispatch_route_gives_every_argument_to_an_array_parameter() -> None:
     container = Container()
     route = make_route("run").with_arguments(
-        ArgumentParameter("many", mode=ArgumentMode.OPTIONAL, value_mode=ArgumentValueMode.ARRAY)
+        ArgumentParameter("many", "The many", mode=ArgumentMode.OPTIONAL, value_mode=ArgumentValueMode.ARRAY)
     )
     router = make_router(RouteCollection().add(route), container)
 
@@ -119,7 +119,7 @@ def test_dispatch_route_gives_every_argument_to_an_array_parameter() -> None:
 
 def test_dispatch_route_leaves_an_argument_with_no_input_empty() -> None:
     container = Container()
-    route = make_route("run").with_arguments(ArgumentParameter("first", mode=ArgumentMode.OPTIONAL))
+    route = make_route("run").with_arguments(ArgumentParameter("first", "The first", mode=ArgumentMode.OPTIONAL))
     router = make_router(RouteCollection().add(route), container)
 
     router.dispatch_route(Input(command_name="run"), route)
@@ -131,7 +131,7 @@ def test_dispatch_route_leaves_an_argument_with_no_input_empty() -> None:
 
 def test_dispatch_route_fills_an_option_by_name_and_by_short_name() -> None:
     container = Container()
-    route = make_route("run").with_options(OptionParameter("verbose", short_names=["v"]))
+    route = make_route("run").with_options(OptionParameter("verbose", "The verbose", short_names=["v"]))
     router = make_router(RouteCollection().add(route), container)
 
     router.dispatch_route(Input(command_name="run", options=[Option("v"), Option("other")]), route)
