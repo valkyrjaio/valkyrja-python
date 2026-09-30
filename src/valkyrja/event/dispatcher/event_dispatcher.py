@@ -14,6 +14,9 @@ from valkyrja.event.collection.contract.listener_collection_contract import (
     ListenerCollectionContract,
 )
 from valkyrja.event.constant.event_argument import EventArgument
+from valkyrja.event.contract.arguments_capable_event_contract import (
+    ArgumentsCapableEventContract,
+)
 from valkyrja.event.contract.dispatch_collectable_event_contract import (
     DispatchCollectableEventContract,
 )
@@ -85,9 +88,15 @@ class EventDispatcher(EventDispatcherContract):
         the thing that this identifier names". Go resolves it the same way. An
         application binds each event that it dispatches by identifier.
         """
+        arguments = arguments if arguments is not None else {}
         resolved = self._container.get(event_id, arguments, InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION)
 
-        if not isinstance(resolved, EventContract):
+        # PHP tests `instanceof $eventId`. A Python id is a string, so the event
+        # answers for itself, and a binding that resolves to another event fails here.
+        if not isinstance(resolved, EventContract) or resolved.get_event_id() != event_id:
             raise EventInvalidEventException(event_id)
+
+        if isinstance(resolved, ArgumentsCapableEventContract):
+            return resolved.set_arguments(arguments)
 
         return resolved
