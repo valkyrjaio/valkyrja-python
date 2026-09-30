@@ -8,14 +8,22 @@
 
 """Tests for the AttributeRouteCollector and the `@route` decorator."""
 
+import pytest
+
 from tests.fixtures.cli.routing.controller_fixture import (
     FIRST_MIDDLEWARE_ID,
     ControllerFixture,
     EmptyControllerFixture,
+    ExtendingControllerFixture,
+    InstanceMethodControllerFixture,
+    MisplacedDecoratorControllerFixture,
 )
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.routing.attribute.route import ROUTE_MARKER, RouteMarker
 from valkyrja.cli.routing.collector.attribute_route_collector import AttributeRouteCollector
+from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_route_handler_exception import (
+    CliRoutingInvalidRouteHandlerException,
+)
 from valkyrja.container.manager.container import Container
 
 
@@ -76,3 +84,22 @@ def test_a_route_with_no_middleware_starts_empty() -> None:
     assert first.get_route_matched_middleware() == []
     assert not first.has_options()
     assert not first.has_help_text()
+
+
+def test_the_collector_reads_a_decorator_that_sits_over_the_static_method() -> None:
+    routes = AttributeRouteCollector().get_routes(MisplacedDecoratorControllerFixture)
+
+    assert [route.get_name() for route in routes] == ["misplaced"]
+
+
+def test_the_collector_reports_a_marked_instance_method() -> None:
+    # A handler takes the container and the arguments alone, so an instance method
+    # would read the container as its instance.
+    with pytest.raises(CliRoutingInvalidRouteHandlerException, match="is no static method"):
+        AttributeRouteCollector().get_routes(InstanceMethodControllerFixture)
+
+
+def test_the_collector_reads_a_command_that_a_base_class_declares() -> None:
+    routes = AttributeRouteCollector().get_routes(ExtendingControllerFixture)
+
+    assert sorted(route.get_name() for route in routes) == ["inherited", "own"]
