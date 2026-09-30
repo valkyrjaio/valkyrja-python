@@ -14,7 +14,7 @@ from valkyrja.cli.routing.data.contract.argument_parameter_contract import (
     ArgumentParameterContract,
 )
 from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
-from valkyrja.cli.routing.data.contract.route_contract import CliHandler, HelpText, RouteContract
+from valkyrja.cli.routing.data.contract.route_contract import CliHandlerFunc, HelpText, RouteContract
 from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_argument_name_exception import (
     CliRoutingInvalidArgumentNameException,
 )
@@ -31,7 +31,7 @@ class Route(RouteContract):
         self,
         name: str,
         description: str,
-        handler: CliHandler,
+        handler: CliHandlerFunc,
         help_text: HelpText | None = None,
         route_matched_middleware: list[str] | None = None,
         route_dispatched_middleware: list[str] | None = None,
@@ -282,11 +282,11 @@ class Route(RouteContract):
         return new
 
     @override
-    def get_handler(self) -> CliHandler:
+    def get_handler(self) -> CliHandlerFunc:
         return self._handler
 
     @override
-    def with_handler(self, handler: CliHandler) -> Self:
+    def with_handler(self, handler: CliHandlerFunc) -> Self:
         new = self._copy()
         new._handler = handler
 
