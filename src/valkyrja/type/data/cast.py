@@ -13,11 +13,11 @@ from valkyrja.type.enum.cast_type import CastType
 
 @dataclass(frozen=True)
 class Cast:
-    type: str
+    type_: str
     convert: bool = True
     is_array: bool = False
 
     @staticmethod
     def from_cast_type(cast_type: CastType, convert: bool = True, is_array: bool = False) -> Cast:
         """Build a cast from a member of `CastType`."""
-        return Cast(type=cast_type.value, convert=convert, is_array=is_array)
+        return Cast(type_=cast_type.value, convert=convert, is_array=is_array)
