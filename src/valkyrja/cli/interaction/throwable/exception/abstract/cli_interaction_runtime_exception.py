@@ -9,8 +9,8 @@
 from valkyrja.cli.interaction.throwable.contract.cli_interaction_throwable import (
     CliInteractionThrowable,
 )
-from valkyrja.throwable.exception.abstract.valkyrja_runtime_exception import ValkyrjaRuntimeException
+from valkyrja.cli.throwable.exception.abstract.cli_runtime_exception import CliRuntimeException
 
 
-class CliInteractionRuntimeException(ValkyrjaRuntimeException, CliInteractionThrowable):
+class CliInteractionRuntimeException(CliRuntimeException, CliInteractionThrowable):
     _valkyrja_abstract = True
