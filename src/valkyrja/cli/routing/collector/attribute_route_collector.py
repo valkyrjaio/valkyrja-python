@@ -12,7 +12,7 @@ from valkyrja.cli.routing.attribute.route import ROUTE_MARKER, RouteMarker
 from valkyrja.cli.routing.collector.contract.route_collector_contract import (
     RouteCollectorContract,
 )
-from valkyrja.cli.routing.data.contract.route_contract import CliHandler, RouteContract
+from valkyrja.cli.routing.data.contract.route_contract import CliHandlerFunc, RouteContract
 from valkyrja.cli.routing.data.route import Route
 from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_route_handler_exception import (
     CliRoutingInvalidRouteHandlerException,
@@ -64,7 +64,7 @@ class AttributeRouteCollector(RouteCollectorContract):
         return None
 
     @staticmethod
-    def _get_handler(controller: type, name: str, attribute: object) -> CliHandler:
+    def _get_handler(controller: type, name: str, attribute: object) -> CliHandlerFunc:
         """Get the callable that answers the command.
 
         A handler takes the container and the arguments alone, so a member that
@@ -77,10 +77,10 @@ class AttributeRouteCollector(RouteCollectorContract):
 
         # `staticmethod.__func__` is typed as the wrapped callable, which the
         # marker does not narrow, so the cast states what the decorator guarantees.
-        return cast("CliHandler", attribute.__func__)
+        return cast("CliHandlerFunc", attribute.__func__)
 
     @staticmethod
-    def _make_route(marker: RouteMarker, handler: CliHandler) -> RouteContract:
+    def _make_route(marker: RouteMarker, handler: CliHandlerFunc) -> RouteContract:
         """Build a command from the marker and the function that answers it."""
         return Route(
             name=marker.name,
