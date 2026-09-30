@@ -18,7 +18,7 @@ from valkyrja.cli.routing.data.contract.argument_parameter_contract import (
 from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
-type CliHandler = Callable[[ContainerContract, dict[str, Any]], OutputContract]
+type CliHandlerFunc = Callable[[ContainerContract, dict[str, Any]], OutputContract]
 """The router calls this handler when the route matches."""
 
 type HelpText = Callable[[], MessageContract]
@@ -171,9 +171,9 @@ class RouteContract(ABC):
         """
 
     @abstractmethod
-    def get_handler(self) -> CliHandler:
+    def get_handler(self) -> CliHandlerFunc:
         """Get the handler that answers the command."""
 
     @abstractmethod
-    def with_handler(self, handler: CliHandler) -> Self:
+    def with_handler(self, handler: CliHandlerFunc) -> Self:
         """Get a copy of the route that carries a different handler."""
