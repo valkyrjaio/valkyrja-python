@@ -16,6 +16,11 @@ import pytest
 from valkyrja.type.contract.type_contract import TypeContract
 from valkyrja.type.data.cast import Cast
 from valkyrja.type.enum.cast_type import CastType
+from valkyrja.type.throwable.contract.type_throwable import TypeThrowable
+from valkyrja.type.throwable.exception.abstract.type_invalid_argument_exception import (
+    TypeInvalidArgumentException,
+)
+from valkyrja.type.throwable.exception.abstract.type_runtime_exception import TypeRuntimeException
 
 
 def test_the_type_contract_does_not_construct() -> None:
@@ -38,9 +43,9 @@ def test_cast_type_holds_every_member_that_php_holds() -> None:
 
 
 def test_a_cast_defaults_to_a_converting_single_value() -> None:
-    cast = Cast(type=CastType.STRING.value)
+    cast = Cast(type_=CastType.STRING.value)
 
-    assert cast.type == "valkyrja.type.string.StringT"
+    assert cast.type_ == "valkyrja.type.string.StringT"
     assert cast.convert
     assert not cast.is_array
 
@@ -48,13 +53,26 @@ def test_a_cast_defaults_to_a_converting_single_value() -> None:
 def test_from_cast_type_builds_a_cast() -> None:
     cast = Cast.from_cast_type(CastType.INT, convert=False, is_array=True)
 
-    assert cast.type == "valkyrja.type.int.IntT"
+    assert cast.type_ == "valkyrja.type.int.IntT"
     assert not cast.convert
     assert cast.is_array
 
 
 def test_a_cast_is_frozen() -> None:
-    cast = Cast(type=CastType.BOOL.value)
+    cast = Cast(type_=CastType.BOOL.value)
 
     with pytest.raises(dataclasses.FrozenInstanceError):
-        cast.type = "other"  # type: ignore[misc]
+        cast.type_ = "other"  # type: ignore[misc]
+
+
+def test_the_type_throwable_bases_do_not_construct() -> None:
+    for exception_class in (TypeThrowable, TypeRuntimeException, TypeInvalidArgumentException):
+        with pytest.raises(TypeError, match="Can't instantiate abstract throwable"):
+            exception_class()
+
+
+def test_the_type_bases_extend_the_language_roots() -> None:
+    assert issubclass(TypeRuntimeException, RuntimeError)
+    assert issubclass(TypeInvalidArgumentException, ValueError)
+    assert issubclass(TypeRuntimeException, TypeThrowable)
+    assert issubclass(TypeInvalidArgumentException, TypeThrowable)
