@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import override
+from typing import Any, override
 
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.input.contract.input_contract import InputContract
@@ -42,6 +42,7 @@ from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionP
 from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 from valkyrja.cli.routing.dispatcher.contract.router_contract import RouterContract
 from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
+from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
 
@@ -91,11 +92,32 @@ class Router(RouterContract):
         self._container.set_singleton(CliRoutingServiceId.ROUTE_CONTRACT, after_middleware)
 
         handler = after_middleware.get_handler()
-        # The handler reads the route from the container, never from the
-        # signature. The second argument carries the arguments alone.
-        output = handler(self._container, {})
+        # The handler reads the route from the container, never from the signature.
+        # The second argument carries the named arguments of the command.
+        output = handler(self._container, self._get_named_arguments(after_middleware))
 
         return self._route_dispatched_handler.route_dispatched(input_, output, after_middleware)
+
+    @staticmethod
+    def _get_named_arguments(route: RouteContract) -> dict[str, Any]:
+        """Read each parameter of the command under the name it carries.
+
+        An array parameter answers with every value it took. Every other parameter
+        answers with one value, or with `None` where the command line gave none.
+        """
+        arguments: dict[str, Any] = {}
+
+        for argument in route.get_arguments():
+            values = argument.get_cast_values()
+            takes_many = argument.get_value_mode() is ArgumentValueMode.ARRAY
+            arguments[argument.get_name()] = values if takes_many else next(iter(values), None)
+
+        for option in route.get_options():
+            values = option.get_cast_values()
+            takes_many = option.get_value_mode() is OptionValueMode.ARRAY
+            arguments[option.get_name()] = values if takes_many else next(iter(values), None)
+
+        return arguments
 
     def _attempt_to_match_route(self, input_: InputContract) -> RouteContract | OutputContract:
         """Get the command that the input names, or an output that reports none."""
