@@ -7,7 +7,7 @@
 #
 
 from copy import copy
-from typing import Any, Self, override
+from typing import Self, override
 
 from valkyrja.cli.interaction.option.contract.option_contract import OptionContract
 from valkyrja.cli.routing.data.abstract.parameter import Parameter, ValuedParameter
@@ -20,7 +20,6 @@ from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_option_with_va
 from valkyrja.cli.routing.throwable.exception.cli_routing_option_values_validation_exception import (
     CliRoutingOptionValuesValidationException,
 )
-from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
 
 
@@ -37,9 +36,8 @@ class OptionParameter(Parameter, OptionParameterContract):
         default_value: str = "",
         options: list[OptionContract] | None = None,
         valid_values: list[str] | None = None,
-        container: ContainerContract | None = None,
     ) -> None:
-        super().__init__(name, description, cast, container)
+        super().__init__(name, description, cast)
 
         self._default_value: str = default_value
         self._short_names: list[str] = list(short_names) if short_names is not None else []
@@ -130,8 +128,8 @@ class OptionParameter(Parameter, OptionParameterContract):
         return option
 
     @override
-    def get_cast_values(self) -> list[Any]:
-        return self._get_cast_values_for_parameters(list[ValuedParameter](self._options))
+    def get_values(self) -> list[str]:
+        return self._get_values_of_parameters(list[ValuedParameter](self._options))
 
     @override
     def is_provided(self) -> bool:
