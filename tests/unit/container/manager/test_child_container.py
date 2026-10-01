@@ -408,3 +408,36 @@ def test_the_parent_keeps_its_state_after_the_child_resolves() -> None:
     assert data_before == data_after
     assert parent.is_singleton_instance(SINGLETON_ID) == singleton_instance_before
     assert not parent.is_published(PROVIDED_ID)
+
+
+def test_the_child_reads_a_parent_service_rather_than_a_copy() -> None:
+    # The data of a child carries no service, and the child still answers one the
+    # parent holds, because its own override reads the parent.
+    parent = make_parent()
+    child = make_child_from(parent)
+
+    assert child.is_service(SERVICE_ID)
+    assert child.get_service(SERVICE_ID) == {"arguments": {}}
+    assert not parent.is_singleton_instance(SERVICE_ID)
+
+
+def test_the_child_resolves_a_parent_singleton_that_the_parent_never_resolved() -> None:
+    parent = Container()
+    parent.bind_singleton(SINGLETON_ID, make_service)
+    child = make_child_from(parent)
+
+    assert child.is_singleton_binding(SINGLETON_ID)
+    assert child.get_singleton(SINGLETON_ID) == {"arguments": {}}
+    # The child caches the instance, and the parent keeps none.
+    assert not parent.is_singleton_instance(SINGLETON_ID)
+
+
+def test_the_child_publishes_a_parent_provider_into_itself() -> None:
+    parent = Container()
+    parent.register(ServiceProviderFixture())
+    child = make_child_from(parent)
+
+    assert child.get(PROVIDED_ID) == {"published": True}
+    # The publish happened in the child, so the parent stays as it was.
+    assert not parent.is_published(PROVIDED_ID)
+    assert not parent.is_singleton_instance(PROVIDED_ID)
