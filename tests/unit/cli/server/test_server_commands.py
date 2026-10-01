@@ -11,6 +11,7 @@
 from typing import Any
 
 from tests.fixtures.cli.routing.route_fixture import make_route
+from valkyrja.cli.interaction.argument.argument import Argument
 from valkyrja.cli.interaction.constant.cli_interaction_service_id import (
     CliInteractionServiceId,
 )
@@ -50,10 +51,18 @@ def get_text(messages: Any) -> str:
     return "".join(message.get_text() for message in messages)
 
 
+def make_bash_route(namespace: str = "") -> Any:
+    """Build the route that the bash command answers, carrying one namespace."""
+    route = AttributeRouteCollector().get_routes(ListBashCommand)[0]
+    namespace_parameter = route.get_arguments()[1].with_arguments(Argument(namespace))
+
+    return route.with_arguments(route.get_arguments()[0], namespace_parameter)
+
+
 def test_the_bash_command_lists_every_command() -> None:
     collection = RouteCollection().add(make_route("run")).add(make_route("stop"))
 
-    output = ListBashCommand.run(make_container(collection), {})
+    output = ListBashCommand.run(make_container(collection), make_bash_route())
 
     assert get_text(output.get_messages()) == "run stop"
 
@@ -61,7 +70,7 @@ def test_the_bash_command_lists_every_command() -> None:
 def test_the_bash_command_filters_by_a_namespace() -> None:
     collection = RouteCollection().add(make_route("app:run")).add(make_route("app:stop")).add(make_route("other"))
 
-    output = ListBashCommand.run(make_container(collection), {"namespace": "app"})
+    output = ListBashCommand.run(make_container(collection), make_bash_route("app"))
 
     assert get_text(output.get_messages()) == "app:run app:stop"
 
@@ -69,7 +78,7 @@ def test_the_bash_command_filters_by_a_namespace() -> None:
 def test_the_bash_command_drops_the_namespace_the_shell_already_typed() -> None:
     collection = RouteCollection().add(make_route("app:run")).add(make_route("app:stop"))
 
-    output = ListBashCommand.run(make_container(collection), {"namespace": "app:"})
+    output = ListBashCommand.run(make_container(collection), make_bash_route("app:"))
 
     assert get_text(output.get_messages()) == "run stop"
 
@@ -77,7 +86,7 @@ def test_the_bash_command_drops_the_namespace_the_shell_already_typed() -> None:
 def test_the_bash_command_takes_no_namespace_as_every_command() -> None:
     collection = RouteCollection().add(make_route("run"))
 
-    output = ListBashCommand.run(make_container(collection), {"namespace": None})
+    output = ListBashCommand.run(make_container(collection), make_bash_route())
 
     assert get_text(output.get_messages()) == "run"
 
