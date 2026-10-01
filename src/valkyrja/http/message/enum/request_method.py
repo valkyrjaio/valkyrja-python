@@ -21,3 +21,21 @@ class RequestMethod(Enum):
     PATCH = "PATCH"
     ANY = "ANY"
     """A route that answers every method. A request never carries this one."""
+
+    @classmethod
+    def all(cls) -> list[RequestMethod]:
+        """Get each method that a request carries.
+
+        `ANY` stands for a route that answers every method, so the list leaves it out.
+        """
+        return [
+            cls.GET,
+            cls.HEAD,
+            cls.POST,
+            cls.PUT,
+            cls.DELETE,
+            cls.CONNECT,
+            cls.OPTIONS,
+            cls.TRACE,
+            cls.PATCH,
+        ]
