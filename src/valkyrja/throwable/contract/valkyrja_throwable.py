@@ -7,7 +7,7 @@
 #
 
 from abc import ABC
-from itertools import islice
+from sys import _getframe
 from traceback import walk_stack
 from typing import Any, Self
 
@@ -29,11 +29,12 @@ class ValkyrjaThrowable(BaseException, ABC):
         throwable = super().__new__(cls, *args, **kwargs)
         # The stack is read here, at the construction site, because `__traceback__`
         # is empty until the raise and grows with every frame the raise passes.
-        # `walk_stack` opens on this frame, so the first entry is dropped. Each
-        # frame becomes a tuple of plain values, so the throwable stays picklable.
+        # The walk opens on the construction frame, named rather than counted off
+        # the stack. Each frame becomes a tuple of plain values, so the throwable
+        # stays picklable.
         throwable._construction_stack = tuple(
             (frame.f_code.co_filename, line_number, frame.f_code.co_name)
-            for frame, line_number in islice(walk_stack(None), 1, None)
+            for frame, line_number in walk_stack(_getframe(1))
         )
 
         return throwable
