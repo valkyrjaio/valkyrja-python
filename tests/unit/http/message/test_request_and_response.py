@@ -198,3 +198,13 @@ def test_send_http_line_returns_the_response(capsys: Any) -> None:
     assert response.send_body() is response
 
     capsys.readouterr()
+
+
+def test_send_headers_writes_nothing_for_a_header_with_no_value(capsys: Any) -> None:
+    # A bare line break would close the header block, and the body would then read
+    # as another header.
+    response = Response(headers=HeaderCollection(Header("X-Empty"), Header("X-Set", "yes")))
+
+    response.send_headers()
+
+    assert capsys.readouterr().out == "X-Set: yes\n"
