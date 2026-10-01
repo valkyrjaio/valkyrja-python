@@ -20,8 +20,8 @@ from valkyrja.http.message.response.contract.redirect_response_contract import (
     RedirectResponseContract,
 )
 from valkyrja.http.message.response.response import Response
-from valkyrja.http.message.response.throwable.exception.http_invalid_redirect_status_code_exception import (
-    HttpInvalidRedirectStatusCodeException,
+from valkyrja.http.message.response.throwable.exception.http_response_invalid_redirect_status_code_exception import (
+    HttpResponseInvalidRedirectStatusCodeException,
 )
 from valkyrja.http.message.uri.contract.uri_contract import UriContract
 from valkyrja.http.message.uri.uri import Uri
@@ -35,7 +35,9 @@ class RedirectResponse(Response, RedirectResponseContract):
         headers: HeaderCollectionContract | None = None,
     ) -> None:
         if not status_code.is_redirect():
-            raise HttpInvalidRedirectStatusCodeException(f"Invalid redirect status code {status_code.value} used.")
+            raise HttpResponseInvalidRedirectStatusCodeException(
+                f"Invalid redirect status code {status_code.value} used."
+            )
 
         self._uri: UriContract = uri if uri is not None else Uri(path="/")
 
@@ -45,6 +47,16 @@ class RedirectResponse(Response, RedirectResponseContract):
             status_code=status_code,
             headers=headers.with_header(Header(HeaderName.LOCATION, str(self._uri))),
         )
+
+    @classmethod
+    def create_from_uri(
+        cls,
+        uri: UriContract | None = None,
+        status_code: StatusCode = StatusCode.FOUND,
+        headers: HeaderCollectionContract | None = None,
+    ) -> RedirectResponse:
+        """Build a response that sends the caller to one uri."""
+        return cls(uri=uri, status_code=status_code, headers=headers)
 
     def get_uri(self) -> UriContract:
         """Get the uri that the response sends the caller to."""
