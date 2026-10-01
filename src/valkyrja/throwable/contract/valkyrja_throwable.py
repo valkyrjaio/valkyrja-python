@@ -27,11 +27,11 @@ class ValkyrjaThrowable(BaseException, ABC):
             raise TypeError(f"Can't instantiate abstract throwable {cls.__name__}")
 
         throwable = super().__new__(cls, *args, **kwargs)
-        # The stack is read here, at the construction site, because `__traceback__`
-        # is empty until the raise and grows with every frame the raise passes.
-        # The walk opens on the construction frame, named rather than counted off
-        # the stack. Each frame becomes a tuple of plain values, so the throwable
-        # stays picklable.
+        # The stack is read here, at construction, because `__traceback__` is empty
+        # until the raise and grows with every frame the raise passes. The walk
+        # opens on the caller of this method, so a subclass that defines `__new__`
+        # names its own frame first. Each frame becomes a tuple of plain values, so
+        # the throwable stays picklable.
         throwable._construction_stack = tuple(
             (frame.f_code.co_filename, line_number, frame.f_code.co_name)
             for frame, line_number in walk_stack(_getframe(1))
