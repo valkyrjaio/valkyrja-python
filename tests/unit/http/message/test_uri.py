@@ -327,3 +327,19 @@ def test_the_user_info_encodes_a_character_it_cannot_hold() -> None:
 
 def test_the_user_info_of_a_user_with_no_password() -> None:
     assert Uri(username="user").get_user_info() == "user"
+
+
+def test_an_ip_literal_host_keeps_its_brackets_beside_a_port() -> None:
+    # RFC 3986 brackets an IP literal, so the colons of the address stay apart from
+    # the one before the port.
+    uri = Uri(scheme=Scheme.HTTPS, host="[::1]", port=8080)
+
+    assert uri.get_host_port() == "[::1]:8080"
+    assert uri.get_authority() == "[::1]:8080"
+    assert uri.get_scheme_host_port() == "https://[::1]:8080"
+
+
+def test_the_scheme_host_port_of_a_uri_with_no_host() -> None:
+    # No host means no authority, so there is nothing for a scheme to sit in front of.
+    assert Uri(scheme=Scheme.HTTPS, port=8080).get_scheme_host_port() == ""
+    assert Uri(port=8080).get_scheme_host_port() == ""
