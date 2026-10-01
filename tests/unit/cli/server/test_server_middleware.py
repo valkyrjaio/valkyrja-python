@@ -11,14 +11,16 @@
 import pytest
 
 from valkyrja.cli.interaction.data.cli_interaction_config import CliInteractionConfig
+from valkyrja.cli.interaction.enum.exit_code import ExitCode
+from valkyrja.cli.interaction.input.contract.input_contract import InputContract
 from valkyrja.cli.interaction.input.input import Input
-from valkyrja.cli.interaction.message.message import Message
 from valkyrja.cli.interaction.option.option import Option
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.middleware.handler.input_received_handler import InputReceivedHandler
 from valkyrja.cli.middleware.handler.throwable_caught_handler import ThrowableCaughtHandler
 from valkyrja.cli.routing.constant.option_name import OptionName
 from valkyrja.cli.routing.constant.option_short_name import OptionShortName
+from valkyrja.cli.server.constant.cli_server_service_id import CliServerServiceId
 from valkyrja.cli.server.constant.command_name import CommandName
 from valkyrja.cli.server.middleware.input_received.check_for_help_options_middleware import (
     CheckForHelpOptionsMiddleware,
@@ -49,28 +51,28 @@ def make_interaction_middleware(
     )
 
 
-@pytest.mark.parametrize(
-    ("middleware_class", "command_name", "option_name", "short_name"),
-    [
-        (CheckForHelpOptionsMiddleware, CommandName.HELP, OptionName.HELP, OptionShortName.HELP),
-        (
-            CheckForVersionOptionsMiddleware,
-            CommandName.VERSION,
-            OptionName.VERSION,
-            OptionShortName.VERSION,
-        ),
-    ],
-)
-def test_the_option_sends_the_input_to_its_command(
-    middleware_class: type, command_name: str, option_name: str, short_name: str
-) -> None:
-    middleware = middleware_class(command_name, option_name, short_name)
+def test_the_help_option_sends_the_input_to_the_help_command() -> None:
+    # The two middleware differ: help names the command it describes, version does not.
+    middleware = CheckForHelpOptionsMiddleware(CommandName.HELP, OptionName.HELP, OptionShortName.HELP)
     handler = InputReceivedHandler(Container())
-    input_ = Input(command_name="run", options=[Option(option_name)])
+    input_ = Input(command_name="run", options=[Option(OptionName.HELP)])
 
     answered = middleware.input_received(input_, handler)
 
-    assert answered.get_command_name() == command_name
+    assert isinstance(answered, InputContract)
+    assert answered.get_command_name() == CommandName.HELP
+    assert [(option.get_name(), option.get_value()) for option in answered.get_options()] == [("command", "run")]
+
+
+def test_the_version_option_sends_the_input_to_the_version_command() -> None:
+    middleware = CheckForVersionOptionsMiddleware(CommandName.VERSION, OptionName.VERSION, OptionShortName.VERSION)
+    handler = InputReceivedHandler(Container())
+    input_ = Input(command_name="run", options=[Option(OptionName.VERSION)])
+
+    answered = middleware.input_received(input_, handler)
+
+    assert isinstance(answered, InputContract)
+    assert answered.get_command_name() == CommandName.VERSION
     assert answered.get_options() == []
 
 
@@ -157,14 +159,35 @@ def test_the_config_keeps_its_defaults_without_an_option() -> None:
     assert not config.is_silent
 
 
-def test_the_throwable_middleware_writes_the_output() -> None:
-    output = EmptyOutput().with_added_message(Message("boom"))
+def test_the_throwable_middleware_reports_the_throwable_and_continues() -> None:
+    output = EmptyOutput()
 
-    written = OutputThrowableCaughtMiddleware().throwable_caught(
-        Input(), output, RuntimeError("boom"), ThrowableCaughtHandler(Container())
+    try:
+        raise RuntimeError("boom")
+    except RuntimeError as throwable:
+        reported = OutputThrowableCaughtMiddleware().throwable_caught(
+            Input(command_name="run"), output, throwable, ThrowableCaughtHandler(Container())
+        )
+
+    text = "".join(message.get_text() for message in reported.get_messages())
+
+    assert reported.get_exit_code() is ExitCode.ERROR
+    assert "Cli Server Error:" in text
+    assert "run" in text
+    assert "boom" in text
+    assert "Line:" in text
+    assert "Trace:" in text
+
+
+def test_the_throwable_middleware_reports_a_throwable_that_never_raised() -> None:
+    # An unraised throwable carries no traceback, so the line reads zero.
+    reported = OutputThrowableCaughtMiddleware().throwable_caught(
+        Input(command_name="run"), EmptyOutput(), RuntimeError("boom"), ThrowableCaughtHandler(Container())
     )
 
-    assert written.has_written_message()
+    text = "".join(message.get_text() for message in reported.get_messages())
+
+    assert "Line: 0" in text
 
 
 def test_the_command_names() -> None:
@@ -172,4 +195,19 @@ def test_the_command_names() -> None:
     assert CommandName.LIST == "list"
     assert CommandName.LIST_BASH == "list:bash"
     assert CommandName.VERSION == "version"
-    assert CommandName.DATA_GENERATE == "data:generate"
+
+
+def test_the_server_service_ids() -> None:
+    assert CliServerServiceId.INPUT_HANDLER_CONTRACT == "valkyrja.cli.server.handler.InputHandlerContract"
+    assert CliServerServiceId.CHECK_FOR_HELP_OPTIONS_MIDDLEWARE == (
+        "valkyrja.cli.server.middleware.input_received.CheckForHelpOptionsMiddleware"
+    )
+    assert CliServerServiceId.CHECK_FOR_VERSION_OPTIONS_MIDDLEWARE == (
+        "valkyrja.cli.server.middleware.input_received.CheckForVersionOptionsMiddleware"
+    )
+    assert CliServerServiceId.CHECK_GLOBAL_INTERACTION_OPTIONS_MIDDLEWARE == (
+        "valkyrja.cli.server.middleware.input_received.CheckGlobalInteractionOptionsMiddleware"
+    )
+    assert CliServerServiceId.OUTPUT_THROWABLE_CAUGHT_MIDDLEWARE == (
+        "valkyrja.cli.server.middleware.throwable_caught.OutputThrowableCaughtMiddleware"
+    )
