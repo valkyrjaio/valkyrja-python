@@ -18,8 +18,8 @@ def get_trace_code(self) -> str: ...
 
 A trace code identifies a failure point. A log entry carries the trace code, and
 the application does not have to show the stack trace to a user.
-`ThrowableFactory` computes the code from the class name and the stack at the
-construction site:
+`ThrowableFactory` computes the code from the class name and the construction
+stack:
 
 ```python
 from valkyrja.throwable.factory.throwable_factory import ThrowableFactory
@@ -27,8 +27,9 @@ from valkyrja.throwable.factory.throwable_factory import ThrowableFactory
 trace_code = ThrowableFactory.get_trace_code(exception)
 ```
 
-Two throwables of one class constructed at one site share a code, and two
-constructed at different sites do not.
+The construction stack holds every frame from the construction call to the top
+of the stack. Two throwables of one class share a code when one call path
+constructs both. A second call path to the same line gives a second code.
 
 ## Exception Classes
 
