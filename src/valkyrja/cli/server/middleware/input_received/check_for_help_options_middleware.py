@@ -9,6 +9,7 @@
 from typing import override
 
 from valkyrja.cli.interaction.input.contract.input_contract import InputContract
+from valkyrja.cli.interaction.option.option import Option
 from valkyrja.cli.interaction.output.contract.output_contract import OutputContract
 from valkyrja.cli.middleware.contract.input_received_middleware_contract import (
     InputReceivedMiddlewareContract,
@@ -29,6 +30,10 @@ class CheckForHelpOptionsMiddleware(InputReceivedMiddlewareContract):
         self, input_: InputContract, handler: InputReceivedHandlerContract
     ) -> InputContract | OutputContract:
         if input_.has_option(self._option_short_name) or input_.has_option(self._option_name):
-            input_ = input_.with_command_name(self._command_name).with_options()
+            # The help command names the command it describes, so the original name
+            # travels as an option of its own.
+            input_ = input_.with_command_name(self._command_name).with_options(
+                Option("command", input_.get_command_name())
+            )
 
         return handler.input_received(input_)
