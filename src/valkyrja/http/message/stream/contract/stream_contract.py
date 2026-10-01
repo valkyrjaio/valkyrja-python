@@ -7,7 +7,7 @@
 #
 
 from abc import ABC, abstractmethod
-from typing import Any, TextIO
+from typing import Any, BinaryIO
 
 SEEK_SET = 0
 """Seek from the start of the stream."""
@@ -23,7 +23,7 @@ class StreamContract(ABC):
         """Close the stream."""
 
     @abstractmethod
-    def detach(self) -> TextIO | None:
+    def detach(self) -> BinaryIO | None:
         """Take the stream away, and leave this object with none."""
 
     @abstractmethod
@@ -55,7 +55,7 @@ class StreamContract(ABC):
         """Get whether the stream takes a write."""
 
     @abstractmethod
-    def write(self, string: str) -> int:
+    def write(self, data: bytes | str) -> int:
         """Write to the stream, and get how many bytes it took."""
 
     @abstractmethod
@@ -63,11 +63,11 @@ class StreamContract(ABC):
         """Get whether the stream gives a read."""
 
     @abstractmethod
-    def read(self, length: int) -> str:
+    def read(self, length: int) -> bytes:
         """Read a number of bytes from the stream."""
 
     @abstractmethod
-    def get_contents(self) -> str:
+    def get_contents(self) -> bytes:
         """Read the rest of the stream."""
 
     @abstractmethod
