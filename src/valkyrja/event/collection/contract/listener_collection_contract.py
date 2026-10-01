@@ -86,8 +86,15 @@ class ListenerCollectionContract(ABC):
 
     @abstractmethod
     def get_events(self) -> list[str]:
-        """Get the id of each event that has a listener."""
+        """Get the id of each event that the collection holds.
+
+        An event stays once its last listener goes, so the list names an event with
+        no listener. `has_listeners_for_event_by_id` is the test for a listener.
+        """
 
     @abstractmethod
     def get_events_with_listeners(self) -> dict[str, list[ListenerContract]]:
-        """Get each event id, with the listeners of that event."""
+        """Get each event id, with the listeners of that event.
+
+        An event that holds no listener answers with an empty list.
+        """
