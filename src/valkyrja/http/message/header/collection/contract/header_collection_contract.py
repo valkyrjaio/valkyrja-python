@@ -42,5 +42,17 @@ class HeaderCollectionContract(ABC):
         """Get a copy of the collection that holds one more header."""
 
     @abstractmethod
+    def with_headers(self, *headers: HeaderContract) -> Self:
+        """Get a copy of the collection that holds these headers alone."""
+
+    @abstractmethod
+    def with_added_headers(self, *headers: HeaderContract) -> Self:
+        """Get a copy of the collection that holds these headers as well."""
+
+    @abstractmethod
+    def without_headers(self, *names: str) -> Self:
+        """Get a copy of the collection that holds none of these headers."""
+
+    @abstractmethod
     def without_header(self, name: str) -> Self:
         """Get a copy of the collection without the header of a given name."""

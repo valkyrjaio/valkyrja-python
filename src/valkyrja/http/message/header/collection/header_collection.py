@@ -13,6 +13,9 @@ from valkyrja.http.message.header.collection.contract.header_collection_contract
     HeaderCollectionContract,
 )
 from valkyrja.http.message.header.contract.header_contract import HeaderContract
+from valkyrja.http.message.header.throwable.exception.http_header_invalid_header_name_exception import (
+    HttpHeaderInvalidHeaderNameException,
+)
 
 
 class HeaderCollection(HeaderCollectionContract):
@@ -25,7 +28,12 @@ class HeaderCollection(HeaderCollectionContract):
 
     @override
     def get(self, name: str) -> HeaderContract:
-        return self._headers[name.lower()]
+        header = self._headers.get(name.lower())
+
+        if header is None:
+            raise HttpHeaderInvalidHeaderNameException(f"Header {name} does not exist")
+
+        return header
 
     @override
     def get_header_line(self, name: str) -> str:
@@ -54,6 +62,31 @@ class HeaderCollection(HeaderCollectionContract):
     def with_header(self, header: HeaderContract) -> Self:
         new = self._copy()
         new._headers[header.get_normalized_name()] = header
+
+        return new
+
+    @override
+    def with_headers(self, *headers: HeaderContract) -> Self:
+        new = self._copy()
+        new._headers = {header.get_normalized_name(): header for header in headers}
+
+        return new
+
+    @override
+    def with_added_headers(self, *headers: HeaderContract) -> Self:
+        new = self._copy()
+
+        for header in headers:
+            new._headers[header.get_normalized_name()] = header
+
+        return new
+
+    @override
+    def without_headers(self, *names: str) -> Self:
+        new = self._copy()
+
+        for name in names:
+            new._headers.pop(name.lower(), None)
 
         return new
 
