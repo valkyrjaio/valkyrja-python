@@ -369,3 +369,15 @@ def test_the_invalid_header_param_exception_names_the_failure() -> None:
 
     assert str(exception) == "Param must be header"
     assert isinstance(exception, HttpMessageInvalidArgumentException)
+
+
+def test_a_value_leaves_out_a_component_that_writes_nothing() -> None:
+    # A component with no name and no value writes nothing, so it leaves no stray
+    # separator behind.
+    value = Value(Component(""), Component("a", "b"))
+
+    assert str(value) == "a=b"
+
+
+def test_a_value_of_components_that_all_write_nothing_is_empty() -> None:
+    assert str(Value(Component(""))) == ""
