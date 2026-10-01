@@ -6,6 +6,9 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from typing import Final, final
 
-class ValkyrjaTestCase:
-    pass
+
+@final
+class ThrowableServiceId:
+    HANDLER_CONTRACT: Final[str] = "valkyrja.throwable.handler.ThrowableHandlerContract"

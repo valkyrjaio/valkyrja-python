@@ -5,7 +5,3 @@
 #
 # Released under the MIT License. See LICENSE.md for details.
 #
-
-
-class ValkyrjaTestCase:
-    pass
