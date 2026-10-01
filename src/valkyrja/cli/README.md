@@ -154,6 +154,12 @@ it and no flag suppresses it.
 | ----------- | --------------------------------------------- |
 | `list:bash` | writes each command name, for bash completion |
 
+A command reads each value it took from the route that the router gives it:
+
+```python
+namespace = route.get_argument_value("namespace")
+```
+
 `CheckForHelpOptionsMiddleware` sends an input that carries `--help` to the help
 command, and it carries the original command name as a `command` option.
 `CheckCommandForTypoMiddleware` offers a command whose name is close to the one
