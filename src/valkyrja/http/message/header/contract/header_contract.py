@@ -7,6 +7,7 @@
 #
 
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from typing import Self
 
 from valkyrja.http.message.header.value.contract.value_contract import ValueContract
@@ -44,3 +45,23 @@ class HeaderContract(ABC):
     @abstractmethod
     def get_header_line(self) -> str:
         """Get every value of the header, joined by a comma."""
+
+    @abstractmethod
+    def __getitem__(self, index: int) -> ValueContract:
+        """Get the value that sits at one position."""
+
+    @abstractmethod
+    def __setitem__(self, index: int, value: ValueContract | str) -> None:
+        """Refuse the write, because a header is immutable."""
+
+    @abstractmethod
+    def __delitem__(self, index: int) -> None:
+        """Refuse the removal, because a header is immutable."""
+
+    @abstractmethod
+    def __len__(self) -> int:
+        """Get how many values the header carries."""
+
+    @abstractmethod
+    def __iter__(self) -> Iterator[ValueContract]:
+        """Read each value of the header in turn."""
