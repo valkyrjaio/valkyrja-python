@@ -8,7 +8,7 @@
 
 """Tests for the Cli Router."""
 
-from typing import Any, cast
+from typing import cast
 
 from tests.fixtures.cli.middleware.short_circuit_middleware_fixture import (
     SHORT_CIRCUIT_MIDDLEWARE_ID,
@@ -66,7 +66,7 @@ def test_dispatch_answers_a_command_that_no_route_matches() -> None:
 def test_dispatch_runs_the_handler_of_the_matched_route() -> None:
     seen: list[ContainerContract] = []
 
-    def handle(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+    def handle(container: ContainerContract, route: RouteContract) -> OutputContract:
         seen.append(container)
 
         return EmptyOutput()

@@ -18,6 +18,7 @@ from tests.fixtures.cli.routing.controller_fixture import (
     InstanceMethodControllerFixture,
     MisplacedDecoratorControllerFixture,
 )
+from tests.fixtures.cli.routing.route_fixture import make_route
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.routing.attribute.route import ROUTE_MARKER, RouteMarker
 from valkyrja.cli.routing.collector.attribute_route_collector import AttributeRouteCollector
@@ -37,7 +38,7 @@ def test_the_decorator_attaches_a_marker_and_returns_the_function() -> None:
 
 def test_the_decorator_registers_nothing() -> None:
     """The marker is metadata alone, so the function still answers a call."""
-    assert isinstance(ControllerFixture.first(Container(), {}), EmptyOutput)
+    assert isinstance(ControllerFixture.first(Container(), make_route()), EmptyOutput)
 
 
 def test_the_collector_reads_each_marked_function() -> None:
@@ -74,7 +75,7 @@ def test_the_route_handler_is_the_marked_function() -> None:
     routes = AttributeRouteCollector().get_routes(ControllerFixture)
     first = next(route for route in routes if route.get_name() == "first")
 
-    assert isinstance(first.get_handler()(Container(), {}), EmptyOutput)
+    assert isinstance(first.get_handler()(Container(), make_route()), EmptyOutput)
 
 
 def test_a_route_with_no_middleware_starts_empty() -> None:
