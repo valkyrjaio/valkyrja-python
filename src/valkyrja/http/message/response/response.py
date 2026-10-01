@@ -17,10 +17,12 @@ from valkyrja.http.message.enum.status_code import StatusCode
 from valkyrja.http.message.header.collection.contract.header_collection_contract import (
     HeaderCollectionContract,
 )
+from valkyrja.http.message.header.factory.header_factory import HeaderFactory
 from valkyrja.http.message.header.header import Header
 from valkyrja.http.message.header.value.contract.cookie_contract import CookieContract
 from valkyrja.http.message.response.contract.response_contract import ResponseContract
 from valkyrja.http.message.stream.contract.stream_contract import StreamContract
+from valkyrja.http.message.stream.stream import Stream
 
 
 class Response(Message, ResponseContract):
@@ -35,6 +37,20 @@ class Response(Message, ResponseContract):
 
         self._status_code = status_code
         self._reason_phrase = status_code.as_phrase()
+
+    @classmethod
+    def create(
+        cls,
+        content: str = "",
+        status_code: StatusCode = StatusCode.OK,
+        headers: HeaderCollectionContract | None = None,
+    ) -> Response:
+        """Build a response whose body carries the content."""
+        body = Stream()
+        body.write(content)
+        body.rewind()
+
+        return cls(body=body, status_code=status_code, headers=headers)
 
     @override
     def get_status_code(self) -> StatusCode:
@@ -54,8 +70,13 @@ class Response(Message, ResponseContract):
 
     @override
     def with_reason_phrase(self, reason_phrase: str) -> Self:
+        # A phrase travels on the status line, so a fold or a line break in it would
+        # split the response. RFC 7230 states the same rule for a header value.
+        HeaderFactory.assert_valid_value(reason_phrase)
+
         new = copy(self)
-        new._reason_phrase = reason_phrase
+        # An empty phrase falls back to the one that the status code names.
+        new._reason_phrase = reason_phrase if reason_phrase != "" else self._status_code.as_phrase()
 
         return new
 
@@ -84,7 +105,12 @@ class Response(Message, ResponseContract):
 
                 continue
 
-            self._write(f"{header}\n")
+            line = str(header)
+
+            # A header with no value writes nothing. A bare line break would close
+            # the header block, and the body after it would read as another header.
+            if line != "":
+                self._write(f"{line}\n")
 
         return self
 
