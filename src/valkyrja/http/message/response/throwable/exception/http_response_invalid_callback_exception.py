@@ -11,5 +11,5 @@ from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_arg
 )
 
 
-class HttpResponseInvalidRedirectStatusCodeException(HttpMessageInvalidArgumentException):
+class HttpResponseInvalidCallbackException(HttpMessageInvalidArgumentException):
     pass
