@@ -16,4 +16,5 @@ from valkyrja.cli.interaction.output.output import Output
 class EmptyOutput(Output, EmptyOutputContract):
     @override
     def _output_message(self, message: MessageContract) -> None:
+        # Empty on purpose: the empty output discards every message.
         pass
