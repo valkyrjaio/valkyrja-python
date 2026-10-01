@@ -84,7 +84,12 @@ class StreamFactory:
 
     @staticmethod
     def _get_standard_stream(stream: StandardStream, mode: Mode) -> BinaryIO:
-        """Get the stream that the process holds open under a given name."""
+        """Get the stream that the process holds open under a given name.
+
+        A stream of the process is open already, and the process decided its mode, so
+        the mode applies to the stream in memory alone. `Stream` reads the real mode
+        back from the stream, and it refuses a read or a write that the mode forbids.
+        """
         match stream:
             case StandardStream.STDIN:
                 return StreamFactory._get_buffer(sys.stdin)
