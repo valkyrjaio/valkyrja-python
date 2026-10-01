@@ -40,10 +40,5 @@ class ValkyrjaThrowable(BaseException, ABC):
         return throwable
 
     def get_trace_code(self) -> str:
-        """Get a trace code unique to the throwable that is raised.
-
-        The method is concrete, so every throwable gets a trace code without
-        writing this body again. `self` still resolves to the class that raised,
-        so the code names that class.
-        """
+        """Get a trace code unique to the throwable that is raised."""
         return ThrowableFactory.get_trace_code(self)
