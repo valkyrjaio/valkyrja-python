@@ -26,9 +26,9 @@ class ChildContainer(Container):
     def __init__(self, parent: ContainerContract, data: ContainerData) -> None:
         super().__init__()
 
-        # Only the singletons and the callbacks come from the data. An alias or a
-        # service would make the child resolve what the parent owns, and the
-        # parent caches what it resolves, so the child would write to the parent.
+        # Only the singletons and the callbacks come from the data. The child reads
+        # an alias and a service of the parent through its own overrides, so a copy
+        # would shadow the parent and walk past the guards below.
         self._parent = parent
         self._singletons = dict(data.singletons)
         self._callbacks.update(data.callbacks)
