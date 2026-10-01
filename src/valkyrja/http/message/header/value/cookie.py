@@ -10,9 +10,13 @@ import time
 from copy import copy
 from datetime import UTC, datetime
 from typing import Self, override
-from urllib.parse import quote
+from urllib.parse import quote_plus
 
 from valkyrja.http.message.enum.same_site import SameSite
+from valkyrja.http.message.header.factory.header_factory import HeaderFactory
+from valkyrja.http.message.header.throwable.exception.http_header_invalid_cookie_exception import (
+    HttpHeaderInvalidCookieException,
+)
 from valkyrja.http.message.header.value.component.component import Component
 from valkyrja.http.message.header.value.component.contract.component_contract import (
     ComponentContract,
@@ -43,6 +47,9 @@ class Cookie(Value, CookieContract):
     ) -> None:
         super().__init__()
 
+        self._validate_attribute("path", path)
+        self._validate_attribute("domain", domain)
+
         self._name = name
         self._value = value
         self._expire = expire
@@ -65,7 +72,7 @@ class Cookie(Value, CookieContract):
             max_age = -ONE_YEAR_AND_A_SECOND
             value = "delete"
 
-        components: list[ComponentContract] = [Component(quote(self._name), quote(value))]
+        components: list[ComponentContract] = [Component(self._get_encoded(self._name), self._get_encoded(value))]
 
         if expire != 0:
             components.append(Component("expires", self._format_expire(expire)))
@@ -75,7 +82,31 @@ class Cookie(Value, CookieContract):
         components.extend(self._get_flag_components())
         components.append(Component("samesite", self._same_site.value))
 
-        return "; ".join(str(component) for component in components)
+        # A component with no value writes nothing, so it leaves no empty pair behind.
+        return "; ".join(text for text in (str(component) for component in components) if text != "")
+
+    def _get_encoded(self, value: str) -> str:
+        """Get the value as the cookie writes it.
+
+        A raw cookie writes its name and its value as they are, so a caller that
+        already encoded them keeps control of the form.
+        """
+        if self._raw:
+            self._validate_attribute("value", value)
+
+            return value
+
+        return quote_plus(value)
+
+    @staticmethod
+    def _validate_attribute(name: str, value: str) -> None:
+        """Refuse an attribute that would split the Set-Cookie header.
+
+        A cookie writes each attribute into one header line, so a fold or a line
+        break in one of them opens a header that the caller never set.
+        """
+        if not HeaderFactory.is_valid_value(value) or ";" in value:
+            raise HttpHeaderInvalidCookieException(f"Invalid cookie {name} of `{value}` provided")
 
     @override
     def delete(self) -> Self:
