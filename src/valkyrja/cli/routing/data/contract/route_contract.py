@@ -8,7 +8,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any, Self
+from typing import Self
 
 from valkyrja.cli.interaction.message.contract.message_contract import MessageContract
 from valkyrja.cli.interaction.output.contract.output_contract import OutputContract
@@ -18,8 +18,13 @@ from valkyrja.cli.routing.data.contract.argument_parameter_contract import (
 from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
-type CliHandlerFunc = Callable[[ContainerContract, dict[str, Any]], OutputContract]
-"""The router calls this handler when the route matches."""
+type CliHandlerFunc = Callable[[ContainerContract, "RouteContract"], OutputContract]
+"""The router calls this handler when the route matches.
+
+The route carries every parameter the command took, so the handler reads an
+argument or an option from it. A handler that wants a cast value resolves
+`CasterContract` from the container.
+"""
 
 type HelpText = Callable[[], MessageContract]
 """The route builds its help text only when a reader asks for it."""

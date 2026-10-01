@@ -7,7 +7,7 @@
 #
 
 from abc import ABC, abstractmethod
-from typing import Any, Self
+from typing import Self
 
 from valkyrja.type.data.cast import Cast
 
@@ -46,8 +46,12 @@ class ParameterContract(ABC):
         """Get a copy of the parameter that carries a different description."""
 
     @abstractmethod
-    def get_cast_values(self) -> list[Any]:
-        """Get each value of the parameter, with the cast applied to it."""
+    def get_values(self) -> list[str]:
+        """Get each raw value of the parameter.
+
+        A parameter holds no container, so it applies no cast. `CasterContract` takes
+        the cast, because the thing that asks for a cast value does the casting.
+        """
 
     @abstractmethod
     def has_first_value(self) -> bool:
