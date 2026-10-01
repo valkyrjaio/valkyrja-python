@@ -35,11 +35,11 @@ class Uri(UriContract):
         self._scheme = scheme
         self._username = username
         self._password = password
-        self._host = host
+        self._host = UriFactory.get_filtered_host(host)
         self._port = port
-        self._path = path
-        self._query = query
-        self._fragment = fragment
+        self._path = UriFactory.get_filtered_path(path)
+        self._query = UriFactory.get_filtered_query(query)
+        self._fragment = UriFactory.get_filtered_fragment(fragment)
 
     @override
     def __str__(self) -> str:
@@ -82,9 +82,9 @@ class Uri(UriContract):
         # Truthiness, not a comparison to a literal. The comparison reads to a
         # security scanner as a password written into the source.
         if self._password:
-            return f"{self._username}:{self._password}"
+            return UriFactory.get_filtered_user_info(f"{self._username}:{self._password}")
 
-        return self._username
+        return UriFactory.get_filtered_user_info(self._username)
 
     @override
     def get_host(self) -> str:
@@ -96,6 +96,10 @@ class Uri(UriContract):
 
     @override
     def get_port(self) -> int:
+        # A standard port reads as absent, so a uri that writes itself leaves it out.
+        if UriFactory.is_standard_port(self._scheme, self._host, self._port):
+            return 0
+
         return self._port
 
     @override
@@ -151,14 +155,15 @@ class Uri(UriContract):
     def with_user_info(self, user: str, password: str = "") -> Self:  # nosec B107
         new = copy(self)
         new._username = user
-        new._password = password
+        # A password belongs to a user, so no user means no password.
+        new._password = password if user != "" else ""
 
         return new
 
     @override
     def with_host(self, host: str) -> Self:
         new = copy(self)
-        new._host = host
+        new._host = UriFactory.get_filtered_host(host)
 
         return new
 
@@ -174,21 +179,21 @@ class Uri(UriContract):
     @override
     def with_path(self, path: str) -> Self:
         new = copy(self)
-        new._path = path
+        new._path = UriFactory.get_filtered_path(path)
 
         return new
 
     @override
     def with_query(self, query: str) -> Self:
         new = copy(self)
-        new._query = query
+        new._query = UriFactory.get_filtered_query(query)
 
         return new
 
     @override
     def with_fragment(self, fragment: str) -> Self:
         new = copy(self)
-        new._fragment = fragment
+        new._fragment = UriFactory.get_filtered_fragment(fragment)
 
         return new
 
