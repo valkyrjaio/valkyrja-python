@@ -12,6 +12,10 @@ from typing import Self, override
 from valkyrja.http.message.constant.header_name import HeaderName
 from valkyrja.http.message.enum.protocol_version import ProtocolVersion
 from valkyrja.http.message.enum.request_method import RequestMethod
+from valkyrja.http.message.file.collection.contract.uploaded_file_collection_contract import (
+    UploadedFileCollectionContract,
+)
+from valkyrja.http.message.file.collection.uploaded_file_collection import UploadedFileCollection
 from valkyrja.http.message.header.collection.contract.header_collection_contract import (
     HeaderCollectionContract,
 )
@@ -57,6 +61,7 @@ class ServerRequest(Request, ServerRequestContract):
         query: QueryParamCollectionContract | None = None,
         parsed_body: ParsedBodyParamCollectionContract | None = None,
         attributes: AttributeParamCollectionContract | None = None,
+        uploaded_files: UploadedFileCollectionContract | None = None,
     ) -> None:
         super().__init__(uri, method, body, headers, protocol_version)
 
@@ -68,6 +73,9 @@ class ServerRequest(Request, ServerRequestContract):
         )
         self._attributes: AttributeParamCollectionContract = (
             attributes if attributes is not None else AttributeParamCollection()
+        )
+        self._uploaded_files: UploadedFileCollectionContract = (
+            uploaded_files if uploaded_files is not None else UploadedFileCollection()
         )
 
     @override
@@ -111,6 +119,17 @@ class ServerRequest(Request, ServerRequestContract):
     def with_parsed_body(self, params: ParsedBodyParamCollectionContract) -> Self:
         new = copy(self)
         new._parsed_body = params
+
+        return new
+
+    @override
+    def get_uploaded_files(self) -> UploadedFileCollectionContract:
+        return self._uploaded_files
+
+    @override
+    def with_uploaded_files(self, files: UploadedFileCollectionContract) -> Self:
+        new = copy(self)
+        new._uploaded_files = files
 
         return new
 
