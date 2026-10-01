@@ -44,6 +44,7 @@ from valkyrja.cli.middleware.handler.route_matched_handler import RouteMatchedHa
 from valkyrja.cli.middleware.handler.route_not_matched_handler import RouteNotMatchedHandler
 from valkyrja.cli.middleware.handler.throwable_caught_handler import ThrowableCaughtHandler
 from valkyrja.cli.routing.collection.route_collection import RouteCollection
+from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 from valkyrja.cli.routing.dispatcher.router import Router
 from valkyrja.cli.server.constant.cli_server_service_id import CliServerServiceId
 from valkyrja.cli.server.handler.input_handler import InputHandler
@@ -111,7 +112,7 @@ def test_handle_answers_a_command_that_no_route_matches() -> None:
 
 
 def test_handle_catches_a_throwable_from_the_command() -> None:
-    def raising(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+    def raising(container: ContainerContract, route: RouteContract) -> OutputContract:
         raise RuntimeError("the command failed")
 
     handler = make_handler(RouteCollection().add(make_route("run").with_handler(raising)))
@@ -138,7 +139,7 @@ def test_run_reads_an_integer_exit_code(monkeypatch: pytest.MonkeyPatch) -> None
     codes: list[int] = []
     monkeypatch.setattr(Exiter, "exit", staticmethod(codes.append))
 
-    def failing(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+    def failing(container: ContainerContract, route: RouteContract) -> OutputContract:
         return EmptyOutput(exit_code=7)
 
     handler = make_handler(RouteCollection().add(make_route("run").with_handler(failing)))
@@ -223,7 +224,7 @@ def make_handler_with(
 def make_raising_route(name: str) -> Any:
     """Build a command whose handler raises."""
 
-    def handle(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+    def handle(container: ContainerContract, route: RouteContract) -> OutputContract:
         raise RuntimeError("the command failed")
 
     return make_route(name).with_handler(handle)
