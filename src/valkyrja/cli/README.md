@@ -134,6 +134,31 @@ Warning: the caster asks the container for a service, never for a singleton. A
 singleton would build one type from the first value and hand it back for every
 later value.
 
+## Server
+
+`InputHandler` runs one command. It gives the input to the input received stage,
+then to the router, then it writes the output and ends the process:
+
+```python
+InputHandler(...).run(InputFactory.from_globals(sys.argv))
+```
+
+Each stage of the run sits under a guard, and a stage that raises takes a report
+rather than the process. A report that fails itself takes a second report, which
+the handler builds without the output factory, so no configured factory redirects
+it and no flag suppresses it.
+
+### The Commands It Ships
+
+| Command     | Does                                          |
+| ----------- | --------------------------------------------- |
+| `list:bash` | writes each command name, for bash completion |
+
+`CheckForHelpOptionsMiddleware` sends an input that carries `--help` to the help
+command, and it carries the original command name as a `command` option.
+`CheckCommandForTypoMiddleware` offers a command whose name is close to the one
+the input names.
+
 ## Exit Codes
 
 `ExitCode` holds the conventional codes that a command returns. `SUCCESS` is `0`,
