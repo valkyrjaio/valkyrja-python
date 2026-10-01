@@ -8,11 +8,8 @@
 
 """Tests for the parameters that a command declares."""
 
-from typing import Any
-
 import pytest
 
-from tests.fixtures.type.string_type_fixture import StringTypeFixture
 from valkyrja.cli.interaction.argument.argument import Argument
 from valkyrja.cli.interaction.option.option import Option
 from valkyrja.cli.routing.data.argument_parameter import ArgumentParameter
@@ -30,28 +27,11 @@ from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_option_with_va
 from valkyrja.cli.routing.throwable.exception.cli_routing_no_cast_exception import (
     CliRoutingNoCastException,
 )
-from valkyrja.cli.routing.throwable.exception.cli_routing_no_container_exception import (
-    CliRoutingNoContainerException,
-)
 from valkyrja.cli.routing.throwable.exception.cli_routing_option_values_validation_exception import (
     CliRoutingOptionValuesValidationException,
 )
-from valkyrja.container.manager.container import Container
-from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
 from valkyrja.type.enum.cast_type import CastType
-
-STRING_TYPE_ID = CastType.STRING.value
-
-
-def make_container() -> Container:
-    container = Container()
-    container.bind(
-        STRING_TYPE_ID,
-        lambda c, arguments: StringTypeFixture(str(arguments["value"])),
-    )
-
-    return container
 
 
 def test_a_parameter_holds_its_name_and_description() -> None:
@@ -123,49 +103,6 @@ def test_get_arguments_copies_the_list() -> None:
     assert len(parameter.get_arguments()) == 1
 
 
-def test_a_parameter_with_no_cast_returns_the_raw_values() -> None:
-    parameter = ArgumentParameter("name", "The name").with_arguments(Argument("a"), Argument("b"))
-
-    assert parameter.get_cast_values() == ["a", "b"]
-
-
-def test_a_parameter_with_a_cast_but_no_container_reports_the_missing_container() -> None:
-    # A raw string in place of the cast type would reach the handler as the wrong type.
-    parameter = ArgumentParameter("name", "The name", cast=Cast.from_cast_type(CastType.STRING)).with_arguments(
-        Argument("a")
-    )
-
-    with pytest.raises(CliRoutingNoContainerException, match="holds no container"):
-        parameter.get_cast_values()
-
-
-def test_a_cast_that_converts_gives_the_plain_value() -> None:
-    parameter = ArgumentParameter(
-        "name",
-        "The name",
-        cast=Cast.from_cast_type(CastType.STRING),
-        arguments=[Argument("a")],
-        container=make_container(),
-    )
-
-    assert parameter.get_cast_values() == ["a"]
-
-
-def test_a_cast_that_does_not_convert_gives_the_type() -> None:
-    parameter = ArgumentParameter(
-        "name",
-        "The name",
-        cast=Cast.from_cast_type(CastType.STRING, convert=False),
-        arguments=[Argument("a")],
-        container=make_container(),
-    )
-
-    values: list[Any] = parameter.get_cast_values()
-
-    assert isinstance(values[0], StringTypeFixture)
-    assert values[0].as_value() == "a"
-
-
 def test_an_option_parameter_has_defaults() -> None:
     parameter = OptionParameter("name", "The name")
 
@@ -209,38 +146,6 @@ def test_get_short_names_and_options_copy_their_lists() -> None:
 
     assert len(parameter.get_short_names()) == 1
     assert len(parameter.get_options()) == 1
-
-
-def test_an_option_parameter_casts_its_values() -> None:
-    parameter = OptionParameter(
-        "name",
-        "The name",
-        cast=Cast.from_cast_type(CastType.STRING),
-        options=[Option("name", "a")],
-        container=make_container(),
-    )
-
-    assert parameter.get_cast_values() == ["a"]
-
-
-def test_an_option_parameter_with_no_cast_returns_the_raw_values() -> None:
-    parameter = OptionParameter("name", "The name", options=[Option("name", "a")])
-
-    assert parameter.get_cast_values() == ["a"]
-
-
-def test_the_container_is_the_way_python_resolves_a_cast() -> None:
-    """PHP calls `$castType::fromValue()`. Python resolves the key instead."""
-    container: ContainerContract = make_container()
-    parameter = ArgumentParameter(
-        "name",
-        "The name",
-        cast=Cast(type_=STRING_TYPE_ID),
-        arguments=[Argument("value")],
-        container=container,
-    )
-
-    assert parameter.get_cast_values() == ["value"]
 
 
 def test_a_required_argument_with_no_value_is_not_valid() -> None:
@@ -422,3 +327,24 @@ def test_an_option_parameter_that_takes_no_value_accepts_several_options() -> No
     parameter = OptionParameter("name", "The name", value_mode=OptionValueMode.NONE)
 
     assert parameter.with_options(Option("name", ""), Option("name", "")).are_values_valid()
+
+
+def test_a_parameter_answers_with_its_raw_values() -> None:
+    parameter = ArgumentParameter("name", "The name").with_arguments(Argument("a"), Argument("b"))
+
+    assert parameter.get_values() == ["a", "b"]
+
+
+def test_an_option_parameter_answers_with_its_raw_values() -> None:
+    parameter = OptionParameter("name", "The name").with_options(Option("name", "a"))
+
+    assert parameter.get_values() == ["a"]
+
+
+def test_a_parameter_that_names_a_cast_still_answers_with_raw_values() -> None:
+    # A parameter is a data object, so it holds no container and applies no cast.
+    parameter = ArgumentParameter("name", "The name", cast=Cast.from_cast_type(CastType.STRING)).with_arguments(
+        Argument("a")
+    )
+
+    assert parameter.get_values() == ["a"]
