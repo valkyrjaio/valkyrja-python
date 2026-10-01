@@ -7,7 +7,7 @@
 #
 
 from copy import copy
-from typing import Any, Self, override
+from typing import Self, override
 
 from valkyrja.cli.interaction.argument.contract.argument_contract import ArgumentContract
 from valkyrja.cli.routing.data.abstract.parameter import Parameter, ValuedParameter
@@ -19,7 +19,6 @@ from valkyrja.cli.routing.enum.argument_value_mode import ArgumentValueMode
 from valkyrja.cli.routing.throwable.exception.cli_routing_argument_values_validation_exception import (
     CliRoutingArgumentValuesValidationException,
 )
-from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.type.data.cast import Cast
 
 
@@ -32,9 +31,8 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
         mode: ArgumentMode = ArgumentMode.OPTIONAL,
         value_mode: ArgumentValueMode = ArgumentValueMode.DEFAULT,
         arguments: list[ArgumentContract] | None = None,
-        container: ContainerContract | None = None,
     ) -> None:
-        super().__init__(name, description, cast, container)
+        super().__init__(name, description, cast)
 
         self._mode = mode
         self._value_mode = value_mode
@@ -81,8 +79,8 @@ class ArgumentParameter(Parameter, ArgumentParameterContract):
         return new
 
     @override
-    def get_cast_values(self) -> list[Any]:
-        return self._get_cast_values_for_parameters(list[ValuedParameter](self._arguments))
+    def get_values(self) -> list[str]:
+        return self._get_values_of_parameters(list[ValuedParameter](self._arguments))
 
     @override
     def is_provided(self) -> bool:
