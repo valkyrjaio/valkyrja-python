@@ -19,6 +19,18 @@ from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_inval
 from valkyrja.cli.interaction.throwable.exception.abstract.cli_interaction_runtime_exception import (
     CliInteractionRuntimeException,
 )
+from valkyrja.cli.middleware.throwable.exception.abstract.cli_middleware_invalid_argument_exception import (
+    CliMiddlewareInvalidArgumentException,
+)
+from valkyrja.cli.middleware.throwable.exception.abstract.cli_middleware_runtime_exception import (
+    CliMiddlewareRuntimeException,
+)
+from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_invalid_argument_exception import (
+    CliRoutingInvalidArgumentException,
+)
+from valkyrja.cli.routing.throwable.exception.abstract.cli_routing_runtime_exception import (
+    CliRoutingRuntimeException,
+)
 from valkyrja.cli.throwable.contract.cli_throwable import CliThrowable
 from valkyrja.cli.throwable.exception.abstract.cli_invalid_argument_exception import (
     CliInvalidArgumentException,
@@ -58,3 +70,10 @@ def test_the_interaction_bases_chain_through_the_component_bases() -> None:
     # caller catches every Cli failure with one of the two component bases.
     assert issubclass(CliInteractionRuntimeException, CliRuntimeException)
     assert issubclass(CliInteractionInvalidArgumentException, CliInvalidArgumentException)
+
+
+def test_the_middleware_and_routing_bases_chain_through_the_component_bases() -> None:
+    assert issubclass(CliMiddlewareRuntimeException, CliRuntimeException)
+    assert issubclass(CliMiddlewareInvalidArgumentException, CliInvalidArgumentException)
+    assert issubclass(CliRoutingRuntimeException, CliRuntimeException)
+    assert issubclass(CliRoutingInvalidArgumentException, CliInvalidArgumentException)
