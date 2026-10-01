@@ -13,10 +13,14 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from valkyrja.container.manager.contract.container_contract import ContainerContract
 
-type PublishCallback = Callable[[ContainerContract], None]
-"""A provider gives this callback for a service, and the container calls it once."""
+type PublishCallback = Callable[["ContainerContract"], None]
+"""A provider gives this callback for a service, and the container calls it once.
 
-type ServiceFactory = Callable[[ContainerContract, dict[str, Any]], object]
+The name of the container is a string. Only the type checker imports that name, so
+a reader that evaluates this alias would otherwise raise a `NameError`.
+"""
+
+type ServiceFactory = Callable[["ContainerContract", dict[str, Any]], object]
 """The container calls this factory each time it builds a service."""
 
 
