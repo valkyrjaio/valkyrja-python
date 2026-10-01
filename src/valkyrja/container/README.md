@@ -39,26 +39,21 @@ for the full rule. Go and TypeScript use string keys for the same reason.
 1. A singleton instance that the container resolved already.
 2. A service factory.
 3. An alias, which points at another id.
-4. The fallback.
 
 Warning: the container tests each step for `None`, never for a false value. PHP
 chains the steps with `??`, which tests for null alone. Python's `or` tests for a
 false value, so a service that is an empty list would fall through to the next
 step.
 
-## The Fallback
+## An Id That The Container Does Not Hold
 
-Warning: the fallback always raises `ContainerInvalidReferenceException`. It
-raises for `InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION` too.
+`get` raises `ContainerInvalidReferenceException` once the three steps find
+nothing. A container resolves what an application binds, and it constructs
+nothing of its own.
 
-An id is a string constant such as `valkyrja.container.manager.ContainerContract`.
-That string names no Python module, so the container cannot construct the class
-that the id stands for. PHP constructs it, because a PHP id is a class name.
-Java constructs it, because a Java id is a class object. TypeScript raises, for
-the same reason as Python.
-
-`InvalidReferenceMode` stays for parity with the other ports, and an entry that
-resolves an id to a class can override `_get_fallback`.
+An id is a string constant such as `valkyrja.container.manager.ContainerContract`,
+and that string names no Python module, so a container could not construct the
+class that the id stands for even if it tried.
 
 ## The Containers
 

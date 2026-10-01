@@ -10,7 +10,6 @@ from abc import abstractmethod
 from typing import Any, Self
 
 from valkyrja.container.data.container_data import ContainerData, ServiceFactory
-from valkyrja.container.enum.invalid_reference_mode import InvalidReferenceMode
 from valkyrja.container.manager.contract.providers_aware_contract import ProvidersAwareContract
 
 
@@ -74,16 +73,11 @@ class ContainerContract(ProvidersAwareContract):
         """Get whether a given id has a singleton instance already."""
 
     @abstractmethod
-    def get(
-        self,
-        id_: str,
-        arguments: dict[str, Any] | None = None,
-        mode: InvalidReferenceMode = InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION,
-    ) -> object:
+    def get(self, id_: str, arguments: dict[str, Any] | None = None) -> object:
         """Get a service from the container.
 
-        The container looks for a singleton, then a service, then an alias. The
-        mode decides what the container does when it finds none of them.
+        The container looks for a singleton, then a service, then an alias, and it
+        raises when it finds none of them.
         """
 
     @abstractmethod

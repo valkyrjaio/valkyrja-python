@@ -17,7 +17,6 @@ from tests.fixtures.container.provider.service_provider_fixture import (
     ServiceProviderFixture,
 )
 from valkyrja.container.data.container_data import ContainerData
-from valkyrja.container.enum.invalid_reference_mode import InvalidReferenceMode
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
@@ -116,11 +115,6 @@ def test_get_reads_an_alias() -> None:
 def test_get_raises_for_a_missing_id() -> None:
     with pytest.raises(ContainerInvalidReferenceException, match="not found"):
         Container().get(MISSING_ID)
-
-
-def test_get_raises_for_a_missing_id_in_the_throw_mode() -> None:
-    with pytest.raises(ContainerInvalidReferenceException):
-        Container().get(MISSING_ID, {}, InvalidReferenceMode.THROW_EXCEPTION)
 
 
 def test_get_returns_a_service_that_is_false() -> None:
