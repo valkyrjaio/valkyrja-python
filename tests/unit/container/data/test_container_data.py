@@ -13,7 +13,7 @@ from typing import Any
 
 import pytest
 
-from valkyrja.container.data.container_data import ContainerData
+from valkyrja.container.data.container_data import ContainerData, PublishCallback, ServiceFactory
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
 SERVICE_ID = "tests.unit.container.Service"
@@ -61,3 +61,10 @@ def test_the_data_is_frozen() -> None:
 
     with pytest.raises(dataclasses.FrozenInstanceError):
         data.aliases = {}  # type: ignore[misc]
+
+
+def test_each_callable_alias_resolves_at_runtime() -> None:
+    # Only the type checker imports the container, so each alias names it as a
+    # string. A reader that evaluates the alias would otherwise raise a NameError.
+    assert PublishCallback.__value__ is not None
+    assert ServiceFactory.__value__ is not None
