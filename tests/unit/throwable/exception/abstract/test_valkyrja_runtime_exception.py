@@ -29,9 +29,11 @@ def test_the_base_class_does_not_construct() -> None:
 
 def test_get_trace_code() -> None:
     exception = ValkyrjaRuntimeExceptionFixture()
+    trace_code = exception.get_trace_code()
 
-    assert TRACE_CODE_PATTERN.fullmatch(exception.get_trace_code())
-    assert exception.get_trace_code() == exception.get_trace_code()
+    assert TRACE_CODE_PATTERN.fullmatch(trace_code)
+    # The code is derived once, at construction, so every later call repeats it.
+    assert exception.get_trace_code() == trace_code
 
 
 def test_a_concrete_exception_is_a_runtime_error() -> None:
