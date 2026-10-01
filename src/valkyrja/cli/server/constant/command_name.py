@@ -15,4 +15,3 @@ class CommandName:
     LIST: Final[str] = "list"
     LIST_BASH: Final[str] = "list:bash"
     VERSION: Final[str] = "version"
-    DATA_GENERATE: Final[str] = "data:generate"
