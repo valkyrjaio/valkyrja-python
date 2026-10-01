@@ -13,8 +13,20 @@ import pytest
 from valkyrja.http.message.uri.constant.port import MAX_PORT, MIN_PORT, Port
 from valkyrja.http.message.uri.enum.scheme import Scheme
 from valkyrja.http.message.uri.factory.uri_factory import UriFactory
+from valkyrja.http.message.uri.throwable.exception.http_uri_invalid_from_string_exception import (
+    HttpUriInvalidFromStringException,
+)
+from valkyrja.http.message.uri.throwable.exception.http_uri_invalid_path_exception import (
+    HttpUriInvalidPathException,
+)
 from valkyrja.http.message.uri.throwable.exception.http_uri_invalid_port_exception import (
     HttpUriInvalidPortException,
+)
+from valkyrja.http.message.uri.throwable.exception.http_uri_invalid_query_exception import (
+    HttpUriInvalidQueryException,
+)
+from valkyrja.http.message.uri.throwable.exception.http_uri_invalid_scheme_exception import (
+    HttpUriInvalidSchemeException,
 )
 from valkyrja.http.message.uri.uri import Uri
 
@@ -29,9 +41,15 @@ def test_a_new_uri_is_empty() -> None:
     assert str(uri) == ""
 
 
-def test_a_scheme_gives_its_own_port() -> None:
-    assert Uri(scheme=Scheme.HTTP).get_port() == Port.HTTP
-    assert Uri(scheme=Scheme.HTTPS).get_port() == Port.HTTPS
+def test_the_standard_port_of_a_scheme_reads_as_absent() -> None:
+    # A uri leaves out the port that its scheme implies, so `get_port` answers zero.
+    assert Uri(scheme=Scheme.HTTP, host="valkyrja.io").get_port() == 0
+    assert Uri(scheme=Scheme.HTTPS, host="valkyrja.io").get_port() == 0
+
+
+def test_a_uri_with_no_host_reads_its_port_as_absent() -> None:
+    # No host means no authority, so a port stands for nothing.
+    assert Uri(scheme=Scheme.HTTP, port=8080).get_port() == 0
 
 
 def test_is_secure_reads_the_scheme() -> None:
@@ -40,7 +58,8 @@ def test_is_secure_reads_the_scheme() -> None:
 
 
 def test_a_named_port_wins_over_the_scheme() -> None:
-    assert Uri(scheme=Scheme.HTTP, port=8080).get_port() == 8080
+    assert Uri(scheme=Scheme.HTTP, host="valkyrja.io", port=8080).get_port() == 8080
+    assert Uri(scheme=Scheme.HTTPS, host="valkyrja.io", port=Port.HTTP).get_port() == Port.HTTP
 
 
 def test_an_invalid_port_reports_a_failure() -> None:
@@ -172,3 +191,139 @@ def test_an_empty_scheme_leaves_the_port_out_only_with_a_host() -> None:
 def test_a_port_that_is_not_standard_stays_in() -> None:
     assert not UriFactory.is_standard_port(Scheme.HTTP, "valkyrja.io", 8080)
     assert not UriFactory.is_standard_port(Scheme.HTTPS, "valkyrja.io", 80)
+
+
+def test_with_user_info_drops_the_password_when_no_user_holds_it() -> None:
+    uri = Uri(username="user", password="secret")  # nosec B106
+
+    cleared = uri.with_user_info("")
+
+    assert cleared.get_username() == ""
+    assert cleared.get_password() == ""
+
+
+def test_with_user_info_keeps_a_password_that_a_user_holds() -> None:
+    changed = Uri().with_user_info("user", "secret")  # nosec B106
+
+    assert changed.get_username() == "user"
+    assert changed.get_password() == "secret"  # nosec B105
+
+
+def test_the_host_reads_in_lower_case() -> None:
+    assert Uri(host="VALKYRJA.IO").get_host() == "valkyrja.io"
+
+
+def test_an_ip_literal_host_keeps_its_brackets() -> None:
+    assert Uri(host="[::1]").get_host() == "[::1]"
+
+
+def test_a_host_encodes_a_character_it_cannot_hold() -> None:
+    assert UriFactory.get_filtered_host("valkyrja io") == "valkyrja%20io"
+
+
+def test_a_path_encodes_a_character_it_cannot_hold() -> None:
+    assert Uri(path="/a b").get_path() == "/a%20b"
+    assert Uri(path="/a/b").get_path() == "/a/b"
+    assert Uri(path="//a").get_path() == "/a"
+    assert Uri(path="a b").get_path() == "a%20b"
+
+
+def test_a_path_refuses_a_query_string_and_a_fragment() -> None:
+    with pytest.raises(HttpUriInvalidPathException, match="must not contain a query string"):
+        Uri(path="/a?b=c")
+
+    with pytest.raises(HttpUriInvalidPathException, match="must not contain a URI fragment"):
+        Uri(path="/a#b")
+
+
+def test_a_query_drops_the_question_mark_and_encodes_the_rest() -> None:
+    assert Uri(query="?a=b").get_query() == "a=b"
+    assert Uri(query="a=b c").get_query() == "a=b%20c"
+
+
+def test_a_query_refuses_a_fragment() -> None:
+    with pytest.raises(HttpUriInvalidQueryException, match="must not contain a URI fragment"):
+        Uri(query="a=b#c")
+
+
+def test_a_fragment_drops_the_hash_and_encodes_the_rest() -> None:
+    assert Uri(fragment="#top").get_fragment() == "top"
+    assert Uri(fragment="a b").get_fragment() == "a%20b"
+
+
+def test_an_encoded_triplet_keeps_its_meaning_in_upper_case() -> None:
+    assert Uri(path="/a%2fb").get_path() == "/a%2Fb"
+    assert Uri(path="/100%").get_path() == "/100%25"
+
+
+def test_each_with_method_filters_what_it_takes() -> None:
+    assert Uri().with_host("VALKYRJA.IO").get_host() == "valkyrja.io"
+    assert Uri().with_path("/a b").get_path() == "/a%20b"
+    assert Uri().with_query("?a=b c").get_query() == "a=b%20c"
+    assert Uri().with_fragment("#a b").get_fragment() == "a%20b"
+
+
+def test_from_string_reads_each_part_of_a_full_uri() -> None:
+    uri = UriFactory.from_string("https://user:secret@valkyrja.io:8080/path?a=b#top")
+
+    assert uri.get_scheme() is Scheme.HTTPS
+    assert uri.get_username() == "user"
+    assert uri.get_password() == "secret"  # nosec B105
+    assert uri.get_host() == "valkyrja.io"
+    assert uri.get_port() == 8080
+    assert uri.get_path() == "/path"
+    assert uri.get_query() == "a=b"
+    assert uri.get_fragment() == "top"
+
+
+def test_from_string_reads_a_path_alone() -> None:
+    uri = UriFactory.from_string("/path")
+
+    assert uri.get_scheme() is Scheme.EMPTY
+    assert uri.get_path() == "/path"
+    assert uri.get_host() == ""
+
+
+def test_from_string_reads_an_authority_with_no_scheme() -> None:
+    uri = UriFactory.from_string("valkyrja.io/path")
+
+    assert uri.get_host() == "valkyrja.io"
+    assert uri.get_path() == "/path"
+
+
+def test_from_string_reads_an_empty_string() -> None:
+    uri = UriFactory.from_string("")
+
+    assert uri.get_scheme() is Scheme.EMPTY
+    assert str(uri) == ""
+
+
+def test_from_string_reports_a_uri_it_cannot_read() -> None:
+    with pytest.raises(HttpUriInvalidFromStringException, match="Invalid uri"):
+        UriFactory.from_string("https://valkyrja.io:notaport/path")
+
+
+def test_the_scheme_filter_reads_each_scheme_the_component_knows() -> None:
+    assert UriFactory.get_filtered_scheme("HTTP") is Scheme.HTTP
+    assert UriFactory.get_filtered_scheme("https") is Scheme.HTTPS
+    assert UriFactory.get_filtered_scheme("http://") is Scheme.HTTP
+    assert UriFactory.get_filtered_scheme("") is Scheme.EMPTY
+
+
+def test_the_scheme_filter_reports_a_scheme_it_does_not_know() -> None:
+    # A uri that opens with another scheme reads as an authority, so the filter is
+    # where an unknown scheme reports the failure.
+    with pytest.raises(HttpUriInvalidSchemeException, match="must be one of http or https"):
+        UriFactory.get_filtered_scheme("ftp")
+
+
+def test_the_user_info_encodes_a_character_it_cannot_hold() -> None:
+    # The colon separates the username from the password, so the colon stays.
+    uri = Uri(username="a b", password="c d", host="valkyrja.io")  # nosec B106
+
+    assert uri.get_user_info() == "a%20b:c%20d"
+    assert uri.get_authority() == "a%20b:c%20d@valkyrja.io"
+
+
+def test_the_user_info_of_a_user_with_no_password() -> None:
+    assert Uri(username="user").get_user_info() == "user"
