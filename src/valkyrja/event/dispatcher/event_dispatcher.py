@@ -8,7 +8,6 @@
 
 from typing import Any, final, override
 
-from valkyrja.container.enum.invalid_reference_mode import InvalidReferenceMode
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.event.collection.contract.listener_collection_contract import (
     ListenerCollectionContract,
@@ -89,7 +88,7 @@ class EventDispatcher(EventDispatcherContract):
         application binds each event that it dispatches by identifier.
         """
         arguments = arguments if arguments is not None else {}
-        resolved = self._container.get(event_id, arguments, InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION)
+        resolved = self._container.get(event_id, arguments)
 
         # PHP tests `instanceof $eventId`. A Python id is a string, so the event
         # answers for itself, and a binding that resolves to another event fails here.
