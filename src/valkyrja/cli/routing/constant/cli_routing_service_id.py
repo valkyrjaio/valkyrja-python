@@ -14,4 +14,5 @@ class CliRoutingServiceId:
     ROUTER_CONTRACT: Final[str] = "valkyrja.cli.routing.dispatcher.RouterContract"
     ROUTE_COLLECTION_CONTRACT: Final[str] = "valkyrja.cli.routing.collection.RouteCollectionContract"
     ROUTE_CONTRACT: Final[str] = "valkyrja.cli.routing.data.RouteContract"
+    CASTER_CONTRACT: Final[str] = "valkyrja.cli.routing.caster.CasterContract"
     CLI_ROUTING_DATA: Final[str] = "valkyrja.cli.routing.data.CliRoutingData"
