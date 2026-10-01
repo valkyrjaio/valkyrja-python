@@ -13,6 +13,7 @@ import inspect
 
 import pytest
 
+from valkyrja.type.constant.cast_argument import CastArgument
 from valkyrja.type.contract.type_contract import TypeContract
 from valkyrja.type.data.cast import Cast
 from valkyrja.type.enum.cast_type import CastType
@@ -76,3 +77,8 @@ def test_the_type_bases_extend_the_language_roots() -> None:
     assert issubclass(TypeInvalidArgumentException, ValueError)
     assert issubclass(TypeRuntimeException, TypeThrowable)
     assert issubclass(TypeInvalidArgumentException, TypeThrowable)
+
+
+def test_the_cast_argument_names_the_value() -> None:
+    # The caster passes the raw value under this name, so the type reads it.
+    assert CastArgument.VALUE == "value"
