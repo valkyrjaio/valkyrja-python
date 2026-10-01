@@ -10,6 +10,7 @@
 
 import pytest
 
+from valkyrja.http.message.constant.content_type_value import ContentTypeValue
 from valkyrja.http.message.enum.protocol_version import ProtocolVersion
 from valkyrja.http.message.enum.request_method import RequestMethod
 from valkyrja.http.message.enum.same_site import SameSite
@@ -68,3 +69,41 @@ def test_every_status_code_is_in_a_class_that_http_defines() -> None:
 
 def test_each_status_code_is_unique() -> None:
     assert len({code.value for code in StatusCode}) == len(StatusCode)
+
+
+def test_the_status_code_answers_its_number() -> None:
+    assert StatusCode.OK.code() == 200
+    assert StatusCode.NOT_FOUND.code() == 404
+
+
+def test_the_status_code_reports_a_failure_of_the_server() -> None:
+    assert StatusCode.INTERNAL_SERVER_ERROR.is_error()
+    assert StatusCode.NETWORK_AUTHENTICATION_REQUIRED.is_error()
+    assert not StatusCode.NOT_FOUND.is_error()
+    assert not StatusCode.OK.is_error()
+
+
+def test_the_request_methods_leave_out_the_routing_member() -> None:
+    methods = RequestMethod.all()
+
+    assert RequestMethod.ANY not in methods
+    assert methods == [
+        RequestMethod.GET,
+        RequestMethod.HEAD,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.DELETE,
+        RequestMethod.CONNECT,
+        RequestMethod.OPTIONS,
+        RequestMethod.TRACE,
+        RequestMethod.PATCH,
+    ]
+
+
+def test_the_content_type_values() -> None:
+    assert ContentTypeValue.APPLICATION_JAVASCRIPT == "application/javascript"
+    assert ContentTypeValue.APPLICATION_XML == "application/xml"
+    assert ContentTypeValue.APPLICATION_XML_UTF8 == "application/xml; charset=utf-8"
+    assert ContentTypeValue.APPLICATION_X_WWW_FORM == "application/x-www-form-urlencoded"
+    assert ContentTypeValue.MULTIPART_FORM_DATA == "multipart/form-data"
+    assert ContentTypeValue.TEXT_JAVASCRIPT == "text/javascript"
