@@ -44,7 +44,8 @@ def test_a_new_request_has_defaults() -> None:
 def test_a_request_adds_the_host_header_from_the_uri() -> None:
     request = Request(uri=Uri(scheme=Scheme.HTTP, host="valkyrja.io"))
 
-    assert request.get_headers().get_header_line(HeaderName.HOST) == "valkyrja.io:80"
+    # Port 80 is the standard one for http, so the host header leaves it out.
+    assert request.get_headers().get_header_line(HeaderName.HOST) == "valkyrja.io"
 
 
 def test_a_request_keeps_a_host_header_that_the_caller_gave() -> None:
