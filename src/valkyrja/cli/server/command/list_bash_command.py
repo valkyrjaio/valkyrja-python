@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import Any, cast
+from typing import cast
 
 from valkyrja.cli.interaction.constant.cli_interaction_service_id import (
     CliInteractionServiceId,
@@ -23,6 +23,7 @@ from valkyrja.cli.routing.collection.contract.route_collection_contract import (
 )
 from valkyrja.cli.routing.constant.cli_routing_service_id import CliRoutingServiceId
 from valkyrja.cli.routing.data.argument_parameter import ArgumentParameter
+from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 from valkyrja.cli.server.constant.command_name import CommandName
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
@@ -43,11 +44,11 @@ class ListBashCommand:
             ArgumentParameter(name="namespace", description="An optional namespace to filter commands by"),
         ],
     )
-    def run(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+    def run(container: ContainerContract, route: RouteContract) -> OutputContract:
         """Write each command name on one line, so bash completes one of them."""
         collection = cast("RouteCollectionContract", container.get(CliRoutingServiceId.ROUTE_COLLECTION_CONTRACT))
         output_factory = cast("OutputFactoryContract", container.get(CliInteractionServiceId.OUTPUT_FACTORY_CONTRACT))
-        namespace = str(arguments.get("namespace") or "")
+        namespace = route.get_argument_value("namespace")
         names = list(collection.all())
 
         if namespace != "":
