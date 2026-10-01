@@ -67,6 +67,56 @@ the question allows.
 | `CliInteractionServiceId.OUTPUT_FACTORY_CONTRACT` | `OutputFactoryContract`        |
 | `CliInteractionServiceId.CONFIG_CONTRACT`         | `CliInteractionConfigContract` |
 
+## Middleware
+
+A command passes several stages, and each stage has a handler. A middleware is
+bound in the container by its own key, and a handler resolves it by that key:
+
+| Stage               | Runs when                           |
+| ------------------- | ----------------------------------- |
+| `input_received`    | the input arrives, before any match |
+| `route_matched`     | a command matches the input         |
+| `route_not_matched` | no command matches the input        |
+| `route_dispatched`  | the command answered with an output |
+| `throwable_caught`  | a stage raised                      |
+| `process_exiting`   | the run ends                        |
+
+A handler appends each middleware, and it never removes a duplicate. A middleware
+that a caller adds twice runs twice, which is the caller's own doing.
+
+## Routing
+
+A command is a route. It carries a name, a description, a handler, and the
+parameters it takes:
+
+```python
+class Controller:
+    @staticmethod
+    @route(name="greet", description="Greet one person")
+    def greet(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract: ...
+```
+
+`AttributeRouteCollector.get_routes` reads each marked function of each class it is
+given, and a command that a base class declares is read as well.
+
+Warning: a marked member is a static method. A handler takes the container and the
+arguments alone, so a member that also takes an instance cannot answer a command.
+
+### Parameters
+
+An argument takes its value from the position it sits in, and an option takes its
+value from the name the command line gives:
+
+| Parameter           | Reads                                       |
+| ------------------- | ------------------------------------------- |
+| `ArgumentParameter` | one value, or every remaining value         |
+| `OptionParameter`   | a value that a name or a short name carries |
+
+A parameter names a cast, and the container builds the type that the cast names.
+
+Warning: a parameter that names a cast and holds no container reports a failure. A
+raw string in place of the cast type would reach the handler as the wrong type.
+
 ## Exit Codes
 
 `ExitCode` holds the conventional codes that a command returns. `SUCCESS` is `0`,
