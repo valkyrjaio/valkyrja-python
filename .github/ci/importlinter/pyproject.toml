@@ -21,6 +21,18 @@ name = "The components form layers"
 type = "layers"
 layers = ["valkyrja.cli", "valkyrja.event", "valkyrja.container", "valkyrja.type", "valkyrja.throwable"]
 
+# `http` sits at the same height as `cli`, and a layers contract states one order,
+# so each protocol gets a contract of its own.
+[[tool.importlinter.contracts]]
+name = "The http component sits over the components it uses"
+type = "layers"
+layers = ["valkyrja.http", "valkyrja.event", "valkyrja.container", "valkyrja.type", "valkyrja.throwable"]
+
+[[tool.importlinter.contracts]]
+name = "The protocol components are independent"
+type = "independence"
+modules = ["valkyrja.cli", "valkyrja.http"]
+
 # A contract declares a shape, so it never reads an implementation of that shape.
 [[tool.importlinter.contracts]]
 name = "A container contract does not import an implementation"
