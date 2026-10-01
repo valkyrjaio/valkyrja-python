@@ -93,7 +93,14 @@ parameters it takes:
 class Controller:
     @staticmethod
     @route(name="greet", description="Greet one person")
-    def greet(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract: ...
+    def greet(container: ContainerContract, route: RouteContract) -> OutputContract: ...
+```
+
+A handler takes the container and the route. The route carries every parameter the
+command took, so the handler reads a value from it:
+
+```python
+name = route.get_argument_value("name")
 ```
 
 `AttributeRouteCollector.get_routes` reads each marked function of each class it is
@@ -112,10 +119,20 @@ value from the name the command line gives:
 | `ArgumentParameter` | one value, or every remaining value         |
 | `OptionParameter`   | a value that a name or a short name carries |
 
-A parameter names a cast, and the container builds the type that the cast names.
+A parameter holds its raw values, and it applies no cast of its own. `CasterContract`
+takes a parameter and answers with its values, with the cast applied:
 
-Warning: a parameter that names a cast and holds no container reports a failure. A
-raw string in place of the cast type would reach the handler as the wrong type.
+```python
+caster = container.get(CliRoutingServiceId.CASTER_CONTRACT)
+values = caster.get_cast_values(parameter)
+```
+
+A parameter is a data object, so it holds no container. The thing that asks for a
+cast value does the casting.
+
+Warning: the caster asks the container for a service, never for a singleton. A
+singleton would build one type from the first value and hand it back for every
+later value.
 
 ## Exit Codes
 
