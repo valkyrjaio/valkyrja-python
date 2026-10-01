@@ -10,7 +10,12 @@
 
 import time
 
+import pytest
+
 from valkyrja.http.message.enum.same_site import SameSite
+from valkyrja.http.message.header.throwable.exception.http_header_invalid_cookie_exception import (
+    HttpHeaderInvalidCookieException,
+)
 from valkyrja.http.message.header.value.contract.value_contract import ValueContract
 from valkyrja.http.message.header.value.cookie import ONE_YEAR_AND_A_SECOND, Cookie
 
@@ -38,7 +43,28 @@ def test_a_cookie_writes_its_name_and_value() -> None:
 
 
 def test_a_cookie_escapes_its_name_and_value() -> None:
-    assert "a%20b" in str(Cookie("a b", "c d"))
+    # PHP writes these with `urlencode`, which writes a space as a plus sign.
+    assert "a+b=c+d" in str(Cookie("a b", "c d"))
+
+
+def test_a_raw_cookie_writes_its_name_and_value_as_they_are() -> None:
+    assert "a%20b=c%20d" in str(Cookie("a%20b", "c%20d", raw=True))
+
+
+def test_a_cookie_refuses_a_path_that_would_split_the_header() -> None:
+    with pytest.raises(HttpHeaderInvalidCookieException, match="Invalid cookie path"):
+        Cookie("session", "value", path="/\r\nSet-Cookie: a=b")
+
+
+def test_a_cookie_refuses_a_domain_that_would_split_the_header() -> None:
+    with pytest.raises(HttpHeaderInvalidCookieException, match="Invalid cookie domain"):
+        Cookie("session", "value", domain="valkyrja.io; HttpOnly")
+
+
+def test_a_raw_cookie_refuses_a_value_that_would_split_the_header() -> None:
+    # A raw cookie writes its value as it is, so the value passes the same test.
+    with pytest.raises(HttpHeaderInvalidCookieException, match="Invalid cookie value"):
+        str(Cookie("session", "a\r\nSet-Cookie: b=c", raw=True))
 
 
 def test_a_cookie_writes_the_path_and_the_same_site() -> None:
