@@ -84,6 +84,14 @@ class StatusCode(IntEnum):
         """
         return StatusText[self.name].value
 
+    def code(self) -> int:
+        """Get the number that the status line carries."""
+        return self.value
+
     def is_redirect(self) -> bool:
         """Get whether the code tells the caller to ask somewhere else."""
         return StatusCode.MULTIPLE_CHOICES.value <= self.value < StatusCode.BAD_REQUEST.value
+
+    def is_error(self) -> bool:
+        """Get whether the code reports a failure of the server."""
+        return self.value >= StatusCode.INTERNAL_SERVER_ERROR.value
