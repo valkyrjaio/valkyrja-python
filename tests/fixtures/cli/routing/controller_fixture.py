@@ -11,6 +11,7 @@ from typing import Any, final
 from valkyrja.cli.interaction.output.contract.output_contract import OutputContract
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
 from valkyrja.cli.routing.attribute.route import route
+from valkyrja.cli.routing.data.contract.route_contract import RouteContract
 from valkyrja.cli.routing.data.option.help_option_parameter import HelpOptionParameter
 
 FIRST_MIDDLEWARE_ID = "tests.middleware.First"
@@ -22,7 +23,7 @@ class ControllerFixture:
 
     @staticmethod
     @route(name="first", description="The first command")
-    def first(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def first(container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()
 
     @staticmethod
@@ -32,11 +33,11 @@ class ControllerFixture:
         route_matched_middleware=[FIRST_MIDDLEWARE_ID],
         options=[HelpOptionParameter()],
     )
-    def second(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def second(container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()
 
     @staticmethod
-    def not_a_command(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def not_a_command(container: Any, route: RouteContract) -> OutputContract:
         """A function with no marker, so the collector skips it."""
         return EmptyOutput()
 
@@ -56,7 +57,7 @@ class MisplacedDecoratorControllerFixture:
 
     @route(name="misplaced", description="The decorator sits over the static method")
     @staticmethod
-    def misplaced(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def misplaced(container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()
 
 
@@ -65,7 +66,7 @@ class InstanceMethodControllerFixture:
     """A controller that marks an instance method, which takes an instance too."""
 
     @route(name="instance", description="An instance method")
-    def instance(self, container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def instance(self, container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()
 
 
@@ -74,7 +75,7 @@ class BaseControllerFixture:
 
     @staticmethod
     @route(name="inherited", description="A command a base class declares")
-    def inherited(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def inherited(container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()
 
 
@@ -84,5 +85,5 @@ class ExtendingControllerFixture(BaseControllerFixture):
 
     @staticmethod
     @route(name="own", description="A command this class declares")
-    def own(container: Any, arguments: dict[str, Any]) -> OutputContract:
+    def own(container: Any, route: RouteContract) -> OutputContract:
         return EmptyOutput()

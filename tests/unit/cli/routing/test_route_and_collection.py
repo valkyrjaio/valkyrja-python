@@ -194,7 +194,8 @@ def test_the_data_defaults_to_no_route() -> None:
 
 
 def test_a_route_handler_answers_with_an_output() -> None:
-    output = make_route().get_handler()(Container(), {})
+    route = make_route()
+    output = route.get_handler()(Container(), route)
 
     assert isinstance(output, EmptyOutput)
 
