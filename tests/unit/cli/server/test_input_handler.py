@@ -18,6 +18,17 @@ from tests.fixtures.cli.middleware.short_circuit_input_middleware_fixture import
     ShortCircuitInputMiddlewareFixture,
 )
 from tests.fixtures.cli.routing.route_fixture import make_route
+from tests.fixtures.cli.server.failing_fixture import (
+    CodelessOutputFixture,
+    NamelessInputFixture,
+    UnwritableOutputFixture,
+)
+from tests.fixtures.cli.server.raising_middleware_fixture import (
+    RAISING_PROCESS_EXITING_MIDDLEWARE_ID,
+    RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID,
+    RaisingProcessExitingMiddlewareFixture,
+    RaisingThrowableCaughtMiddlewareFixture,
+)
 from valkyrja.cli.interaction.constant.cli_interaction_service_id import (
     CliInteractionServiceId,
 )
@@ -173,3 +184,150 @@ def test_a_frozen_exiter_does_not_end_the_process() -> None:
     """The autouse fixture freezes the exiter, so the call returns."""
     assert Exiter.is_frozen()
     assert Exiter.exit(1) is None
+
+
+def make_handler_with(
+    collection: RouteCollection,
+    container: Container,
+    throwable_caught_handler: ThrowableCaughtHandler | None = None,
+    process_exiting_handler: ProcessExitingHandler | None = None,
+) -> InputHandler:
+    """Build a handler whose recovery stages a test can make fail."""
+    throwable_caught_handler = (
+        throwable_caught_handler if throwable_caught_handler is not None else ThrowableCaughtHandler(container)
+    )
+    process_exiting_handler = (
+        process_exiting_handler if process_exiting_handler is not None else ProcessExitingHandler(container)
+    )
+    router = Router(
+        container=container,
+        collection=collection,
+        output_factory=OutputFactory(),
+        throwable_caught_handler=ThrowableCaughtHandler(container),
+        route_matched_handler=RouteMatchedHandler(container),
+        route_not_matched_handler=RouteNotMatchedHandler(container),
+        route_dispatched_handler=RouteDispatchedHandler(container),
+        process_exiting_handler=ProcessExitingHandler(container),
+    )
+
+    return InputHandler(
+        container=container,
+        router=router,
+        input_received_handler=InputReceivedHandler(container),
+        throwable_caught_handler=throwable_caught_handler,
+        process_exiting_handler=process_exiting_handler,
+        output_factory=OutputFactory(),
+    )
+
+
+def make_raising_route(name: str) -> Any:
+    """Build a command whose handler raises."""
+
+    def handle(container: ContainerContract, arguments: dict[str, Any]) -> OutputContract:
+        raise RuntimeError("the command failed")
+
+    return make_route(name).with_handler(handle)
+
+
+def test_handle_reports_a_recovery_that_failed() -> None:
+    container = Container()
+    container.set_singleton(RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID, RaisingThrowableCaughtMiddlewareFixture())
+    throwable_caught_handler = ThrowableCaughtHandler(container, RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID)
+    handler = make_handler_with(RouteCollection().add(make_raising_route("run")), container, throwable_caught_handler)
+
+    output = handler.handle(Input(command_name="run"))
+    text = "".join(message.get_text() for message in output.get_messages())
+
+    assert output.get_exit_code() is ExitCode.ERROR
+    assert "the command failed" in text
+    assert "Recovery message:" in text
+    assert "the recovery stage failed" in text
+
+
+def test_the_recovery_report_leaves_out_an_input_it_cannot_read() -> None:
+    container = Container()
+    container.set_singleton(RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID, RaisingThrowableCaughtMiddlewareFixture())
+    throwable_caught_handler = ThrowableCaughtHandler(container, RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID)
+    handler = make_handler_with(RouteCollection().add(make_raising_route("run")), container, throwable_caught_handler)
+
+    # The first report reads the command name, so an input that raises there takes it.
+    output = handler.handle(NamelessInputFixture(command_name="run"))
+    text = "".join(message.get_text() for message in output.get_messages())
+
+    assert "Cli Server Error:" in text
+    assert "Command:" not in text
+    assert "Recovery message:" in text
+
+
+def test_run_reports_a_write_that_failed() -> None:
+    container = Container()
+    handler = make_handler_with(RouteCollection(), container)
+
+    handler.run(Input(command_name="run"))
+
+    published = container.get_singleton(CliInteractionServiceId.OUTPUT_CONTRACT)
+
+    assert isinstance(published, OutputContract)
+
+
+def test_run_recovers_from_a_write_that_failed() -> None:
+    container = Container()
+    route = make_route("run").with_handler(lambda c, a: UnwritableOutputFixture())
+    handler = make_handler_with(RouteCollection().add(route), container)
+
+    handler.run(Input(command_name="run"))
+
+    published = container.get_singleton(CliInteractionServiceId.OUTPUT_CONTRACT)
+
+    assert isinstance(published, OutputContract)
+    assert published.has_written_message()
+
+
+def test_run_recovers_when_the_write_recovery_also_failed() -> None:
+    container = Container()
+    container.set_singleton(RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID, RaisingThrowableCaughtMiddlewareFixture())
+    throwable_caught_handler = ThrowableCaughtHandler(container, RAISING_THROWABLE_CAUGHT_MIDDLEWARE_ID)
+    route = make_route("run").with_handler(lambda c, a: UnwritableOutputFixture())
+    handler = make_handler_with(RouteCollection().add(route), container, throwable_caught_handler)
+
+    handler.run(Input(command_name="run"))
+
+    published = container.get_singleton(CliInteractionServiceId.OUTPUT_CONTRACT)
+
+    assert isinstance(published, OutputContract)
+    assert published.get_exit_code() is ExitCode.ERROR
+
+
+def test_run_reports_an_exit_stage_that_failed() -> None:
+    container = Container()
+    container.set_singleton(RAISING_PROCESS_EXITING_MIDDLEWARE_ID, RaisingProcessExitingMiddlewareFixture())
+    process_exiting_handler = ProcessExitingHandler(container, RAISING_PROCESS_EXITING_MIDDLEWARE_ID)
+    handler = make_handler_with(
+        RouteCollection().add(make_route("run")), container, process_exiting_handler=process_exiting_handler
+    )
+
+    # The exit stage failure must not stop the run, because the exiter still ends it.
+    handler.run(Input(command_name="run"))
+
+
+def test_run_reports_an_exit_stage_whose_report_also_failed() -> None:
+    container = Container()
+    container.set_singleton(RAISING_PROCESS_EXITING_MIDDLEWARE_ID, RaisingProcessExitingMiddlewareFixture())
+    process_exiting_handler = ProcessExitingHandler(container, RAISING_PROCESS_EXITING_MIDDLEWARE_ID)
+    handler = make_handler_with(
+        RouteCollection().add(make_route("run")), container, process_exiting_handler=process_exiting_handler
+    )
+
+    handler.run(NamelessInputFixture(command_name="run"))
+
+
+def test_run_ends_with_an_error_when_the_exit_code_is_unreadable(monkeypatch: pytest.MonkeyPatch) -> None:
+    codes: list[int] = []
+    monkeypatch.setattr(Exiter, "exit", staticmethod(codes.append))
+    container = Container()
+    route = make_route("run").with_handler(lambda c, a: CodelessOutputFixture())
+    handler = make_handler_with(RouteCollection().add(route), container)
+
+    handler.run(Input(command_name="run"))
+
+    assert codes == [ExitCode.ERROR.value]
