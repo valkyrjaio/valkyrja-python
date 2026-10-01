@@ -6,6 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+import re
 from copy import copy
 from typing import Self, override
 
@@ -18,9 +19,15 @@ from valkyrja.http.message.header.collection.contract.header_collection_contract
 )
 from valkyrja.http.message.header.header import Header
 from valkyrja.http.message.request.contract.request_contract import RequestContract
+from valkyrja.http.message.request.throwable.exception.http_request_invalid_request_target_exception import (
+    HttpRequestInvalidRequestTargetException,
+)
 from valkyrja.http.message.stream.contract.stream_contract import StreamContract
 from valkyrja.http.message.uri.contract.uri_contract import UriContract
 from valkyrja.http.message.uri.uri import Uri
+
+WHITESPACE_PATTERN = re.compile(r"\s")
+"""Any whitespace, which the request line reads as the end of the target."""
 
 
 class Request(Message, RequestContract):
@@ -55,10 +62,22 @@ class Request(Message, RequestContract):
 
     @override
     def with_request_target(self, request_target: str) -> Self:
+        self._validate_request_target(request_target)
+
         new = copy(self)
         new._request_target = request_target
 
         return new
+
+    @staticmethod
+    def _validate_request_target(request_target: str) -> None:
+        """Refuse a request target that holds whitespace.
+
+        A target travels on the request line, and a space there opens a second
+        field, so the line would name another method or another version.
+        """
+        if WHITESPACE_PATTERN.search(request_target) is not None:
+            raise HttpRequestInvalidRequestTargetException("Invalid request target provided; cannot contain whitespace")
 
     @override
     def get_method(self) -> RequestMethod:
