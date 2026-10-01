@@ -9,7 +9,6 @@
 from typing import Any, Self, override
 
 from valkyrja.container.data.container_data import ContainerData, ServiceFactory
-from valkyrja.container.enum.invalid_reference_mode import InvalidReferenceMode
 from valkyrja.container.manager.abstract.providers_aware import ProvidersAware
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
     ContainerInvalidReferenceException,
@@ -100,12 +99,7 @@ class Container(ProvidersAware):
         return id_ in self._instances
 
     @override
-    def get(
-        self,
-        id_: str,
-        arguments: dict[str, Any] | None = None,
-        mode: InvalidReferenceMode = InvalidReferenceMode.NEW_INSTANCE_OR_THROW_EXCEPTION,
-    ) -> object:
+    def get(self, id_: str, arguments: dict[str, Any] | None = None) -> object:
         arguments = arguments if arguments is not None else {}
 
         self._publish_unpublished_provided(id_)
@@ -127,7 +121,7 @@ class Container(ProvidersAware):
         if aliased is not None:
             return aliased
 
-        return self._get_fallback(id_, arguments, mode)
+        raise ContainerInvalidReferenceException(id_)
 
     @override
     def get_aliased(self, id_: str, arguments: dict[str, Any] | None = None) -> object:
@@ -204,16 +198,3 @@ class Container(ProvidersAware):
     def _get_service_factory(self, id_: str) -> ServiceFactory | None:
         """Get the factory that the container holds for an id."""
         return self._services.get(id_)
-
-    def _get_fallback(self, id_: str, arguments: dict[str, Any], mode: InvalidReferenceMode) -> object:
-        """Raise, because the container has no service for the id.
-
-        Warning: the fallback ignores `mode`, and it raises for
-        `NEW_INSTANCE_OR_THROW_EXCEPTION` too. An id is a string constant such
-        as `valkyrja.container.manager.ContainerContract`, and that string names no
-        Python module, so the container cannot construct the class that the id
-        stands for. PHP and Java construct it, because a PHP id is a class name
-        and a Java id is a class object. TypeScript raises for the same reason
-        as Python.
-        """
-        raise ContainerInvalidReferenceException(id_)
