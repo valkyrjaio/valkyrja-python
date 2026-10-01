@@ -50,7 +50,10 @@ from valkyrja.http.message.request.server_request import ServerRequest
 from valkyrja.http.message.request.throwable.exception.http_request_invalid_json_exception import (
     HttpRequestInvalidJsonException,
 )
+from valkyrja.http.message.response.redirect_response import RedirectResponse
 from valkyrja.http.message.stream.stream import Stream
+from valkyrja.http.message.uri.enum.scheme import Scheme
+from valkyrja.http.message.uri.uri import Uri
 
 
 def make_stream(text: str) -> Stream:
@@ -303,3 +306,58 @@ def test_with_added_refuses_a_param_it_cannot_carry() -> None:
 def test_with_refuses_a_param_it_cannot_carry() -> None:
     with pytest.raises(HttpParamInvalidParamException):
         QueryParamCollection().with_({"a": object()})
+
+
+def test_secure_sends_the_caller_to_the_secure_host() -> None:
+    request = ServerRequest(uri=Uri(scheme=Scheme.HTTP, host="valkyrja.io", port=8080))
+
+    secured = RedirectResponse().secure("/here", request)
+
+    assert secured.get_uri().get_scheme() is Scheme.HTTPS
+    assert secured.get_uri().get_host() == "valkyrja.io"
+    assert secured.get_uri().get_path() == "/here"
+
+
+def test_back_sends_the_caller_to_the_page_it_came_from() -> None:
+    request = ServerRequest(
+        uri=Uri(scheme=Scheme.HTTPS, host="valkyrja.io"),
+        headers=HeaderCollection(Header(HeaderName.REFERER, "https://valkyrja.io/from")),
+    )
+
+    back = RedirectResponse().back(request)
+
+    assert back.get_uri().get_path() == "/from"
+
+
+def test_back_sends_the_caller_to_the_root_without_a_referer() -> None:
+    request = ServerRequest(uri=Uri(scheme=Scheme.HTTPS, host="valkyrja.io"))
+
+    assert RedirectResponse().back(request).get_uri().get_path() == "/"
+
+
+def test_back_refuses_a_referer_that_names_another_host() -> None:
+    # A referer off the site would send the caller away from it.
+    request = ServerRequest(
+        uri=Uri(scheme=Scheme.HTTPS, host="valkyrja.io"),
+        headers=HeaderCollection(Header(HeaderName.REFERER, "https://example.com/elsewhere")),
+    )
+
+    back = RedirectResponse().back(request)
+
+    assert back.get_uri().get_path() == "/"
+    assert back.get_uri().get_host() == ""
+
+
+def test_back_takes_a_referer_that_names_no_host() -> None:
+    request = ServerRequest(
+        uri=Uri(scheme=Scheme.HTTPS, host="valkyrja.io"),
+        headers=HeaderCollection(Header(HeaderName.REFERER, "/relative")),
+    )
+
+    assert RedirectResponse().back(request).get_uri().get_path() == "/relative"
+
+
+def test_secure_keeps_a_port_the_request_names() -> None:
+    request = ServerRequest(uri=Uri(scheme=Scheme.HTTP, host="valkyrja.io", port=8080))
+
+    assert RedirectResponse().secure("/here", request).get_uri().get_port() == 8080
