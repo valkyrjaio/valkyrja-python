@@ -9,6 +9,9 @@
 from abc import abstractmethod
 from typing import Self
 
+from valkyrja.http.message.file.collection.contract.uploaded_file_collection_contract import (
+    UploadedFileCollectionContract,
+)
 from valkyrja.http.message.param.contract.attribute_param_collection_contract import (
     AttributeParamCollectionContract,
 )
@@ -59,6 +62,14 @@ class ServerRequestContract(RequestContract):
     @abstractmethod
     def with_parsed_body(self, params: ParsedBodyParamCollectionContract) -> Self:
         """Get a copy of the request that carries a different body."""
+
+    @abstractmethod
+    def get_uploaded_files(self) -> UploadedFileCollectionContract:
+        """Get every file that the request uploaded."""
+
+    @abstractmethod
+    def with_uploaded_files(self, files: UploadedFileCollectionContract) -> Self:
+        """Get a copy of the request that carries different uploads."""
 
     @abstractmethod
     def get_attributes(self) -> AttributeParamCollectionContract:
