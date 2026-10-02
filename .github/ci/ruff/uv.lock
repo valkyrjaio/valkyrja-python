@@ -29,11 +29,11 @@ wheels = [
 
 [[package]]
 name = "valkyrja-ci-ruff"
-version = "26.0.20"
+version = "26.0.21"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b3/f6/095f089cd1e3dbc1f712a4554e80025ea5b2c71606798ae5a1e824994936/valkyrja_ci_ruff-26.0.20.tar.gz", hash = "sha256:f139684024535cc4d09503be44153c0f68bb2429292ae2e917bd092f80d5f628", size = 58913, upload-time = "2026-09-29T16:46:56.225Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ad/d3/bc67ad1361e996d92e1ab21ad64a73332ae8c5288437bc3196f182cfc1a9/valkyrja_ci_ruff-26.0.21.tar.gz", hash = "sha256:53723801a0cd2ed098bebe0760eb4083271966062cb99202a31676f14be7e840", size = 59035, upload-time = "2026-10-02T16:30:42.06Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/fb/e92f835a086570c5d73121ce04be0aadd322f626e76046339a5da8c33c8e/valkyrja_ci_ruff-26.0.20-py3-none-any.whl", hash = "sha256:52bed5890dac63c2daa61701ffd8adae9fdadd2c633e3cd5edb0259a3bcbe79a", size = 15095, upload-time = "2026-09-29T16:46:55.216Z" },
+    { url = "https://files.pythonhosted.org/packages/a5/9a/72399d6ed273b4aca5dc4120744b6b92f2d336aad9ce9850bc09d7bb61bd/valkyrja_ci_ruff-26.0.21-py3-none-any.whl", hash = "sha256:7e7d24897744bd8a6484ecd0866c218a34cadd397436cf95109747ce7ac5381c", size = 15096, upload-time = "2026-10-02T16:30:41.035Z" },
 ]
 
 [[package]]
@@ -48,5 +48,5 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "ruff", specifier = ">=0.16.10,<0.17" },
-    { name = "valkyrja-ci-ruff", specifier = ">=26.0.20,<27" },
+    { name = "valkyrja-ci-ruff", specifier = ">=26.0.21,<27" },
 ]
