@@ -12,5 +12,5 @@ from typing import Final
 class ValkyrjaInfo:
     """Package version metadata, updated by the release workflow."""
 
-    VERSION: Final[str] = "26.0.23"
-    VERSION_BUILD_DATE_TIME: Final[str] = "October 15 2026 09:45:20 MST"
+    VERSION: Final[str] = "26.0.24"
+    VERSION_BUILD_DATE_TIME: Final[str] = "October 17 2026 08:22:18 MST"
