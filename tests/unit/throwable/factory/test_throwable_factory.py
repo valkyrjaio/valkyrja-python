@@ -68,5 +68,9 @@ def test_get_trace_code_holds_across_a_raise_and_a_re_raise() -> None:
         assert ThrowableFactory.get_trace_code(raised) == constructed_trace_code
 
 
-def test_get_trace_code_accepts_a_throwable_the_framework_does_not_define() -> None:
-    assert TRACE_CODE_PATTERN.fullmatch(ThrowableFactory.get_trace_code(ValueError("Custom message")))
+def test_get_trace_code_names_the_class_alone_for_a_throwable_the_framework_does_not_define() -> None:
+    # The digest covers `builtins.ValueError` and nothing else, so every instance shares it.
+    trace_code = ThrowableFactory.get_trace_code(ValueError("Custom message"))
+
+    assert trace_code == "8a63baddb62cd36ced14c3d33b8ee037"
+    assert ThrowableFactory.get_trace_code(ValueError("Another message")) == trace_code
