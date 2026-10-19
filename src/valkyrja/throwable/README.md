@@ -43,7 +43,7 @@ The name of each one keeps parity with the other ports, and the base keeps the
 exception catchable the way the language catches it. Every component extends
 these to get a `ComponentRuntimeException` and a
 `ComponentInvalidArgumentException`. A concrete exception extends the component
-class. Read [`THROWABLES.md`](https://github.com/valkyrjaio/architecture/blob/26.x/THROWABLES.md)
+class. Read [`THROWABLES.md`](https://github.com/valkyrjaio/architecture/blob/26.x/convention/THROWABLES.md)
 for the full hierarchy and the naming rule.
 
 ## Abstract Enforcement
