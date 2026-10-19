@@ -31,6 +31,9 @@ The construction stack holds every frame from the construction call to the top
 of the stack. Two throwables of one class share a code when one call path
 constructs both. A second call path to the same line gives a second code.
 
+A throwable the framework does not define carries no construction stack, so its
+code names its class alone, and every instance of that class shares one code.
+
 ## Exception Classes
 
 Two abstract base exceptions live under
@@ -117,7 +120,7 @@ the internals of the application. Set `display_errors` in development only.
 
 ## Container Bindings
 
-The component binds one service. `ThrowableServiceId` holds the key:
+`ThrowableServiceId` holds the key, and the application entry binds it:
 
 | Key                                   | Value                                                 | Binds                                           |
 | ------------------------------------- | ----------------------------------------------------- | ----------------------------------------------- |
