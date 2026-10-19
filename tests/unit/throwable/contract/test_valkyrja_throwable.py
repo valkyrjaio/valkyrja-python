@@ -58,3 +58,9 @@ def test_a_copy_keeps_the_trace_code() -> None:
     exception = ValkyrjaThrowableFixture()
 
     assert copy(exception).get_trace_code() == exception.get_trace_code()
+
+
+def test_a_pickle_keeps_the_trace_code() -> None:
+    exception = ValkyrjaThrowableFixture()
+
+    assert loads(dumps(exception)).get_trace_code() == exception.get_trace_code()
