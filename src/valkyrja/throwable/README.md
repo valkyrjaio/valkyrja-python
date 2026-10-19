@@ -27,12 +27,15 @@ from valkyrja.throwable.factory.throwable_factory import ThrowableFactory
 trace_code = ThrowableFactory.get_trace_code(exception)
 ```
 
-The construction stack holds every frame from the construction call to the top
-of the stack. Two throwables of one class share a code when one call path
-constructs both. A second call path to the same line gives a second code.
+The construction stack holds every frame from the construction call outward, and
+each frame carries the line it is on. Two throwables of one class share a code
+only when every frame matches: the construction line, and the line each caller
+is on. A different line in any frame gives a different code.
 
-A throwable the framework does not define carries no construction stack, so its
-code names its class alone, and every instance of that class shares one code.
+A throwable that carries no construction stack takes a code from its class
+alone, so every instance of that class shares one code. A throwable the
+framework does not define carries none, and so does one whose base list puts the
+language root before `ValkyrjaThrowable` (see Abstract Enforcement).
 
 ## Exception Classes
 
