@@ -6,7 +6,6 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from copy import copy
 from typing import Self, TextIO, override
 
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
@@ -47,7 +46,7 @@ class StreamOutput(Output, StreamOutputContract):
 
     @override
     def with_stream(self, stream: TextIO) -> Self:
-        new = copy(self)
+        new = self._copy()
         new._stream = stream
 
         return new
