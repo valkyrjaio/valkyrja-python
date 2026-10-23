@@ -6,7 +6,6 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from copy import copy
 from typing import Self, override
 
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
@@ -44,7 +43,7 @@ class FileOutput(Output, FileOutputContract):
 
     @override
     def with_filepath(self, filepath: str) -> Self:
-        new = copy(self)
+        new = self._copy()
         new._filepath = filepath
 
         return new

@@ -187,6 +187,27 @@ def test_a_stream_output_writes_to_its_stream(tmp_path: Path) -> None:
     assert path.read_text(encoding="utf-8") == "a"
 
 
+def test_with_stream_gives_the_copy_its_own_messages(tmp_path: Path) -> None:
+    path = tmp_path / "stream.txt"
+
+    with path.open("w", encoding="utf-8") as first, path.open("a", encoding="utf-8") as second:
+        output = StreamOutput(first)
+        changed = output.with_stream(second)
+        changed.write_message(Message("written"))
+
+        assert not output.has_written_message()
+        assert changed.has_written_message()
+
+
+def test_with_filepath_gives_the_copy_its_own_messages(tmp_path: Path) -> None:
+    output = FileOutput(str(tmp_path / "first.txt"))
+    changed = output.with_filepath(str(tmp_path / "second.txt"))
+    changed.write_message(Message("written"))
+
+    assert not output.has_written_message()
+    assert changed.has_written_message()
+
+
 def test_with_stream_returns_a_copy(tmp_path: Path) -> None:
     path = tmp_path / "stream.txt"
 
