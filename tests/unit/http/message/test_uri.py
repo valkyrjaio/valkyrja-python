@@ -125,7 +125,7 @@ def test_the_host_port() -> None:
 def test_the_scheme_host_port() -> None:
     uri = Uri(scheme=Scheme.HTTPS, host="valkyrja.io")
 
-    assert uri.get_scheme_host_port() == "https://valkyrja.io:443"
+    assert uri.get_scheme_host_port() == "https://valkyrja.io"
     assert Uri(host="valkyrja.io", port=8080).get_scheme_host_port() == "valkyrja.io:8080"
 
 
