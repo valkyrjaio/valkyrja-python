@@ -8,6 +8,7 @@
 
 from typing import override
 
+from valkyrja.cli.interaction.argument.contract.argument_contract import ArgumentContract
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.input.contract.input_contract import InputContract
 from valkyrja.cli.interaction.message.banner import Banner
@@ -123,17 +124,19 @@ class Router(RouterContract):
 
     def _add_arguments_to_route(self, input_: InputContract, route: RouteContract) -> RouteContract:
         """Give each argument of the input to the parameter that takes it."""
-        arguments = list(input_.get_arguments())
+        # The map is keyed by position, because a parameter reads the argument at its
+        # own position and an array parameter reads what no parameter took.
+        remaining = dict(enumerate(input_.get_arguments()))
         parameters: list[ArgumentParameterContract] = []
 
         for key, parameter in enumerate(route.get_arguments()):
-            taken = []
+            taken: list[ArgumentContract] = []
 
             if parameter.get_value_mode() is ArgumentValueMode.ARRAY:
-                taken = arguments
-                arguments = []
-            elif key < len(arguments):
-                taken = [arguments[key]]
+                taken = list(remaining.values())
+                remaining = {}
+            elif key in remaining:
+                taken = [remaining.pop(key)]
 
             parameters.append(parameter.with_arguments(*taken).validate_values())
 
