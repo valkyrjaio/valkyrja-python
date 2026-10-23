@@ -11,6 +11,7 @@ from typing import Self, final, override
 from valkyrja.cli.interaction.enum.exit_code import ExitCode
 from valkyrja.cli.interaction.input.input import Input
 from valkyrja.cli.interaction.output.empty_output import EmptyOutput
+from valkyrja.cli.server.throwable.contract.cli_server_throwable import CliServerThrowable
 
 
 @final
@@ -38,3 +39,8 @@ class NamelessInputFixture(Input):
     @override
     def get_command_name(self) -> str:
         raise RuntimeError("the command name is unreadable")
+
+
+@final
+class BareThrowableFixture(CliServerThrowable):
+    """A framework throwable that is no `Exception`, so a narrow guard misses it."""

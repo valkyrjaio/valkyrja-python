@@ -36,6 +36,7 @@ from valkyrja.cli.routing.dispatcher.contract.router_contract import RouterContr
 from valkyrja.cli.server.handler.contract.input_handler_contract import InputHandlerContract
 from valkyrja.cli.server.support.exiter import Exiter
 from valkyrja.container.manager.contract.container_contract import ContainerContract
+from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 
 class InputHandler(InputHandlerContract):
@@ -59,12 +60,12 @@ class InputHandler(InputHandlerContract):
     def handle(self, input_: InputContract) -> OutputContract:
         try:
             output = self._dispatch_router(input_)
-        except Exception as throwable:
+        except (Exception, ValkyrjaThrowable) as throwable:
             try:
                 # A middleware runs here, so the dispatch belongs under a guard of its own.
                 output = self._get_output_from_throwable(input_, throwable)
                 output = self._throwable_caught_handler.throwable_caught(input_, output, throwable)
-            except Exception as recovery_throwable:
+            except (Exception, ValkyrjaThrowable) as recovery_throwable:
                 output = self._get_recovery_output(input_, throwable, recovery_throwable)
 
         self._container.set_singleton(CliInteractionServiceId.OUTPUT_CONTRACT, output)
@@ -83,14 +84,14 @@ class InputHandler(InputHandlerContract):
             output = output.write_messages()
 
             self._container.set_singleton(CliInteractionServiceId.OUTPUT_CONTRACT, output)
-        except Exception as throwable:
+        except (Exception, ValkyrjaThrowable) as throwable:
             try:
                 # A middleware runs here, so the dispatch belongs under the same guard as
                 # the write.
                 output = self._get_output_from_throwable(input_, throwable)
                 output = self._throwable_caught_handler.throwable_caught(input_, output, throwable)
                 output = output.write_messages()
-            except Exception as recovery_throwable:
+            except (Exception, ValkyrjaThrowable) as recovery_throwable:
                 # The build of the first report, the dispatch, or the write of the output
                 # the stage returned failed. That output can hold the destination that
                 # just failed.
@@ -101,12 +102,12 @@ class InputHandler(InputHandlerContract):
 
         try:
             self.exit(input_, output)
-        except Exception as exit_throwable:
+        except (Exception, ValkyrjaThrowable) as exit_throwable:
             try:
                 # The exit stage runs a middleware, and the run still ends through the
                 # exiter, so this report is the only trace the failure leaves.
                 self._get_output_from_throwable(input_, exit_throwable).write_messages()
-            except Exception as report_throwable:
+            except (Exception, ValkyrjaThrowable) as report_throwable:
                 self._get_recovery_output(input_, exit_throwable, report_throwable).write_messages()
 
         Exiter.exit(self._get_exit_code(input_, output))
@@ -138,7 +139,7 @@ class InputHandler(InputHandlerContract):
         """
         try:
             exit_code = output.get_exit_code()
-        except Exception as code_throwable:
+        except (Exception, ValkyrjaThrowable) as code_throwable:
             # This read runs last, so the report is the only trace the failure leaves.
             self._get_recovery_output(input_, code_throwable).write_messages()
 
@@ -164,7 +165,7 @@ class InputHandler(InputHandlerContract):
 
         try:
             messages = [*self._get_throwable_messages(input_, throwable), *recovery_messages]
-        except Exception:
+        except Exception, ValkyrjaThrowable:
             # The first report reads the command name from the input, so an input that
             # raises there takes the report with it.
             messages = [*self._get_bare_throwable_messages(throwable), *recovery_messages]

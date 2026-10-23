@@ -19,6 +19,7 @@ from tests.fixtures.cli.middleware.short_circuit_input_middleware_fixture import
 )
 from tests.fixtures.cli.routing.route_fixture import make_route
 from tests.fixtures.cli.server.failing_fixture import (
+    BareThrowableFixture,
     CodelessOutputFixture,
     NamelessInputFixture,
     UnwritableOutputFixture,
@@ -122,6 +123,18 @@ def test_handle_catches_a_throwable_from_the_command() -> None:
     assert output.get_exit_code() is ExitCode.ERROR
     assert "the command failed" in "".join(m.get_text() for m in output.get_messages())
     assert "run" in "".join(m.get_text() for m in output.get_messages())
+
+
+def test_handle_catches_a_framework_throwable_that_is_no_exception() -> None:
+    def raising(container: ContainerContract, route: RouteContract) -> OutputContract:
+        raise BareThrowableFixture("the command failed")
+
+    handler = make_handler(RouteCollection().add(make_route("run").with_handler(raising)))
+
+    output = handler.handle(Input(command_name="run"))
+
+    assert output.get_exit_code() is ExitCode.ERROR
+    assert "the command failed" in "".join(m.get_text() for m in output.get_messages())
 
 
 def test_run_exits_with_the_code_of_the_output(monkeypatch: pytest.MonkeyPatch) -> None:
