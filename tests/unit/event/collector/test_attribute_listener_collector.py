@@ -9,7 +9,9 @@
 """Tests for AttributeListenerCollector."""
 
 from tests.fixtures.event.collector.listener_class_fixture import (
+    DeclarationOrderClassFixture,
     ListenerClassFixture,
+    ShadowingListenerClassFixture,
     UnmarkedClassFixture,
 )
 from tests.fixtures.event.data.order_event_fixture import ORDER_PLACED_ID, ORDER_SHIPPED_ID
@@ -19,10 +21,10 @@ from valkyrja.event.collector.attribute_listener_collector import AttributeListe
 def test_get_listeners_reads_each_marked_function() -> None:
     listeners = AttributeListenerCollector().get_listeners(ListenerClassFixture)
 
-    assert sorted(listener.get_name() for listener in listeners) == [
+    assert [listener.get_name() for listener in listeners] == [
+        "fixture.order_placed",
         "fixture.both.placed",
         "fixture.both.shipped",
-        "fixture.order_placed",
     ]
 
 
@@ -64,3 +66,19 @@ def test_get_listeners_reads_every_class_it_is_given() -> None:
 
 def test_get_listeners_with_no_class_is_empty() -> None:
     assert AttributeListenerCollector().get_listeners() == []
+
+
+def test_get_listeners_keeps_declaration_order_and_reads_a_classmethod() -> None:
+    listeners = AttributeListenerCollector().get_listeners(DeclarationOrderClassFixture)
+
+    assert [listener.get_name() for listener in listeners] == [
+        "fixture.zeta",
+        "fixture.gamma",
+        "fixture.alpha",
+    ]
+
+
+def test_get_listeners_reads_a_shadowed_function_once() -> None:
+    listeners = AttributeListenerCollector().get_listeners(ShadowingListenerClassFixture)
+
+    assert [listener.get_name() for listener in listeners] == ["fixture.shadow"]
