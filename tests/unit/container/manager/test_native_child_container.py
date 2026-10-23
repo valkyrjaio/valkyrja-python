@@ -84,6 +84,20 @@ def test_is_singleton_instance_reads_the_child_and_the_parent() -> None:
     assert child.is_singleton_instance(CHILD_ID)
 
 
+def test_is_deferred_reads_the_child_and_the_parent() -> None:
+    parent = make_parent()
+    parent.register(ServiceProviderFixture())
+    child = NativeChildContainer(parent)
+
+    assert child.is_deferred(PROVIDED_ID)
+    assert not child.is_deferred(MISSING_ID)
+
+    own = NativeChildContainer(make_parent())
+    own.register(ServiceProviderFixture())
+
+    assert own.is_deferred(PROVIDED_ID)
+
+
 def test_has_reads_the_child_and_the_parent() -> None:
     parent = make_parent()
     parent.register(ServiceProviderFixture())
