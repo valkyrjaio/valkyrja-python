@@ -77,7 +77,14 @@ class HeaderCollection(HeaderCollectionContract):
         new = self._copy()
 
         for header in headers:
-            new._headers[header.get_normalized_name()] = header
+            name = header.get_normalized_name()
+            existing = new._headers.get(name)
+
+            if existing is None:
+                new._headers[name] = header
+                continue
+
+            new._headers[name] = existing.with_added_values(*header.get_values())
 
         return new
 
