@@ -117,6 +117,22 @@ def test_dispatch_route_gives_every_argument_to_an_array_parameter() -> None:
     assert [a.get_value() for a in filled.get_argument("many").get_arguments()] == ["a", "b"]
 
 
+def test_dispatch_route_gives_an_array_parameter_what_no_parameter_took() -> None:
+    container = Container()
+    route = make_route("run").with_arguments(
+        ArgumentParameter("first", "The first", mode=ArgumentMode.OPTIONAL),
+        ArgumentParameter("rest", "The rest", mode=ArgumentMode.OPTIONAL, value_mode=ArgumentValueMode.ARRAY),
+    )
+    router = make_router(RouteCollection().add(route), container)
+
+    router.dispatch_route(Input(command_name="run", arguments=[Argument("a"), Argument("b"), Argument("c")]), route)
+
+    filled = cast("RouteContract", container.get_singleton(CliRoutingServiceId.ROUTE_CONTRACT))
+
+    assert [a.get_value() for a in filled.get_argument("first").get_arguments()] == ["a"]
+    assert [a.get_value() for a in filled.get_argument("rest").get_arguments()] == ["b", "c"]
+
+
 def test_dispatch_route_leaves_an_argument_with_no_input_empty() -> None:
     container = Container()
     route = make_route("run").with_arguments(ArgumentParameter("first", "The first", mode=ArgumentMode.OPTIONAL))
