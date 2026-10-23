@@ -349,6 +349,15 @@ def test_with_added_headers_keeps_the_headers_the_collection_holds() -> None:
     assert sorted(header.get_name() for header in changed.get_all()) == ["Accept", "Content-Type"]
 
 
+def test_with_added_headers_merges_the_values_of_a_name_it_holds() -> None:
+    collection = HeaderCollection(Header("Accept", "text/html"))
+
+    changed = collection.with_added_headers(Header("Accept", "application/json"))
+
+    assert changed.get_header_line("accept") == "text/html, application/json"
+    assert len(changed.get_all()) == 1
+
+
 def test_without_headers_drops_each_name_the_caller_gives() -> None:
     collection = HeaderCollection(
         Header("Content-Type", "text/html"), Header("Accept", "application/json"), Header("Host", "localhost")
