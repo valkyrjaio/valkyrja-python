@@ -35,14 +35,12 @@ class NativeChildContainer(Container):
         return id_ in self._instances or id_ in self._parent._instances
 
     @override
+    def is_deferred(self, id_: str) -> bool:
+        return id_ in self._callbacks or id_ in self._parent._callbacks
+
+    @override
     def has(self, id_: str) -> bool:
-        return (
-            id_ in self._callbacks
-            or id_ in self._parent._callbacks
-            or self.is_singleton(id_)
-            or self.is_service(id_)
-            or self.is_alias(id_)
-        )
+        return self.is_deferred(id_) or self.is_singleton(id_) or self.is_service(id_) or self.is_alias(id_)
 
     @override
     def is_published(self, id_: str) -> bool:
@@ -50,7 +48,7 @@ class NativeChildContainer(Container):
 
     @override
     def _publish_unpublished_provided(self, id_: str) -> None:
-        if (id_ in self._callbacks or id_ in self._parent._callbacks) and not self.is_published(id_):
+        if self.is_deferred(id_) and not self.is_published(id_):
             self.publish(id_)
 
     # Warning: each lookup tests for `None`, never for a false value. An empty
