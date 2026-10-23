@@ -42,7 +42,7 @@ wheels = [
 
 [[package]]
 name = "valkyrja"
-version = "26.0.24"
+version = "26.0.25"
 source = { editable = "." }
 
 [package.dev-dependencies]
