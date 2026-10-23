@@ -178,6 +178,13 @@ class Container(ProvidersAware):
         if singleton is None:
             return None
 
+        # The map decides which instance every reader gets, because a factory can
+        # cache an instance for this id while it runs, before this write.
+        cached = self._instances.get(id_)
+
+        if cached is not None:
+            return cached
+
         self._instances[id_] = singleton
 
         return singleton

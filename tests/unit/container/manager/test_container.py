@@ -106,6 +106,20 @@ def test_get_builds_a_singleton_once() -> None:
     assert container.is_singleton_instance(SINGLETON_ID)
 
 
+def test_get_keeps_the_instance_a_factory_cached_while_it_ran() -> None:
+    cached = {"cached": True}
+
+    def factory(container: ContainerContract, arguments: dict[str, Any]) -> object:
+        container.set_singleton(SINGLETON_ID, cached)
+
+        return {"returned": True}
+
+    container = Container().bind_singleton(SINGLETON_ID, factory)
+
+    assert container.get(SINGLETON_ID) is cached
+    assert container.get_singleton(SINGLETON_ID) is cached
+
+
 def test_get_reads_an_alias() -> None:
     container = Container().bind(SERVICE_ID, make_service).bind_alias(ALIAS_ID, SERVICE_ID)
 
