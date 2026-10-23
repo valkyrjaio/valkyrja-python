@@ -104,8 +104,12 @@ class Uri(UriContract):
 
     @override
     def get_host_port(self) -> str:
-        if self._host != "" and self._port != 0:
-            return f"{self._host}:{self._port}"
+        # `get_port` reads a standard port as absent, so the host carries no port
+        # that the scheme already implies.
+        port = self.get_port()
+
+        if self._host != "" and port != 0:
+            return f"{self._host}:{port}"
 
         return self._host
 
