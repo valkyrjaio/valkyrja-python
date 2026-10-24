@@ -19,7 +19,7 @@ root_packages = ["valkyrja"]
 [[tool.importlinter.contracts]]
 name = "The components form layers"
 type = "layers"
-layers = ["valkyrja.event", "valkyrja.container", "valkyrja.throwable"]
+layers = ["valkyrja.cli", "valkyrja.event", "valkyrja.container", "valkyrja.throwable"]
 
 # A contract declares a shape, so it never reads an implementation of that shape.
 [[tool.importlinter.contracts]]
