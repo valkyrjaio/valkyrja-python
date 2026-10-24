@@ -6,6 +6,8 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from typing import Self, override
+
 from valkyrja.event.throwable.exception.abstract.event_invalid_argument_exception import (
     EventInvalidArgumentException,
 )
@@ -20,3 +22,9 @@ class EventInvalidEventException(EventInvalidArgumentException):
     def get_id(self) -> str:
         """Get the binding key that resolved to a thing that is not an event."""
         return self._id
+
+    @override
+    def __reduce__(self) -> tuple[type[Self], tuple[str]]:
+        # `BaseException.__reduce__` replays `args`, and `args` holds the built
+        # message, so a copy would build the message from the message itself.
+        return type(self), (self._id,)
