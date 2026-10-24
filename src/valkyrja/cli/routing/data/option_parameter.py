@@ -1,0 +1,213 @@
+#
+# This file is part of the Valkyrja Framework package.
+#
+# Copyright (c) 2016-present Melech Mizrachi
+#
+# Released under the MIT License. See LICENSE.md for details.
+#
+
+from copy import copy
+from typing import Self, override
+
+from valkyrja.cli.interaction.option.contract.option_contract import OptionContract
+from valkyrja.cli.routing.data.abstract.parameter import Parameter, ValuedParameter
+from valkyrja.cli.routing.data.contract.option_parameter_contract import OptionParameterContract
+from valkyrja.cli.routing.enum.option_mode import OptionMode
+from valkyrja.cli.routing.enum.option_value_mode import OptionValueMode
+from valkyrja.cli.routing.throwable.exception.cli_routing_invalid_option_with_value_exception import (
+    CliRoutingInvalidOptionWithValueException,
+)
+from valkyrja.cli.routing.throwable.exception.cli_routing_option_values_validation_exception import (
+    CliRoutingOptionValuesValidationException,
+)
+from valkyrja.type.data.cast import Cast
+
+
+class OptionParameter(Parameter, OptionParameterContract):
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        cast: Cast | None = None,
+        short_names: list[str] | None = None,
+        mode: OptionMode = OptionMode.OPTIONAL,
+        value_mode: OptionValueMode = OptionValueMode.DEFAULT,
+        value_display_name: str = "",
+        default_value: str = "",
+        options: list[OptionContract] | None = None,
+        valid_values: list[str] | None = None,
+    ) -> None:
+        super().__init__(name, description, cast)
+
+        self._default_value: str = default_value
+        self._short_names: list[str] = list(short_names) if short_names is not None else []
+        self._mode = mode
+        self._value_mode = value_mode
+        self._value_display_name = value_display_name
+        self._options: list[OptionContract] = list(options) if options is not None else []
+        self._valid_values: list[str] = list(valid_values) if valid_values is not None else []
+
+    @override
+    def get_short_names(self) -> list[str]:
+        return list(self._short_names)
+
+    @override
+    def with_short_names(self, *short_names: str) -> Self:
+        new = self._copy()
+        new._short_names = list(short_names)
+
+        return new
+
+    @override
+    def with_added_short_names(self, *short_names: str) -> Self:
+        new = self._copy()
+        new._short_names = [*new._short_names, *short_names]
+
+        return new
+
+    @override
+    def get_mode(self) -> OptionMode:
+        return self._mode
+
+    @override
+    def with_mode(self, mode: OptionMode) -> Self:
+        new = self._copy()
+        new._mode = mode
+
+        return new
+
+    @override
+    def get_value_mode(self) -> OptionValueMode:
+        return self._value_mode
+
+    @override
+    def with_value_mode(self, value_mode: OptionValueMode) -> Self:
+        new = self._copy()
+        new._value_mode = value_mode
+
+        return new
+
+    @override
+    def has_value_display_name(self) -> bool:
+        return self._value_display_name != ""
+
+    @override
+    def get_value_display_name(self) -> str:
+        return self._value_display_name
+
+    @override
+    def with_value_display_name(self, value_name: str) -> Self:
+        new = self._copy()
+        new._value_display_name = value_name
+
+        return new
+
+    @override
+    def get_options(self) -> list[OptionContract]:
+        return list(self._options)
+
+    @override
+    def with_options(self, *options: OptionContract) -> Self:
+        new = self._copy()
+        new._options = [self._verify_takes_value(option) for option in options]
+
+        return new
+
+    @override
+    def with_added_options(self, *options: OptionContract) -> Self:
+        new = self._copy()
+        new._options = [*new._options, *(self._verify_takes_value(option) for option in options)]
+
+        return new
+
+    def _verify_takes_value(self, option: OptionContract) -> OptionContract:
+        """Check that the option carries no value where the value mode allows none."""
+        if self._value_mode is OptionValueMode.NONE and option.has_value():
+            raise CliRoutingInvalidOptionWithValueException(f"{self._name} should have no value")
+
+        return option
+
+    @override
+    def get_values(self) -> list[str]:
+        return self._get_values_of_parameters(list[ValuedParameter](self._options))
+
+    @override
+    def is_provided(self) -> bool:
+        return self._options != []
+
+    @override
+    def has_first_value(self) -> bool:
+        return self.get_first_value() != ""
+
+    @override
+    def get_first_value(self) -> str:
+        if self._options == []:
+            return ""
+
+        return self._options[0].get_value()
+
+    @override
+    def has_default_value(self) -> bool:
+        return self._default_value != ""
+
+    @override
+    def get_default_value(self) -> str:
+        return self._default_value
+
+    @override
+    def with_default_value(self, default_value: str) -> Self:
+        new = self._copy()
+        new._default_value = default_value
+
+        return new
+
+    @override
+    def get_valid_values(self) -> list[str]:
+        return list(self._valid_values)
+
+    @override
+    def with_valid_values(self, *valid_values: str) -> Self:
+        new = self._copy()
+        new._valid_values = list(valid_values)
+
+        return new
+
+    @override
+    def with_added_valid_values(self, *valid_values: str) -> Self:
+        new = self._copy()
+        new._valid_values = [*new._valid_values, *valid_values]
+
+        return new
+
+    @override
+    def are_values_valid(self) -> bool:
+        valid = True
+
+        if self._mode is OptionMode.REQUIRED:
+            valid = self._options != []
+
+        if self._value_mode is OptionValueMode.DEFAULT:
+            valid = valid and len(self._options) <= 1
+
+        if self._valid_values:
+            for option in self._options:
+                if option.get_value() not in self._valid_values:
+                    return False
+
+        return valid
+
+    @override
+    def validate_values(self) -> Self:
+        if not self.are_values_valid():
+            raise CliRoutingOptionValuesValidationException(f"{self._name} is invalid")
+
+        return self
+
+    def _copy(self) -> Self:
+        """Get a copy that holds its own short name list and option list."""
+        new = copy(self)
+        new._short_names = list(self._short_names)
+        new._options = list(self._options)
+        new._valid_values = list(self._valid_values)
+
+        return new
