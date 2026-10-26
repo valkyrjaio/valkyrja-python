@@ -13,12 +13,12 @@ class CliInteractionConfigContract(ABC):
     @property
     @abstractmethod
     def is_quiet(self) -> bool:
-        """Get whether the output writes a message of low importance."""
+        """Get whether the output writes no message for a successful run."""
 
     @is_quiet.setter
     @abstractmethod
     def is_quiet(self, is_quiet: bool) -> None:
-        """Set whether the output writes a message of low importance."""
+        """Set whether the output writes no message for a successful run."""
 
     @property
     @abstractmethod

@@ -73,7 +73,7 @@ class OutputContract(ABC):
 
     @abstractmethod
     def is_quiet(self) -> bool:
-        """Get whether the output drops a message of low importance."""
+        """Get whether the output writes no message for a successful run."""
 
     @abstractmethod
     def with_is_quiet(self, is_quiet: bool) -> Self:
