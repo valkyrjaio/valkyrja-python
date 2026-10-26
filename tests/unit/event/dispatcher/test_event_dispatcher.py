@@ -199,7 +199,7 @@ def test_dispatch_by_id_raises_when_the_id_is_not_an_event() -> None:
     container.bind(NOT_AN_EVENT_ID, lambda c, a: {"not": "an event"})
     dispatcher, _ = make_dispatcher(container)
 
-    with pytest.raises(EventInvalidEventException, match="is not an event"):
+    with pytest.raises(EventInvalidEventException, match="is not the event it names"):
         dispatcher.dispatch_by_id(NOT_AN_EVENT_ID)
 
 
@@ -277,7 +277,7 @@ def test_dispatch_by_id_raises_when_the_binding_resolves_another_event() -> None
     container.bind(EVENT_ID, lambda c, a: OrderPlacedFixture())
     dispatcher, _ = make_dispatcher(container)
 
-    with pytest.raises(EventInvalidEventException, match="is not an event"):
+    with pytest.raises(EventInvalidEventException, match="is not the event it names"):
         dispatcher.dispatch_by_id(EVENT_ID)
 
 
