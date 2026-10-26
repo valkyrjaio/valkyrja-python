@@ -71,12 +71,7 @@ class ParamCollection(ParamCollectionContract):
         self._validate_params(params)
 
         new = copy(self)
-        # A merge that rewrites an integer key would renumber it beside a string
-        # key, so each key goes in on its own.
-        new._params = dict(self._params)
-
-        for key, value in params.items():
-            new._params[key] = value
+        new._params = {**self._params, **params}
 
         return new
 
