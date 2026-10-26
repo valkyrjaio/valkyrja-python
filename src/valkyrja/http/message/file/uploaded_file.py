@@ -6,6 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from os import W_OK, access
 from pathlib import Path
 from typing import override
 
@@ -123,7 +124,7 @@ class UploadedFile(UploadedFileContract):
         """Refuse a directory that holds no file, or that takes no write."""
         directory = Path(target_directory)
 
-        if not directory.is_dir():
+        if not directory.is_dir() or not access(directory, W_OK):
             raise UploadedFileInvalidDirectoryException(
                 f"The target directory `{target_directory}` does not exists or is not writable"
             )

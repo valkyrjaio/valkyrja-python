@@ -384,3 +384,11 @@ def test_secure_keeps_a_port_the_request_names() -> None:
     request = ServerRequest(uri=Uri(scheme=Scheme.HTTP, host="valkyrja.io", port=8080))
 
     assert RedirectResponse().secure("/here", request).get_uri().get_port() == 8080
+
+
+def test_an_upload_refuses_a_directory_that_takes_no_write(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    upload = UploadedFile(stream=make_stream("payload"))
+    monkeypatch.setattr("valkyrja.http.message.file.uploaded_file.access", lambda path, mode: False)
+
+    with pytest.raises(UploadedFileInvalidDirectoryException, match="does not exists or is not writable"):
+        upload.move_to(str(tmp_path / "moved.txt"))
