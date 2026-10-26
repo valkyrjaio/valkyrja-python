@@ -26,6 +26,17 @@ class ParamCollection(ParamCollectionContract):
 
         self._params: dict[str | int, Any] = dict(params)
 
+    @classmethod
+    def from_array(cls, data: dict[str | int, Any] | list[Any]) -> Self:
+        """Build a collection, and build one for each value that holds more values."""
+        items: Any = data.items() if isinstance(data, dict) else enumerate(data)
+        params: dict[str | int, Any] = {}
+
+        for name, param in items:
+            params[name] = cls.from_array(param) if isinstance(param, (dict, list)) else param
+
+        return cls(params)
+
     @override
     def has(self, key: str | int) -> bool:
         return key in self._params

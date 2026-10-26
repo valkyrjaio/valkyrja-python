@@ -117,7 +117,7 @@ class JsonServerRequest(ServerRequest, JsonServerRequestContract):
         except ValueError as exception:
             raise HttpRequestInvalidJsonException("The body of the request holds no json") from exception
 
-        if not isinstance(decoded, dict):
+        if not isinstance(decoded, (dict, list)):
             raise HttpRequestInvalidJsonException("The json of the request names no object")
 
-        return ParsedJsonParamCollection(decoded)
+        return ParsedJsonParamCollection.from_array(decoded)

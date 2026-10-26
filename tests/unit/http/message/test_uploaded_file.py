@@ -229,7 +229,30 @@ def test_a_json_request_reports_a_body_that_holds_no_json() -> None:
 
 def test_a_json_request_reports_json_that_names_no_object() -> None:
     with pytest.raises(HttpRequestInvalidJsonException, match="names no object"):
-        JsonServerRequest(body=make_stream("[1,2]"), headers=make_json_headers())
+        JsonServerRequest(body=make_stream("5"), headers=make_json_headers())
+
+
+def test_a_json_request_reads_a_top_level_array() -> None:
+    request = JsonServerRequest(body=make_stream("[1,2]"), headers=make_json_headers())
+
+    assert request.get_parsed_json().get(0) == 1
+    assert request.get_parsed_json().get(1) == 2
+
+
+def test_a_json_request_reads_a_nested_object() -> None:
+    request = JsonServerRequest(body=make_stream('{"a": {"b": 1}}'), headers=make_json_headers())
+    nested = request.get_parsed_json().get("a")
+
+    assert isinstance(nested, ParsedJsonParamCollection)
+    assert nested.get("b") == 1
+
+
+def test_a_json_request_reads_a_nested_array() -> None:
+    request = JsonServerRequest(body=make_stream('{"a": [1, 2]}'), headers=make_json_headers())
+    nested = request.get_parsed_json().get("a")
+
+    assert isinstance(nested, ParsedJsonParamCollection)
+    assert nested.get(1) == 2
 
 
 def test_a_json_request_takes_the_json_the_caller_gives() -> None:
