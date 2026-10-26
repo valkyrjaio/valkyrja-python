@@ -81,7 +81,9 @@ uri that names no host. A uri that writes itself therefore leaves the port out.
 | `EmptyResponse`    | no body                      |
 | `RedirectResponse` | a `Location` header alone    |
 
-`ResponseFactory` builds each one.
+`ResponseFactory` builds the text, the json and the redirect response, and a
+response that carries a body of its own. A caller constructs the html, the xml
+and the empty response.
 
 ### Json
 
@@ -114,5 +116,5 @@ ValkyrjaRuntimeException
 A caller that catches `HttpRuntimeException` therefore catches a failure of any
 sub-component.
 
-Read [`HTTP_MESSAGE.md`](https://github.com/valkyrjaio/architecture/blob/master/HTTP_MESSAGE.md)
+Read [`HTTP.md`](https://github.com/valkyrjaio/architecture/blob/26.x/component/HTTP.md)
 for the cross-language map of the message types.
