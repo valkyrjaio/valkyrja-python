@@ -17,7 +17,7 @@ class ParamCollectionContract(ABC):
 
     @abstractmethod
     def get(self, key: str | int) -> Any:
-        """Get the parameter under a given key, or `None` when it holds none."""
+        """Get the parameter under a given key, or the default of the collection."""
 
     @abstractmethod
     def get_all(self) -> dict[str | int, Any]:
