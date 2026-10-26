@@ -6,13 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.http.message.header.throwable.contract.http_header_throwable import (
-    HttpHeaderThrowable,
-)
-from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_argument_exception import (
-    HttpMessageInvalidArgumentException,
+from valkyrja.http.message.header.throwable.exception.abstract.http_header_invalid_argument_exception import (
+    HttpHeaderInvalidArgumentException,
 )
 
 
-class HttpHeaderInvalidCookieException(HttpMessageInvalidArgumentException, HttpHeaderThrowable):
+class HttpHeaderInvalidCookieException(HttpHeaderInvalidArgumentException):
     pass

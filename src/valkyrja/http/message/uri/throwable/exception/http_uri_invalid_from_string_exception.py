@@ -6,10 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_argument_exception import (
-    HttpMessageInvalidArgumentException,
+from valkyrja.http.message.uri.throwable.exception.abstract.http_uri_invalid_argument_exception import (
+    HttpUriInvalidArgumentException,
 )
 
 
-class HttpUriInvalidFromStringException(HttpMessageInvalidArgumentException):
+class HttpUriInvalidFromStringException(HttpUriInvalidArgumentException):
     pass

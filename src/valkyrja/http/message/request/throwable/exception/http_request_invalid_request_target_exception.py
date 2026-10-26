@@ -6,10 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.http.message.throwable.exception.abstract.http_message_invalid_argument_exception import (
-    HttpMessageInvalidArgumentException,
+from valkyrja.http.message.request.throwable.exception.abstract.http_request_invalid_argument_exception import (
+    HttpRequestInvalidArgumentException,
 )
 
 
-class HttpRequestInvalidRequestTargetException(HttpMessageInvalidArgumentException):
+class HttpRequestInvalidRequestTargetException(HttpRequestInvalidArgumentException):
     pass

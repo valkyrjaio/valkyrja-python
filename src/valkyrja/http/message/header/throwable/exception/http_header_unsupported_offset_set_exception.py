@@ -6,13 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.http.message.header.throwable.contract.http_header_throwable import (
-    HttpHeaderThrowable,
-)
-from valkyrja.http.message.throwable.exception.abstract.http_message_runtime_exception import (
-    HttpMessageRuntimeException,
+from valkyrja.http.message.header.throwable.exception.abstract.http_header_runtime_exception import (
+    HttpHeaderRuntimeException,
 )
 
 
-class HttpHeaderUnsupportedOffsetSetException(HttpMessageRuntimeException, HttpHeaderThrowable):
+class HttpHeaderUnsupportedOffsetSetException(HttpHeaderRuntimeException):
     pass
