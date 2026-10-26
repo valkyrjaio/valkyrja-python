@@ -67,8 +67,8 @@ class AttributeRouteCollector(RouteCollectorContract):
     def _get_handler(controller: type, name: str, attribute: object) -> CliHandlerFunc:
         """Get the callable that answers the command.
 
-        A handler takes the container and the arguments alone, so a member that
-        also takes an instance or a class cannot answer a command.
+        A handler takes the container and the route alone, so a member that also
+        takes an instance or a class cannot answer a command.
         """
         if not isinstance(attribute, staticmethod):
             raise CliRoutingInvalidRouteHandlerException(
