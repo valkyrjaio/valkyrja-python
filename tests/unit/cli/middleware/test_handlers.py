@@ -49,9 +49,8 @@ def make_container() -> Container:
 
 
 def test_the_base_handler_holds_each_middleware() -> None:
-    """PHP marks the base `abstract`. Python cannot, because the base implements
-    the one abstract method that the contract declares. A subclass is what a
-    caller uses, and the base carries the chain state for it.
+    """The base is abstract, and a subclass is what a caller uses. The base carries
+    the chain state for it.
     """
     handler = InputReceivedHandler(Container(), FIRST)
 

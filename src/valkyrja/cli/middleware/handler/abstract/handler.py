@@ -6,13 +6,14 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from abc import ABC
 from typing import Any, override
 
 from valkyrja.cli.middleware.handler.contract.handler_contract import HandlerContract
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 
 
-class Handler(HandlerContract):
+class Handler(HandlerContract, ABC):
     def __init__(self, container: ContainerContract, *middleware: str) -> None:
         self._container = container
         self._middleware: list[str] = list(middleware)
