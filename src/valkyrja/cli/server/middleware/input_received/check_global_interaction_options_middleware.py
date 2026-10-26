@@ -56,7 +56,7 @@ class CheckGlobalInteractionOptionsMiddleware(InputReceivedMiddlewareContract):
             self._config.is_interactive = False
 
     def _set_is_quiet(self, input_: InputContract) -> None:
-        """Drop a message of low importance when the user says so."""
+        """Write no message for a successful run when the user says so."""
         if self._has_option(input_, self._quiet_option_name, self._quiet_option_short_name):
             self._config.is_quiet = True
 
