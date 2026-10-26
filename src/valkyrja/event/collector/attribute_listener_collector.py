@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import cast, override
+from typing import cast, final, override
 
 from valkyrja.event.attribute.listener import LISTENER_MARKER, ListenerMarker
 from valkyrja.event.collector.contract.listener_collector_contract import (
@@ -16,6 +16,7 @@ from valkyrja.event.data.contract.listener_contract import ListenerContract, Lis
 from valkyrja.event.data.listener import Listener
 
 
+@final
 class AttributeListenerCollector(ListenerCollectorContract):
     @override
     def get_listeners(self, *classes: type) -> list[ListenerContract]:

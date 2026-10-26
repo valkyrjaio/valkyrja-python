@@ -8,7 +8,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, TypeVar
+from typing import Any, TypeVar, final
 
 Function = TypeVar("Function", bound=Callable[..., Any])
 """The decorator returns the function it received, with its type intact."""
@@ -17,6 +17,7 @@ LISTENER_MARKER = "_valkyrja_event_listeners"
 """The attribute that `@listener` attaches to a function."""
 
 
+@final
 @dataclass(frozen=True)
 class ListenerMarker:
     event_id: str
