@@ -259,3 +259,26 @@ def test_an_event_that_lost_its_last_listener_stays_in_the_events() -> None:
     assert not collection.has_listeners_for_event_by_id(ORDER_PLACED_ID)
     assert collection.get_listeners_for_event_by_id(ORDER_PLACED_ID) == []
     assert collection.get_events_with_listeners() == {ORDER_PLACED_ID: []}
+
+
+def test_remove_listener_leaves_no_event_naming_the_dropped_listener() -> None:
+    collection = ListenerCollection()
+    collection.add_listener(Listener(event_id=ORDER_PLACED_ID, name="shared", handler=handle))
+
+    # The caller names a second event, so the prune must not follow that event alone.
+    collection.remove_listener(Listener(event_id=ORDER_SHIPPED_ID, name="shared", handler=handle))
+
+    assert collection.get_listeners_for_event_by_id(ORDER_PLACED_ID) == []
+    assert not collection.has_listeners_for_event_by_id(ORDER_PLACED_ID)
+
+
+def test_add_listener_moves_a_name_off_the_event_it_named_before() -> None:
+    collection = ListenerCollection()
+    collection.add_listener(Listener(event_id=ORDER_PLACED_ID, name="shared", handler=handle))
+
+    collection.add_listener(Listener(event_id=ORDER_SHIPPED_ID, name="shared", handler=handle))
+
+    assert collection.get_listeners_for_event_by_id(ORDER_PLACED_ID) == []
+    shipped = collection.get_listeners_for_event_by_id(ORDER_SHIPPED_ID)
+
+    assert [listener.get_event_id() for listener in shipped] == [ORDER_SHIPPED_ID]

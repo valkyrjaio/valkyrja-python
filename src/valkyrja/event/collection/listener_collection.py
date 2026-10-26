@@ -46,6 +46,13 @@ class ListenerCollection(ListenerCollectionContract):
     def add_listener(self, listener: ListenerContract) -> None:
         listener_id = listener.get_name()
         event_id = listener.get_event_id()
+
+        # One name identifies one listener, so the name leaves the event it named
+        # before. An event left naming it would dispatch a listener of another event.
+        for other_event_id, other_names in self._events.items():
+            if other_event_id != event_id and listener_id in other_names:
+                other_names.remove(listener_id)
+
         names = self._events.setdefault(event_id, [])
 
         if listener_id not in names:
@@ -55,14 +62,9 @@ class ListenerCollection(ListenerCollectionContract):
 
     @override
     def remove_listener(self, listener: ListenerContract) -> None:
-        listener_id = listener.get_name()
-        event_id = listener.get_event_id()
-        names = self._events.get(event_id)
-
-        if names is not None and listener_id in names:
-            names.remove(listener_id)
-
-        self._listeners.pop(listener_id, None)
+        # The name leaves every event, because one entry of `_listeners` holds it and
+        # an event left naming it would read a listener the collection dropped.
+        self.remove_listener_by_id(listener.get_name())
 
     @override
     def remove_listener_by_id(self, listener_id: str) -> None:
