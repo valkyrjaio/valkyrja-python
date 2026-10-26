@@ -158,6 +158,8 @@ class Cookie(Value, CookieContract):
 
     @override
     def with_path(self, path: str) -> Self:
+        self._validate_attribute("path", path)
+
         new = copy(self)
         new._path = path
 
@@ -169,6 +171,8 @@ class Cookie(Value, CookieContract):
 
     @override
     def with_domain(self, domain: str) -> Self:
+        self._validate_attribute("domain", domain)
+
         new = copy(self)
         new._domain = domain
 

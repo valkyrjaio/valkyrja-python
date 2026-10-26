@@ -146,3 +146,17 @@ def test_every_setter_returns_a_copy() -> None:
     assert cookie.get_name() == "session"
     assert cookie.get_path() == "/"
     assert not cookie.is_secure()
+
+
+def test_with_path_refuses_a_path_that_would_split_the_header() -> None:
+    cookie = Cookie("session", "value")
+
+    with pytest.raises(HttpHeaderInvalidCookieException, match="Invalid cookie path"):
+        cookie.with_path("/\r\nSet-Cookie: a=b")
+
+
+def test_with_domain_refuses_a_domain_that_would_split_the_header() -> None:
+    cookie = Cookie("session", "value")
+
+    with pytest.raises(HttpHeaderInvalidCookieException, match="Invalid cookie domain"):
+        cookie.with_domain("example.com; Secure")
