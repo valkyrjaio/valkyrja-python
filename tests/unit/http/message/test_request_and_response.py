@@ -185,9 +185,8 @@ def test_send_writes_the_line_the_headers_and_the_body(capsys: Any) -> None:
 
     written = capsys.readouterr().out
 
-    assert "HTTP/1.1 404 Not Found" in written
-    assert "Content-Type: text/html" in written
-    assert "hello" in written
+    # HTTP ends each line with CRLF, and an empty line closes the header block.
+    assert written == "HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\nhello"
 
 
 def test_send_http_line_returns_the_response(capsys: Any) -> None:
@@ -207,4 +206,4 @@ def test_send_headers_writes_nothing_for_a_header_with_no_value(capsys: Any) -> 
 
     response.send_headers()
 
-    assert capsys.readouterr().out == "X-Set: yes\n"
+    assert capsys.readouterr().out == "X-Set: yes\r\n\r\n"

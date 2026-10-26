@@ -90,7 +90,7 @@ class Response(Message, ResponseContract):
 
     @override
     def send_http_line(self) -> Self:
-        self._write(f"HTTP/{self._protocol_version.value} {self._status_code.value} {self._reason_phrase}\n")
+        self._write(f"HTTP/{self._protocol_version.value} {self._status_code.value} {self._reason_phrase}\r\n")
 
         return self
 
@@ -101,7 +101,7 @@ class Response(Message, ResponseContract):
                 # RFC 7230 forbids joining a `Set-Cookie` field with a comma,
                 # because the `Expires` attribute of a cookie holds one.
                 for value in header.get_values():
-                    self._write(f"{header.get_name()}: {value}\n")
+                    self._write(f"{header.get_name()}: {value}\r\n")
 
                 continue
 
@@ -110,7 +110,11 @@ class Response(Message, ResponseContract):
             # A header with no value writes nothing. A bare line break would close
             # the header block, and the body after it would read as another header.
             if line != "":
-                self._write(f"{line}\n")
+                self._write(f"{line}\r\n")
+
+        # The empty line closes the header block, so the first body line reads as a
+        # body and not as one more header.
+        self._write("\r\n")
 
         return self
 
