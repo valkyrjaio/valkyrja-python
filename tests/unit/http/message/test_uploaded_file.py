@@ -9,6 +9,7 @@
 """Tests for the uploaded file, its collection, and the json server request."""
 
 from copy import copy
+from os import W_OK
 from pathlib import Path
 from pickle import dumps, loads
 
@@ -142,7 +143,7 @@ def test_an_upload_gives_no_stream_once_it_moved(tmp_path: Path) -> None:
         upload.get_stream()
 
 
-def test_an_upload_refuses_a_directory_that_holds_nothing(tmp_path: Path) -> None:
+def test_an_upload_refuses_a_path_that_names_no_directory(tmp_path: Path) -> None:
     upload = UploadedFile(stream=make_stream("payload"))
 
     with pytest.raises(UploadedFileInvalidDirectoryException, match="does not exists or is not writable"):
@@ -388,7 +389,17 @@ def test_secure_keeps_a_port_the_request_names() -> None:
 
 def test_an_upload_refuses_a_directory_that_takes_no_write(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     upload = UploadedFile(stream=make_stream("payload"))
-    monkeypatch.setattr("valkyrja.http.message.file.uploaded_file.access", lambda path, mode: False)
+    checked: list[tuple[Path, int]] = []
+
+    def deny_write(path: Path, mode: int) -> bool:
+        checked.append((path, mode))
+
+        return False
+
+    monkeypatch.setattr("valkyrja.http.message.file.uploaded_file.access", deny_write)
 
     with pytest.raises(UploadedFileInvalidDirectoryException, match="does not exists or is not writable"):
         upload.move_to(str(tmp_path / "moved.txt"))
+
+    # The guard asks for the write permission of the target directory, not another one.
+    assert checked == [(tmp_path, W_OK)]

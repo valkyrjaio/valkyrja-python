@@ -6,10 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from valkyrja.http.message.file.throwable.exception.abstract.uploaded_file_runtime_exception import (
-    UploadedFileRuntimeException,
+from valkyrja.http.message.file.throwable.exception.abstract.uploaded_file_invalid_argument_exception import (
+    UploadedFileInvalidArgumentException,
 )
 
 
-class UploadedFileInvalidDirectoryException(UploadedFileRuntimeException):
+class UploadedFileInvalidDirectoryException(UploadedFileInvalidArgumentException):
     pass

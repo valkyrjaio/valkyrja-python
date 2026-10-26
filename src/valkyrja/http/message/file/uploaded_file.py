@@ -121,7 +121,7 @@ class UploadedFile(UploadedFileContract):
 
     @staticmethod
     def _validate_target_directory(target_directory: str) -> None:
-        """Refuse a directory that holds no file, or that takes no write."""
+        """Refuse a path that names no directory, or a directory that takes no write."""
         directory = Path(target_directory)
 
         if not directory.is_dir() or not access(directory, W_OK):
