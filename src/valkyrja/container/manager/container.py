@@ -6,6 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from collections.abc import Callable
 from typing import Any, Self, override
 
 from valkyrja.container.data.container_data import ContainerData, ServiceFactory
@@ -24,7 +25,8 @@ class Container(ProvidersAware):
 
         data = data if data is not None else ContainerData()
 
-        self._validate_alias_map_is_not_cyclic(data.aliases)
+        # Nothing is installed before the walks end.
+        self._validate_alias_map_is_not_cyclic(data.aliases, lambda id_: None)
 
         self._aliases: dict[str, str] = dict(data.aliases)
         self._instances: dict[str, object] = {}
@@ -43,7 +45,7 @@ class Container(ProvidersAware):
 
     @override
     def set_from_data(self, data: ContainerData) -> None:
-        self._validate_alias_map_is_not_cyclic({**self._aliases, **data.aliases})
+        self._validate_alias_map_is_not_cyclic(data.aliases, self.get_aliased_id)
 
         self._aliases.update(data.aliases)
         self._callbacks.update(data.callbacks)
@@ -96,24 +98,45 @@ class Container(ProvidersAware):
         if alias == id_:
             raise ContainerCyclicAliasException(alias, id_)
 
+        seen: set[str] = set()
         current = id_
 
-        # The walk ends, because every bind and every data load runs this check, so
-        # the map it walks holds no chain that returns to itself.
         while (aliased_id := self.get_aliased_id(current)) is not None:
             if aliased_id == alias:
                 raise ContainerCyclicAliasException(alias, id_)
 
+            # A parent that binds an alias after a child is built checks only its
+            # own map, so the two can hold a cycle this alias is no part of. End
+            # the walk there.
+            if aliased_id in seen:
+                return
+
+            seen.add(aliased_id)
             current = aliased_id
 
     @staticmethod
-    def _validate_alias_map_is_not_cyclic(aliases: dict[str, str]) -> None:
-        """Refuse an alias map that holds a chain returning to its own start."""
+    def _validate_alias_map_is_not_cyclic(aliases: dict[str, str], installed: Callable[[str], str | None]) -> None:
+        """Refuse an alias map that holds a chain returning to its own start.
+
+        `installed` reads an id the map does not name, so a chain that closes
+        through what the container already reaches is refused as well. A child
+        reaches the aliases of its parent, which the map alone never names.
+        """
         for alias in aliases:
             seen = {alias}
             current = alias
 
-            while (aliased_id := aliases.get(current)) is not None:
+            while True:
+                # Warning: each read tests for `None`, never for a false value. An
+                # empty id is a false value, so `or` would read past it.
+                aliased_id = aliases.get(current)
+
+                if aliased_id is None:
+                    aliased_id = installed(current)
+
+                if aliased_id is None:
+                    break
+
                 # Name the edge that took the walk back to its start.
                 if aliased_id == alias:
                     raise ContainerCyclicAliasException(current, aliased_id)

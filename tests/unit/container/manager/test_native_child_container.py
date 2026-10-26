@@ -10,13 +10,19 @@
 
 from typing import Any
 
+import pytest
+
 from tests.fixtures.container.provider.service_provider_fixture import (
     PROVIDED_ID,
     ServiceProviderFixture,
 )
+from valkyrja.container.data.container_data import ContainerData
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
 from valkyrja.container.manager.native_child_container import NativeChildContainer
+from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
+    ContainerCyclicAliasException,
+)
 
 SERVICE_ID = "tests.unit.container.Service"
 SINGLETON_ID = "tests.unit.container.Singleton"
@@ -185,3 +191,46 @@ def test_the_child_does_not_publish_an_id_that_no_provider_gives() -> None:
     child.publish(MISSING_ID)
 
     assert not child.is_published(MISSING_ID)
+
+
+def test_set_from_data_refuses_an_alias_that_closes_a_cycle_through_the_parent() -> None:
+    parent = Container()
+    parent.bind_alias("first", "second")
+    child = NativeChildContainer(parent)
+
+    with pytest.raises(ContainerCyclicAliasException, match="returns to"):
+        child.set_from_data(ContainerData(aliases={"second": "first"}))
+
+
+def test_set_from_data_takes_an_alias_that_closes_no_cycle_through_the_parent() -> None:
+    parent = Container()
+    parent.bind(SERVICE_ID, make_service)
+    parent.bind_alias("first", SERVICE_ID)
+    child = NativeChildContainer(parent)
+
+    child.set_from_data(ContainerData(aliases={"second": "first"}))
+
+    assert child.get("second") == {"arguments": {}}
+
+
+def test_set_from_data_refuses_two_loaded_aliases_that_close_a_cycle_through_the_parent() -> None:
+    parent = Container()
+    parent.bind_alias("b", "c")
+    child = NativeChildContainer(parent)
+
+    # Neither alias closes the cycle on its own. The chain runs through the parent,
+    # which the loaded map never names.
+    with pytest.raises(ContainerCyclicAliasException):
+        child.set_from_data(ContainerData(aliases={"a": "b", "c": "a"}))
+
+
+def test_bind_alias_ends_the_walk_on_a_cycle_that_a_parent_closed_after_the_child() -> None:
+    parent = Container()
+    parent.bind_alias("b", "c")
+    child = NativeChildContainer(parent)
+    child.bind_alias("a", "b")
+    # The parent reads only its own map, so it takes the edge that closes the chain.
+    parent.bind_alias("c", "a")
+
+    # The new alias is no part of that cycle, so the walk ends rather than running on.
+    assert child.bind_alias("x", "a") is child
