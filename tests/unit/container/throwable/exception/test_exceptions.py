@@ -20,6 +20,9 @@ from valkyrja.container.throwable.exception.abstract.container_invalid_argument_
 from valkyrja.container.throwable.exception.abstract.container_runtime_exception import (
     ContainerRuntimeException,
 )
+from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
+    ContainerCyclicAliasException,
+)
 from valkyrja.container.throwable.exception.container_invalid_publish_callback_exception import (
     ContainerInvalidPublishCallbackException,
 )
@@ -103,12 +106,28 @@ def test_the_unresolved_parent_alias_exception_names_the_alias_and_the_id() -> N
     assert isinstance(exception, ValkyrjaRuntimeException)
 
 
+def test_the_cyclic_alias_exception_names_one_id_for_a_self_alias() -> None:
+    exception = ContainerCyclicAliasException(ALIAS_ID, ALIAS_ID)
+
+    assert f"Alias `{ALIAS_ID}` cannot point at itself." == str(exception)
+    assert isinstance(exception, ContainerInvalidArgumentException)
+
+
+def test_the_cyclic_alias_exception_names_both_ids_for_a_chain() -> None:
+    exception = ContainerCyclicAliasException(ALIAS_ID, SERVICE_ID)
+
+    assert f"Alias `{ALIAS_ID}` cannot reach `{SERVICE_ID}`" in str(exception)
+    assert isinstance(exception, ContainerInvalidArgumentException)
+
+
 @pytest.mark.parametrize(
     "exception",
     [
         ContainerInvalidReferenceException(SERVICE_ID),
         ContainerUnpublishedParentTargetException(SERVICE_ID),
         ContainerUnresolvedParentAliasException(ALIAS_ID, SERVICE_ID),
+        ContainerCyclicAliasException(ALIAS_ID, SERVICE_ID),
+        ContainerCyclicAliasException(ALIAS_ID, ALIAS_ID),
     ],
 )
 def test_a_copy_keeps_the_message_of_the_exception(exception: ValkyrjaThrowable) -> None:

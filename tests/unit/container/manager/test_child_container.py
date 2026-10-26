@@ -20,6 +20,9 @@ from valkyrja.container.data.container_data import ContainerData
 from valkyrja.container.manager.child_container import ChildContainer
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
+from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
+    ContainerCyclicAliasException,
+)
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
     ContainerInvalidReferenceException,
 )
@@ -295,21 +298,20 @@ def test_get_aliased_raises_the_error_of_the_parent_for_an_absent_target() -> No
         make_child_from(parent).get_aliased(ALIAS_ID)
 
 
-def test_get_aliased_resolves_a_self_alias_in_the_parent() -> None:
+def test_a_parent_refuses_a_self_alias() -> None:
     parent = Container()
     parent.bind(SERVICE_ID, make_service)
-    parent.bind_alias(SERVICE_ID, SERVICE_ID)
 
-    assert make_child_from(parent).get_aliased(SERVICE_ID) == {"arguments": {}}
+    with pytest.raises(ContainerCyclicAliasException, match="cannot point at itself"):
+        parent.bind_alias(SERVICE_ID, SERVICE_ID)
 
 
-def test_get_aliased_stops_on_a_cyclic_parent_alias_chain() -> None:
+def test_a_parent_refuses_a_cyclic_alias_chain() -> None:
     parent = Container()
     parent.bind_alias("first", "second")
-    parent.bind_alias("second", "first")
 
-    with pytest.raises(ContainerInvalidReferenceException):
-        make_child_from(parent).get_aliased("first")
+    with pytest.raises(ContainerCyclicAliasException, match="returns to"):
+        parent.bind_alias("second", "first")
 
 
 def test_get_aliased_raises_for_an_unresolved_singleton_part_way_along_the_chain() -> None:

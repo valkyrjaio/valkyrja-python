@@ -29,7 +29,7 @@ container.bind(
 An application declares its own keys the same way. `AppServiceId` above is a
 class that the application owns; the framework owns `ContainerServiceId`.
 
-Read [`CONTAINER_BINDINGS.md`](https://github.com/valkyrjaio/architecture/blob/master/CONTAINER_BINDINGS.md)
+Read [`CONTAINER_BINDINGS.md`](https://github.com/valkyrjaio/architecture/blob/26.x/convention/CONTAINER_BINDINGS.md)
 for the full rule. Go and TypeScript use string keys for the same reason.
 
 ## Resolution Order
@@ -115,11 +115,17 @@ and `set_from_data` adds a state to the container. `sindri` writes this same
 shape into the generated cache, so the container loads a cache the way it loads
 its own state.
 
+A container refuses a cyclic alias. `bind_alias` walks the chain the new alias
+starts, and it raises `ContainerCyclicAliasException` when the chain returns to
+the alias. A container reads its data the same way, so neither a bind nor a
+cache can leave a chain that resolves forever.
+
 ## Exceptions
 
 - `ContainerRuntimeException` — the base runtime exception, abstract
 - `ContainerInvalidArgumentException` — the base invalid argument exception, abstract
 - `ContainerInvalidReferenceException` — the container has no service for the id
+- `ContainerCyclicAliasException` — an alias chain returns to the alias itself
 - `ContainerInvalidPublishCallbackException` — a provider gives a publisher that
   the container cannot call
 - `ContainerUnpublishedParentTargetException` — a child would run a publish

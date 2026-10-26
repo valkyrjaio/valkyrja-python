@@ -19,6 +19,9 @@ from tests.fixtures.container.provider.service_provider_fixture import (
 from valkyrja.container.data.container_data import ContainerData
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
+from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
+    ContainerCyclicAliasException,
+)
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
     ContainerInvalidReferenceException,
 )
@@ -225,3 +228,38 @@ def test_get_publishes_a_provided_service() -> None:
     assert not container.is_published(PROVIDED_ID)
     assert container.get(PROVIDED_ID) == {"published": True}
     assert container.is_published(PROVIDED_ID)
+
+
+def test_bind_alias_refuses_an_alias_that_points_at_itself() -> None:
+    with pytest.raises(ContainerCyclicAliasException, match="cannot point at itself"):
+        Container().bind_alias(ALIAS_ID, ALIAS_ID)
+
+
+def test_bind_alias_refuses_a_two_hop_cycle() -> None:
+    container = Container().bind_alias("first", "second")
+
+    with pytest.raises(ContainerCyclicAliasException, match="returns to"):
+        container.bind_alias("second", "first")
+
+
+def test_bind_alias_allows_a_chain_that_does_not_return() -> None:
+    container = Container().bind(SERVICE_ID, make_service).bind_alias("second", SERVICE_ID)
+
+    assert container.bind_alias("first", "second").get("first") == {"arguments": {}}
+
+
+def test_a_container_refuses_an_alias_map_that_holds_a_cycle() -> None:
+    with pytest.raises(ContainerCyclicAliasException):
+        Container(ContainerData(aliases={"first": "second", "second": "first"}))
+
+
+def test_set_from_data_refuses_an_alias_map_that_holds_a_cycle() -> None:
+    container = Container()
+
+    with pytest.raises(ContainerCyclicAliasException):
+        container.set_from_data(ContainerData(aliases={"first": "second", "second": "first"}))
+
+
+def test_a_container_refuses_an_alias_map_whose_cycle_excludes_the_first_alias() -> None:
+    with pytest.raises(ContainerCyclicAliasException, match="returns to"):
+        Container(ContainerData(aliases={"first": "second", "second": "third", "third": "second"}))

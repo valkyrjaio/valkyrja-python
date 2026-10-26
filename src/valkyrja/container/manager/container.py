@@ -10,6 +10,9 @@ from typing import Any, Self, override
 
 from valkyrja.container.data.container_data import ContainerData, ServiceFactory
 from valkyrja.container.manager.abstract.providers_aware import ProvidersAware
+from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
+    ContainerCyclicAliasException,
+)
 from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
     ContainerInvalidReferenceException,
 )
@@ -20,6 +23,8 @@ class Container(ProvidersAware):
         super().__init__()
 
         data = data if data is not None else ContainerData()
+
+        self._validate_alias_map_is_not_cyclic(data.aliases)
 
         self._aliases: dict[str, str] = dict(data.aliases)
         self._instances: dict[str, object] = {}
@@ -38,6 +43,8 @@ class Container(ProvidersAware):
 
     @override
     def set_from_data(self, data: ContainerData) -> None:
+        self._validate_alias_map_is_not_cyclic({**self._aliases, **data.aliases})
+
         self._aliases.update(data.aliases)
         self._callbacks.update(data.callbacks)
         self._services.update(data.services)
@@ -56,6 +63,8 @@ class Container(ProvidersAware):
 
     @override
     def bind_alias(self, alias: str, id_: str) -> Self:
+        self._validate_alias_is_not_cyclic(alias, id_)
+
         self._aliases[alias] = id_
 
         return self
@@ -81,6 +90,41 @@ class Container(ProvidersAware):
     @override
     def get_aliased_id(self, alias: str) -> str | None:
         return self._aliases.get(alias)
+
+    def _validate_alias_is_not_cyclic(self, alias: str, id_: str) -> None:
+        """Refuse an alias whose chain returns to the alias itself."""
+        if alias == id_:
+            raise ContainerCyclicAliasException(alias, id_)
+
+        current = id_
+
+        # The walk ends, because every bind and every data load runs this check, so
+        # the map it walks holds no chain that returns to itself.
+        while (aliased_id := self.get_aliased_id(current)) is not None:
+            if aliased_id == alias:
+                raise ContainerCyclicAliasException(alias, id_)
+
+            current = aliased_id
+
+    @staticmethod
+    def _validate_alias_map_is_not_cyclic(aliases: dict[str, str]) -> None:
+        """Refuse an alias map that holds a chain returning to its own start."""
+        for alias in aliases:
+            seen = {alias}
+            current = alias
+
+            while (aliased_id := aliases.get(current)) is not None:
+                # Name the edge that took the walk back to its start.
+                if aliased_id == alias:
+                    raise ContainerCyclicAliasException(current, aliased_id)
+
+                # A chain the container already held ends its walk here, the same way
+                # `bind_alias` ends its own.
+                if aliased_id in seen:
+                    break
+
+                seen.add(aliased_id)
+                current = aliased_id
 
     @override
     def is_service(self, id_: str) -> bool:

@@ -11,9 +11,6 @@ from typing import Any, override
 from valkyrja.container.data.container_data import ContainerData
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
-from valkyrja.container.throwable.exception.container_invalid_reference_exception import (
-    ContainerInvalidReferenceException,
-)
 from valkyrja.container.throwable.exception.container_unpublished_parent_target_exception import (
     ContainerUnpublishedParentTargetException,
 )
@@ -114,14 +111,11 @@ class ChildContainer(Container):
 
     def _validate_parent_alias_resolution(self, id_: str) -> None:
         """Check that the parent answers an alias without caching anything new."""
-        seen: set[str] = set()
         current = id_
 
+        # The walk ends, because a container refuses a cyclic alias at the bind and
+        # refuses a cyclic alias map in its data, so no chain returns to itself.
         while (aliased_id := self._parent.get_aliased_id(current)) is not None:
-            if aliased_id in seen:
-                raise ContainerInvalidReferenceException(id_)
-
-            seen.add(aliased_id)
             current = aliased_id
 
             if self._is_unresolved_in_parent(current):
