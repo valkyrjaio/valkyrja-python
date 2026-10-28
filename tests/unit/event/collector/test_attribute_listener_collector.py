@@ -15,7 +15,9 @@ from tests.fixtures.event.collector.listener_class_fixture import (
     UnmarkedClassFixture,
 )
 from tests.fixtures.event.data.order_event_fixture import ORDER_PLACED_ID, ORDER_SHIPPED_ID
+from valkyrja.container.manager.container import Container
 from valkyrja.event.collector.attribute_listener_collector import AttributeListenerCollector
+from valkyrja.event.constant.event_argument import EventArgument
 
 
 def test_get_listeners_reads_each_marked_function() -> None:
@@ -76,6 +78,15 @@ def test_get_listeners_keeps_declaration_order_and_reads_a_classmethod() -> None
         "fixture.gamma",
         "fixture.alpha",
     ]
+
+
+def test_get_listeners_gives_a_classmethod_handler_that_dispatch_can_call() -> None:
+    listeners = AttributeListenerCollector().get_listeners(DeclarationOrderClassFixture)
+    handler = next(listener for listener in listeners if listener.get_name() == "fixture.gamma").get_handler()
+
+    # A raw `classmethod` function takes the class first, so dispatch would hand it
+    # the container as `cls` and run out of arguments.
+    assert handler(Container(), {EventArgument.EVENT: object()}) == "gamma"
 
 
 def test_get_listeners_reads_a_shadowed_function_once() -> None:

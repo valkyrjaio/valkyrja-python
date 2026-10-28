@@ -44,15 +44,13 @@ class AttributeListenerCollector(ListenerCollectorContract):
         seen: set[str] = set()
 
         # `vars` keeps declaration order, where `inspect.getmembers` sorts by name, and
-        # dispatch runs a listener in the order the collector reads it. A `classmethod`
-        # and a `staticmethod` hold the function in `__func__`, so neither is a function
-        # on the class itself.
+        # dispatch runs a listener in the order the collector reads it.
         for klass in listener_class.__mro__:
             for name, value in vars(klass).items():
                 if name in seen:
                     continue
 
-                function = value.__func__ if isinstance(value, (classmethod, staticmethod)) else value
+                function = AttributeListenerCollector._get_function(value, listener_class)
 
                 if callable(function) and hasattr(function, LISTENER_MARKER):
                     seen.add(name)
@@ -61,6 +59,22 @@ class AttributeListenerCollector(ListenerCollectorContract):
                     members.append(cast(ListenerHandler, function))
 
         return members
+
+    @staticmethod
+    def _get_function(value: object, listener_class: type) -> object:
+        """Get the callable a member holds, in the form that dispatch calls.
+
+        A `classmethod` binds to the class, because dispatch gives the handler the
+        container first and the raw function would take that container as `cls`. A
+        `staticmethod` holds a plain function, which takes the container already.
+        """
+        if isinstance(value, classmethod):
+            return value.__get__(None, listener_class)
+
+        if isinstance(value, staticmethod):
+            return value.__func__
+
+        return value
 
     @staticmethod
     def _make_listener(marker: ListenerMarker, handler: ListenerHandler) -> ListenerContract:
