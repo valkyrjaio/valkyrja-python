@@ -76,11 +76,9 @@ class StreamOutput(Output, StreamOutputContract):
             offset += written
 
     def _verify_writable(self) -> None:
-        """Check that the stream takes a write.
-
-        A closed stream and a stream open in a read mode both report a failure the
-        write cannot name, so this check names the condition instead.
-        """
+        """Check that the stream takes a write."""
+        # A closed stream and a stream open in a read mode both report a failure the
+        # write cannot name, so this check names the condition instead.
         if self._stream.closed:
             raise CliInteractionUnwritableStreamException("The stream is closed")
 

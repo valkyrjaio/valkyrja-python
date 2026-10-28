@@ -20,11 +20,15 @@ from valkyrja.cli.interaction.message.message import Message
 
 
 class Unset:
-    """The absence of an argument, which is not the same as `None`."""
+    pass
 
 
 UNSET = Unset()
-"""Stands for the formatter that the caller did not name."""
+"""Stands for the formatter that the caller did not name.
+
+`None` is a formatter the caller removed, so an argument nobody gave takes a value
+of its own.
+"""
 
 
 class Question(Message, QuestionContract):
@@ -75,11 +79,9 @@ class Question(Message, QuestionContract):
         return self._answer.with_user_response(response)
 
     def _read_response(self) -> str:
-        """Read one line from the user.
-
-        The method is a seam. A test overrides it, because a test cannot type
-        into the terminal that the process reads.
-        """
+        """Read one line from the user."""
+        # The method is a seam. A test overrides it, because a test cannot type into
+        # the terminal that the process reads.
         try:
             return input().strip()
         except EOFError:
