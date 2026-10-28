@@ -111,11 +111,17 @@ class ChildContainer(Container):
 
     def _validate_parent_alias_resolution(self, id_: str) -> None:
         """Check that the parent answers an alias without caching anything new."""
+        seen: set[str] = set()
         current = id_
 
-        # The walk ends, because a container refuses a cyclic alias at the bind and
-        # refuses a cyclic alias map in its data, so no chain returns to itself.
         while (aliased_id := self._parent.get_aliased_id(current)) is not None:
+            # A parent that binds an alias after its own child is built checks only
+            # its own map, so a chain it reaches can return to itself. End the walk
+            # there, and leave the parent to answer the id.
+            if aliased_id in seen:
+                return
+
+            seen.add(aliased_id)
             current = aliased_id
 
             if self._is_unresolved_in_parent(current):

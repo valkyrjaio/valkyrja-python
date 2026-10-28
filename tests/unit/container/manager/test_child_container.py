@@ -20,6 +20,7 @@ from valkyrja.container.data.container_data import ContainerData
 from valkyrja.container.manager.child_container import ChildContainer
 from valkyrja.container.manager.container import Container
 from valkyrja.container.manager.contract.container_contract import ContainerContract
+from valkyrja.container.manager.native_child_container import NativeChildContainer
 from valkyrja.container.throwable.exception.container_cyclic_alias_exception import (
     ContainerCyclicAliasException,
 )
@@ -443,3 +444,18 @@ def test_the_child_publishes_a_parent_provider_into_itself() -> None:
     # The publish happened in the child, so the parent stays as it was.
     assert not parent.is_published(PROVIDED_ID)
     assert not parent.is_singleton_instance(PROVIDED_ID)
+
+
+def test_a_child_ends_the_parent_walk_on_a_cycle_the_grandparent_closed() -> None:
+    grandparent = Container()
+    grandparent.bind_alias("b", "c")
+    parent = NativeChildContainer(grandparent)
+    parent.bind_alias("a", "b")
+    # The grandparent reads only its own map, so it takes the edge that closes the
+    # chain that the parent now reaches.
+    grandparent.bind_alias("c", "a")
+
+    # The check ends on the id it has seen, so the resolution that follows reports a
+    # bounded failure. Without the guard the check itself never returns.
+    with pytest.raises(RecursionError):
+        ChildContainer(parent, ContainerData()).get("a")
