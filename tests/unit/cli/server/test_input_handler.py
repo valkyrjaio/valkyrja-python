@@ -273,7 +273,7 @@ def test_the_recovery_report_leaves_out_an_input_it_cannot_read() -> None:
     assert "Recovery message:" in text
 
 
-def test_run_reports_a_write_that_failed() -> None:
+def test_run_publishes_the_output_it_wrote() -> None:
     container = Container()
     handler = make_handler_with(RouteCollection(), container)
 
@@ -281,7 +281,10 @@ def test_run_reports_a_write_that_failed() -> None:
 
     published = container.get_singleton(CliInteractionServiceId.OUTPUT_CONTRACT)
 
+    # The run writes before it publishes, so the published output carries the report
+    # that no command matched.
     assert isinstance(published, OutputContract)
+    assert published.get_messages() != []
 
 
 def test_run_recovers_from_a_write_that_failed() -> None:
