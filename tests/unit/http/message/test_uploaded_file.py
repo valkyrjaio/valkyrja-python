@@ -36,11 +36,13 @@ from valkyrja.http.message.file.throwable.exception.uploaded_file_unable_to_writ
     UploadedFileUnableToWriteFileException,
 )
 from valkyrja.http.message.file.throwable.exception.uploaded_file_upload_error_exception import (
+    UPLOAD_ERROR_MESSAGES,
     UploadedFileUploadErrorException,
 )
 from valkyrja.http.message.file.uploaded_file import UploadedFile
 from valkyrja.http.message.header.collection.header_collection import HeaderCollection
 from valkyrja.http.message.header.header import Header
+from valkyrja.http.message.param.cookie_param_collection import CookieParamCollection
 from valkyrja.http.message.param.parsed_json_param_collection import ParsedJsonParamCollection
 from valkyrja.http.message.param.query_param_collection import QueryParamCollection
 from valkyrja.http.message.param.throwable.exception.http_param_invalid_param_exception import (
@@ -298,12 +300,40 @@ def test_a_param_collection_refuses_a_param_it_cannot_carry() -> None:
         QueryParamCollection({"a": ["not", "scalar"]})
 
 
-def test_a_param_collection_takes_a_scalar_none_and_a_nested_collection() -> None:
+def test_a_param_collection_takes_a_value_and_a_nested_collection() -> None:
     nested = QueryParamCollection({"b": "c"})
     collection = QueryParamCollection({"a": "value", "n": nested})
 
     assert collection.get("a") == "value"
     assert isinstance(collection.get("n"), QueryParamCollection)
+
+
+def test_a_parsed_json_collection_takes_nothing_as_a_value() -> None:
+    # A json body of `{"a": null}` reaches the collection, and `get` declares it.
+    collection = ParsedJsonParamCollection({"a": None})
+
+    assert collection.get("a") is None
+    assert collection.get_all() == {"a": None}
+
+
+def test_a_narrowed_collection_refuses_a_value_its_get_does_not_declare() -> None:
+    # `CookieParamCollection.get` declares text, so a number would read back under a
+    # return type it does not hold.
+    with pytest.raises(HttpParamInvalidParamException):
+        CookieParamCollection({"a": 1})
+
+
+def test_the_upload_error_exception_names_a_generic_failure_for_a_success() -> None:
+    exception = UploadedFileUploadErrorException(UploadError.OK)
+
+    assert str(exception) == "The upload failed"
+    assert exception.get_upload_error() is UploadError.OK
+
+
+def test_the_upload_error_messages_cover_every_error_but_success() -> None:
+    # A member added to the enum and missed in the map would otherwise fall to the
+    # generic message above.
+    assert set(UPLOAD_ERROR_MESSAGES) == set(UploadError) - {UploadError.OK}
 
 
 def test_a_param_collection_answers_an_absent_key_with_its_default() -> None:
