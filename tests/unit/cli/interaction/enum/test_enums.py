@@ -19,15 +19,35 @@ from valkyrja.cli.interaction.enum.option_type import OptionType
 from valkyrja.cli.interaction.enum.style import DEFAULT_STYLE, Style
 from valkyrja.cli.interaction.enum.text_color import DEFAULT_TEXT_COLOR, TextColor
 
+EXIT_CODES = [
+    (ExitCode.SUCCESS, 0),
+    (ExitCode.ERROR, 1),
+    (ExitCode.USAGE_ERROR, 64),
+    (ExitCode.DATA_ERROR, 65),
+    (ExitCode.NO_INPUT, 67),
+    (ExitCode.NO_USER, 68),
+    (ExitCode.UNAVAILABLE, 69),
+    (ExitCode.SOFTWARE_ERROR, 70),
+    (ExitCode.OS_ERROR, 71),
+    (ExitCode.OS_FILE_ERROR, 72),
+    (ExitCode.CANT_CREATE, 73),
+    (ExitCode.IO_ERROR, 74),
+    (ExitCode.TEMP_FAIL, 75),
+    (ExitCode.PROTOCOL_ERROR, 76),
+    (ExitCode.NO_PERMISSION, 77),
+    (ExitCode.CONFIG_ERROR, 78),
+    (ExitCode.AUTO_EXIT, 255),
+]
 
-def test_exit_code_success_is_zero() -> None:
-    assert ExitCode.SUCCESS.value == 0
+
+@pytest.mark.parametrize(("exit_code", "value"), EXIT_CODES)
+def test_every_exit_code_keeps_its_number(exit_code: ExitCode, value: int) -> None:
+    assert exit_code.value == value
 
 
-def test_exit_code_follows_the_sysexits_convention() -> None:
-    assert ExitCode.USAGE_ERROR.value == 64
-    assert ExitCode.CONFIG_ERROR.value == 78
-    assert ExitCode.AUTO_EXIT.value == 255
+def test_the_table_covers_every_exit_code() -> None:
+    # A member added to the enum and missed above would otherwise go unpinned.
+    assert [exit_code for exit_code, _ in EXIT_CODES] == list(ExitCode)
 
 
 def test_exit_code_is_an_integer() -> None:
