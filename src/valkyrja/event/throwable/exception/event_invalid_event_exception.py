@@ -1,0 +1,30 @@
+#
+# This file is part of the Valkyrja Framework package.
+#
+# Copyright (c) 2016-present Melech Mizrachi
+#
+# Released under the MIT License. See LICENSE.md for details.
+#
+
+from typing import Self, override
+
+from valkyrja.event.throwable.exception.abstract.event_invalid_argument_exception import (
+    EventInvalidArgumentException,
+)
+
+
+class EventInvalidEventException(EventInvalidArgumentException):
+    def __init__(self, id_: str) -> None:
+        super().__init__(f"Service with `{id_}` is not the event it names")
+
+        self._id = id_
+
+    def get_id(self) -> str:
+        """Get the binding key that did not resolve to the event it names."""
+        return self._id
+
+    @override
+    def __reduce__(self) -> tuple[type[Self], tuple[str]]:
+        # `BaseException.__reduce__` replays `args`, and `args` holds the built
+        # message, so a copy would build the message from the message itself.
+        return type(self), (self._id,)
