@@ -204,7 +204,7 @@ class OptionParameter(Parameter, OptionParameterContract):
         return self
 
     def _copy(self) -> Self:
-        """Get a copy that holds its own short name list and option list."""
+        """Get a copy that holds its own short name, option and valid value lists."""
         new = copy(self)
         new._short_names = list(self._short_names)
         new._options = list(self._options)

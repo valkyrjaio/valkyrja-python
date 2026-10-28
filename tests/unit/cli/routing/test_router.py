@@ -158,10 +158,16 @@ def test_dispatch_route_fills_an_option_by_name_and_by_short_name() -> None:
 
 
 def test_the_service_ids() -> None:
-    assert CliRoutingServiceId.ROUTE_CONTRACT == "valkyrja.cli.routing.data.RouteContract"
-    assert CliRoutingServiceId.ROUTER_CONTRACT == "valkyrja.cli.routing.dispatcher.RouterContract"
-    assert CliRoutingServiceId.ROUTE_COLLECTION_CONTRACT == "valkyrja.cli.routing.collection.RouteCollectionContract"
-    assert CliRoutingServiceId.CLI_ROUTING_DATA == "valkyrja.cli.routing.data.CliRoutingData"
+    keys = {name: value for name, value in vars(CliRoutingServiceId).items() if not name.startswith("_")}
+
+    # A key added to the holder and missed here would otherwise go unpinned.
+    assert keys == {
+        "ROUTER_CONTRACT": "valkyrja.cli.routing.dispatcher.RouterContract",
+        "ROUTE_COLLECTION_CONTRACT": "valkyrja.cli.routing.collection.RouteCollectionContract",
+        "ROUTE_CONTRACT": "valkyrja.cli.routing.data.RouteContract",
+        "CASTER_CONTRACT": "valkyrja.cli.routing.caster.CasterContract",
+        "CLI_ROUTING_DATA": "valkyrja.cli.routing.data.CliRoutingData",
+    }
 
 
 def test_a_route_matched_middleware_can_answer_with_an_output() -> None:
