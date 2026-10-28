@@ -6,10 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import final, override
+from typing import Any, final, override
 
 from valkyrja.http.message.param.contract.server_param_collection_contract import ServerParamCollectionContract
-from valkyrja.http.message.param.param_collection import ParamCollection
+from valkyrja.http.message.param.param_collection import SCALAR_TYPES, ParamCollection
 
 
 @final
@@ -19,6 +19,15 @@ class ServerParamCollection(ParamCollection, ServerParamCollectionContract):
         value: str | int | float | bool | ServerParamCollectionContract = super().get(key)
 
         return value
+
+    @override
+    def _is_valid_param(self, value: Any) -> bool:
+        """Get whether the collection carries one parameter.
+
+        A server parameter holds a scalar or another one, and never nothing,
+        which is what `get` declares.
+        """
+        return isinstance(value, (*SCALAR_TYPES, type(self)))
 
     @override
     @classmethod

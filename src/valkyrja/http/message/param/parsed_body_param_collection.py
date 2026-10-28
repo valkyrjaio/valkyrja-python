@@ -6,7 +6,7 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
-from typing import final, override
+from typing import Any, final, override
 
 from valkyrja.http.message.param.contract.parsed_body_param_collection_contract import ParsedBodyParamCollectionContract
 from valkyrja.http.message.param.param_collection import ParamCollection
@@ -19,6 +19,14 @@ class ParsedBodyParamCollection(ParamCollection, ParsedBodyParamCollectionContra
         value: str | ParsedBodyParamCollectionContract = super().get(key)
 
         return value
+
+    @override
+    def _is_valid_param(self, value: Any) -> bool:
+        """Get whether the collection carries one parameter.
+
+        A parsed body holds text or another body, which is what `get` declares.
+        """
+        return isinstance(value, (str, type(self)))
 
     @override
     @classmethod

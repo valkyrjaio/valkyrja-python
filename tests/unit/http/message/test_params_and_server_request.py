@@ -114,14 +114,14 @@ def test_a_server_request_holds_what_it_takes() -> None:
     request = ServerRequest(
         server=ServerParamCollection({"REQUEST_METHOD": "POST"}),
         cookies=CookieParamCollection({"session": "abc"}),
-        query=QueryParamCollection({"page": 2}),
+        query=QueryParamCollection({"page": "2"}),
         parsed_body=ParsedBodyParamCollection({"name": "value"}),
         attributes=AttributeParamCollection({"user": 1}),
     )
 
     assert request.get_server_params().get("REQUEST_METHOD") == "POST"
     assert request.get_cookie_params().get("session") == "abc"
-    assert request.get_query_params().get("page") == 2
+    assert request.get_query_params().get("page") == "2"
     assert request.get_parsed_body().get("name") == "value"
     assert request.get_attributes().get("user") == 1
 
@@ -130,9 +130,9 @@ def test_every_setter_returns_a_copy() -> None:
     request = ServerRequest()
 
     assert request.with_server_params(ServerParamCollection({"a": 1})).get_server_params().get("a") == 1
-    assert request.with_cookie_params(CookieParamCollection({"a": 1})).get_cookie_params().get("a") == 1
-    assert request.with_query_params(QueryParamCollection({"a": 1})).get_query_params().get("a") == 1
-    assert request.with_parsed_body(ParsedBodyParamCollection({"a": 1})).get_parsed_body().get("a") == 1
+    assert request.with_cookie_params(CookieParamCollection({"a": "1"})).get_cookie_params().get("a") == "1"
+    assert request.with_query_params(QueryParamCollection({"a": "1"})).get_query_params().get("a") == "1"
+    assert request.with_parsed_body(ParsedBodyParamCollection({"a": "1"})).get_parsed_body().get("a") == "1"
     assert request.with_attributes(AttributeParamCollection({"a": 1})).get_attributes().get("a") == 1
 
     assert request.get_server_params().get_all() == {}
