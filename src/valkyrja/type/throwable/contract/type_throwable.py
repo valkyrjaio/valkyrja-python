@@ -6,8 +6,10 @@
 # Released under the MIT License. See LICENSE.md for details.
 #
 
+from abc import ABC
+
 from valkyrja.throwable.contract.valkyrja_throwable import ValkyrjaThrowable
 
 
-class TypeThrowable(ValkyrjaThrowable):
+class TypeThrowable(ValkyrjaThrowable, ABC):
     _valkyrja_abstract = True
