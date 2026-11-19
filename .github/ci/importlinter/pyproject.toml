@@ -14,8 +14,8 @@ package = false
 root_packages = ["valkyrja"]
 include_external_packages = true
 
-# The framework has zero build and AST dependencies. The contract sees direct
-# imports only, so a transitive dependency still needs review.
+# The framework has zero build and AST dependencies. import-linter does not
+# read the imports inside a third-party package, so it misses a forbidden import there.
 [[tool.importlinter.contracts]]
 name = "The framework does not import sindri or a known AST library"
 type = "forbidden"
