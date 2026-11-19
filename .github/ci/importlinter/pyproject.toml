@@ -9,14 +9,28 @@ dependencies = ["import-linter>=2.15,<3"]
 package = false
 
 # import-linter enforces module boundaries. The root poe task sets PYTHONPATH=src
-# so `valkyrja` is importable. Add layered/independence contracts here as
-# the package grows — the analog of PHP's phparkitect Rules.
+# so `valkyrja` is importable.
 [tool.importlinter]
 root_packages = ["valkyrja"]
+include_external_packages = true
 
-# Example contract to copy once there are layers to enforce:
-# [[tool.importlinter.contracts]]
-# name = "Contracts must not import implementations"
-# type = "forbidden"
-# source_modules = ["valkyrja.contract"]
-# forbidden_modules = ["valkyrja.provider"]
+# The framework has zero build and AST dependencies. import-linter does not
+# read the imports inside a third-party package, so it misses a forbidden import there.
+[[tool.importlinter.contracts]]
+name = "The framework does not import sindri or a known AST library"
+type = "forbidden"
+source_modules = ["valkyrja"]
+forbidden_modules = [
+    "ast",
+    "ast_grep_py",
+    "astroid",
+    "baron",
+    "griffe",
+    "jedi",
+    "libcst",
+    "parso",
+    "redbaron",
+    "rope",
+    "sindri",
+    "tree_sitter",
+]
